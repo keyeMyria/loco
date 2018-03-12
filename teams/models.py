@@ -77,11 +77,11 @@ class Team(BaseModel):
         try:
             membership = TeamMembership.objects.get(user=user, team=self)
             if membership.role == TeamMembership.ROLE_ADMIN:
-                return TeamMembership.objects.filter(team=self).exclude(user=user)
+                return TeamMembership.objects.filter(team=self, user__is_active=True).exclude(user=user)
             elif membership.role == TeamMembership.ROLE_MANAGER:
-                return TeamMembership.objects.filter(team=self, role=TeamMembership.ROLE_MEMBER)
+                return TeamMembership.objects.filter(team=self, user__is_active=True, role=TeamMembership.ROLE_MEMBER)
             elif membership.role == TeamMembership.ROLE_MEMBER:
-                return TeamMembership.objects.filter(team=self, role=TeamMembership.ROLE_ADMIN)
+                return TeamMembership.objects.filter(team=self, user__is_active=True, role=TeamMembership.ROLE_ADMIN)
         except ObjectDoesNotExist:
             pass
 
@@ -91,9 +91,9 @@ class Team(BaseModel):
         try:
             membership = TeamMembership.objects.get(user=user, team=self)
             if membership.role == TeamMembership.ROLE_ADMIN:
-                return TeamMembership.objects.filter(team=self, role=TeamMembership.ROLE_ADMIN).exclude(user=user)
+                return TeamMembership.objects.filter(team=self, user__is_active=True, role=TeamMembership.ROLE_ADMIN).exclude(user=user)
             elif membership.role == TeamMembership.ROLE_MEMBER:
-                return TeamMembership.objects.filter(team=self, role=TeamMembership.ROLE_ADMIN)
+                return TeamMembership.objects.filter(team=self, user__is_active=True, role=TeamMembership.ROLE_ADMIN)
         except ObjectDoesNotExist:
             pass
 
