@@ -308,6 +308,16 @@ def user_media_upload(request, team_id):
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class MessagesList(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        messages = Message.objects.get_conversations(
+            user_id=request.user.id, team_id=team.id)
+        serializer = MessageSerializer(messages, many=True)
+        return Response(data=serializer.data)
+
+class MessagesDetail(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)
 
     def get(self, request, team_id, thread_id, format=None):
