@@ -13,7 +13,8 @@ from loco.services import cache
 from . import constants
 from .models import Team, TeamMembership, Checkin, CheckinMedia, Message
 from .serializers import TeamSerializer, TeamMembershipSerializer, CheckinSerializer,\
-    UserMediaSerializer, CheckinMediaSerializer, serialize_events, MessageSerializer, TYPE_LAST_LOCATION
+    UserMediaSerializer, CheckinMediaSerializer, serialize_events, \
+    MessageSerializer, ConversationMessageSerializer, TYPE_LAST_LOCATION
 from .permissions import IsTeamMember, IsAdminOrReadOnly, IsAdmin, IsMe
 
 from accounts.models import User
@@ -314,7 +315,7 @@ class MessagesList(APIView):
         team = get_object_or_404(Team, id=team_id)
         messages = Message.objects.get_conversations(
             user_id=request.user.id, team_id=team.id)
-        serializer = MessageSerializer(messages, many=True)
+        serializer = ConversationMessageSerializer(messages, many=True)
         return Response(data=serializer.data)
 
 class MessagesDetail(APIView):

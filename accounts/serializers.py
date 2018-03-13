@@ -14,6 +14,12 @@ class UserSerializer(serializers.ModelSerializer):
     def get_status(self, obj):
     	return cache.get_user_status(obj.id)
 
+class UserBioSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('id', 'name', 'photo')
+
 class UserDumpSerializer(serializers.ModelSerializer):
 
     class Meta:

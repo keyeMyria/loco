@@ -234,6 +234,7 @@ class Message(BaseModel):
     id = models.CharField(max_length=16, primary_key=True, editable=False)
     thread = models.CharField(max_length=32)
     team = models.ForeignKey(Team, on_delete=models.DO_NOTHING)
+    group = models.ForeignKey("groups.Group", on_delete=models.DO_NOTHING, blank=True, null=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES)
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="sent_messages")
     target = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="recv_messages")

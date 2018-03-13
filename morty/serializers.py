@@ -50,6 +50,12 @@ def parse_message(data):
     result['sender'] = message.get('@from').replace('@localhost/Rooster', '')
     result['team'] = message.get('team', {}).get('@id')
     result['body'] = message.get('body')
-    result['thread'] = message.get('thread')
     result['original'] = data.get('original')
+    
+    thread = message.get('thread')
+    result['thread'] = thread
+    if 'group_chat' in thread:
+        group = thread.split('_')[-1]
+        result['group'] = group
+        
     return (result, None)

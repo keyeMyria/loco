@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from .models import Team, TeamMembership, Checkin, CheckinMedia, Attendance, UserMedia, Message
 
-from accounts.serializers import UserSerializer
+from accounts.serializers import UserSerializer, UserBioSerializer
+from groups.serializers import GroupSerializer
 from locations.models import PhoneStatus, LocationStatus
 from locations.serializers import PhoneStatusSerializer, LocationStatusSerializer
 
@@ -103,6 +104,23 @@ def serialize_events(events):
 
 class MessageSerializer(serializers.ModelSerializer):
     id = serializers.CharField(max_length=16)
+
+    class Meta:
+        model = Message
+        fields = "__all__"
+        read_only_fields = ('created', 'updated')
+
+    def validate_body(self, value):
+        if not value:
+            return ''
+
+        return value.strip().encode('utf-8')
+
+class ConversationMessageSerializer(serializers.ModelSerializer):
+    id = serializers.CharField(max_length=16)
+    sender = UserBioSerializer(read_only=True)
+    target = UserBioSerializer(read_only=True)
+    group = GroupSerializer(required=False)
 
     class Meta:
         model = Message
