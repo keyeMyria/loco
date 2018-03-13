@@ -43,7 +43,7 @@ class GroupDetail(APIView):
     def get(self, request, group_id, format=None):
         group = get_object_or_404(Group, id=group_id)
         self.check_object_permissions(self.request, group)
-        data = GroupSerializer(group).data            
+        data = GroupSerializer(group, context={GroupSerializer.ADD_MEMBERS_COUNT:True}).data            
         return Response(data=data)
 
     def put(self, request, group_id, format=None):
