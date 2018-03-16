@@ -73,15 +73,24 @@ class Team(BaseModel):
 
         return membership
 
+    # def get_chat_members(self, user):
+    #     try:
+    #         membership = TeamMembership.objects.get(user=user, team=self)
+    #         if membership.role == TeamMembership.ROLE_ADMIN:
+    #             return TeamMembership.objects.filter(team=self, user__is_active=True).exclude(user=user)
+    #         elif membership.role == TeamMembership.ROLE_MANAGER:
+    #             return TeamMembership.objects.filter(team=self, user__is_active=True, role=TeamMembership.ROLE_MEMBER)
+    #         elif membership.role == TeamMembership.ROLE_MEMBER:
+    #             return TeamMembership.objects.filter(team=self, user__is_active=True, role=TeamMembership.ROLE_ADMIN)
+    #     except ObjectDoesNotExist:
+    #         pass
+
+    #     return []
+
     def get_chat_members(self, user):
         try:
-            membership = TeamMembership.objects.get(user=user, team=self)
-            if membership.role == TeamMembership.ROLE_ADMIN:
-                return TeamMembership.objects.filter(team=self, user__is_active=True).exclude(user=user)
-            elif membership.role == TeamMembership.ROLE_MANAGER:
-                return TeamMembership.objects.filter(team=self, user__is_active=True, role=TeamMembership.ROLE_MEMBER)
-            elif membership.role == TeamMembership.ROLE_MEMBER:
-                return TeamMembership.objects.filter(team=self, user__is_active=True, role=TeamMembership.ROLE_ADMIN)
+            return TeamMembership.objects.filter(
+                team=self, user__is_active=True).exclude(user=user)
         except ObjectDoesNotExist:
             pass
 
