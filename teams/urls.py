@@ -22,7 +22,7 @@ urlpatterns = [
     url(r'^(?P<team_id>[0-9]+)/media$', views.user_media_upload),
     url(r'^(?P<team_id>[0-9]+)/media/checkins$', views.checkin_media_upload),
 	url(r'^(?P<team_id>[0-9]+)/subscriptions/$', location_views.LocationSubscriptionList.as_view()),
-	url(r'^(?P<team_id>[0-9]+)/threads$', views.MessagesList.as_view()),
+	url(r'^(?P<team_id>[0-9]+)/threads/$', views.MessagesList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/threads/(?P<thread_id>.+)$', views.MessagesDetail.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/groups/$', groups_views.GroupList.as_view()),
 ]
