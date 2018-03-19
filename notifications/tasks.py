@@ -12,7 +12,7 @@ def send_checkin_gcm_async(checkin_id):
 
 @shared_task
 def send_chat_gcm_async(gcm_token):
-    send_chat_gcm(checkin_id)
+    send_chat_gcm(gcm_token)
 
 @shared_task
 def addnum(x,y):
