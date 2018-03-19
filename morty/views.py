@@ -99,6 +99,7 @@ class MessageList(APIView):
 
     def post(self, request, format=None):
         message_data, error = parse_message(request.data)
+        new_message = False
         if not message_data:
             return Response(data=error, status=400)
 
@@ -110,11 +111,13 @@ class MessageList(APIView):
 
             serializer = MessageUpdateSerializer(message, message_data)
         else:
+            new_message = True
             serializer = MessageSerializer(data=message_data)
 
         if serializer.is_valid():
             message = serializer.save()
-            send_chat_gcm_async.delay(message.target.gcm_token)
+            if new_message:
+                send_chat_gcm_async.delay(message.target.gcm_token)
             return Response(status=201)
 
         return Response(data=serializer.errors, status=400)   
