@@ -6,6 +6,10 @@ from groups.serializers import GroupSerializer
 from locations.models import PhoneStatus, LocationStatus
 from locations.serializers import PhoneStatusSerializer, LocationStatusSerializer
 
+TEAM_CONF_FEAT_CHAT = 'chat'
+TEAM_CONF_FEAT_MAP = 'map'
+TEAM_CONF_FEAT_EVENTS = 'events'
+
 class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -34,11 +38,24 @@ class TeamMembershipSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         return Team.objects.create(**validated_data)
 
+    def get_configuration(self, role):
+        configuration = {
+            "home": "featured", 
+            "features": [TEAM_CONF_FEAT_CHAT]
+        }
+
+        if role == TeamMembership.ROLE_ADMIN:
+            configuration["features"].insert(0, TEAM_CONF_FEAT_MAP)
+
+        return configuration
+
     def to_representation(self, obj):
         data = super(TeamMembershipSerializer, self).to_representation(obj)
-        if data.get('role') == TeamMembership.ROLE_ADMIN:
+        role = data.get('role')
+        if role == TeamMembership.ROLE_ADMIN:
             data['team']['code'] = obj.team.code
 
+        data['team']['configuration'] = self.get_configuration(role)
         return data
 
 class CheckinMediaSerializer(serializers.ModelSerializer):
