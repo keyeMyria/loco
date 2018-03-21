@@ -202,7 +202,7 @@ class UserLocationList(APIView):
             test_location = locations[i]
             last_location = locations[i-1]
 
-            if is_noise(test_location, last_location):
+            if is_noise(test_location, last_valid_location):
                 continue
 
             if is_pitstop(test_location, last_valid_location):
