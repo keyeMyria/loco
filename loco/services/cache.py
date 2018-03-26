@@ -114,7 +114,7 @@ def set_user_ping(user_id, new_ping):
 
     new_ping_time = parse(new_ping.get('timestamp'))
     last_ping_time = parse(last_ping.get('timestamp'))
-    if new_ping_time - last_ping_time > 11*60:
+    if new_ping_time - last_ping_time > timedelta(minutes=11):
         PhoneStatus.objects.create(action_type=PhoneStatus.ACTION_OFF, **_hydrate_user(last_ping))
         PhoneStatus.objects.create(action_type=PhoneStatus.ACTION_ON, **_hydrate_user(new_ping))
 
