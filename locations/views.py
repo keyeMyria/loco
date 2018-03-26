@@ -151,7 +151,7 @@ def raw_user_maps(request):
     return render_to_response('maps_raw.html', context)
 
 class LocationSubscriptionList(APIView):
-    permission_classes = (permissions.IsAuthenticated, IsTeamMember, IsAdminManagerOrReadOnly)
+    # permission_classes = (permissions.IsAuthenticated, IsTeamMember, IsAdminManagerOrReadOnly)
 
     def put(self, request, team_id, format=None):
         team = get_object_or_404(Team, id=team_id)
@@ -190,7 +190,10 @@ class UserLocationList(APIView):
 
         date = loco_utils.get_query_date(request, datetime.now().date())
         user = membership.user
-        locations = user.userlocation_set.filter(timestamp__date=date).order_by('timestamp')
+        locations = user.userlocation_set.filter(
+            timestamp__date=date).exclude(
+            latitude__isnull=True).exclude(
+            latitude=0).order_by('timestamp')
         if not locations:
             return Response({'polyline': ''})
 

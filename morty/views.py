@@ -51,8 +51,8 @@ def set_user_location(request, format=None):
         ping_data = _clean_ping_data(ping_data)
         cache.set_user_ping(ping_data['user'], ping_data)
         latitude = serializer.validated_data.get('latitude')
+        location = serializer.save()
         if latitude:
-            location = serializer.save()
             data = serializer.data
             data['user'] = UserSerializer(location.user).data
             cache.set_last_known_location(location.user.id, data)

@@ -112,10 +112,11 @@ def set_user_ping(user_id, new_ping):
     if not last_ping:
         return
 
+    new_ping_time = parse(new_ping.get('timestamp'))
     last_ping_time = parse(last_ping.get('timestamp'))
-    # if timezone.now() - last_ping_time > timedelta(minutes=10):
-    #     PhoneStatus.objects.create(action_type=PhoneStatus.ACTION_OFF, **_hydrate_user(last_ping))
-    #     PhoneStatus.objects.create(action_type=PhoneStatus.ACTION_ON, **_hydrate_user(new_ping))
+    if new_ping_time - last_ping_time > timedelta(minutes=11).seconds:
+        PhoneStatus.objects.create(action_type=PhoneStatus.ACTION_OFF, **_hydrate_user(last_ping))
+        PhoneStatus.objects.create(action_type=PhoneStatus.ACTION_ON, **_hydrate_user(new_ping))
 
     current_location_status = get_user_location_status(user_id)
     if new_ping.get('latitude') == '0.0' and current_location_status != 'False':
