@@ -1,4 +1,4 @@
-import redis, pickle
+import redis, pickle, logging
 from datetime import timedelta
 from dateutil.parser import parse
 from django.conf import settings
@@ -6,6 +6,9 @@ from django.utils import timezone
 from locations.models import LocationStatus, PhoneStatus
 from accounts.models import User
 from teams.models import Team
+
+
+logger = logging.getLogger('custom')
 
 CACHE_LOCATION = 'loco.masterpeace.in'
 CACHE_PORT = 6174
@@ -92,7 +95,7 @@ def get_user_signin_timestamp(user_id):
         return
         
     key = KEY_TIME_SIGNIN + str(user_id)
-    return cache.set(key)
+    return cache.get(key)
 
 def set_user_location_status(user_id, status):
     if settings.DEBUG:
@@ -111,6 +114,29 @@ def get_user_location_status(user_id):
     key = KEY_STATUS + str(user_id)
     return cache.hget(key, KEY_STATUS_LOCATION)
 
+def update_phone_status(new_ping, last_ping, user_id):
+    try:
+        new_ping_time = parse(new_ping.get('timestamp'))
+        last_ping_time = parse(last_ping.get('timestamp'))
+        signin_time = parse(get_user_signin_timestamp(user_id))
+        if new_ping_time - last_ping_time > timedelta(minutes=6) and new_ping_time - signin_time > timedelta(minutes=6):
+            PhoneStatus.objects.create(action_type=PhoneStatus.ACTION_OFF, **_hydrate_user(last_ping))
+            PhoneStatus.objects.create(action_type=PhoneStatus.ACTION_ON, **_hydrate_user(new_ping))
+    except Exception as e:
+        logger.error("Failed to update phone status", exc_info=True, extra={'new_ping': new_ping, 'last_ping': last_ping})
+
+def update_location_status(new_ping, user_id):
+    try:
+        current_location_status = get_user_location_status(user_id)
+        if new_ping.get('latitude') == '0.0' and current_location_status != 'False':
+            set_user_location_status(user_id, False)
+            LocationStatus.objects.create(action_type=LocationStatus.ACTION_OFF, **_hydrate_user(last_ping))
+        elif new_ping.get('latitude') != '0.0' and current_location_status == 'False':
+            set_user_location_status(user_id, True)
+            LocationStatus.objects.create(action_type=LocationStatus.ACTION_ON, **_hydrate_user(new_ping))
+    except Exception as e:
+        logger.error("Failed to update location status", exc_info=True, extra={'new_ping': new_ping})
+
 def set_user_ping(user_id, new_ping):
     if settings.DEBUG:
         raise Exception("Cannot use cache in developement")
@@ -124,20 +150,8 @@ def set_user_ping(user_id, new_ping):
     if not last_ping:
         return
 
-    new_ping_time = parse(new_ping.get('timestamp'))
-    last_ping_time = parse(last_ping.get('timestamp'))
-    signin_time = parse(get_user_signin_timestamp(user_id))
-    if new_ping_time - last_ping_time > timedelta(minutes=6) and new_ping_time - signin_time > timedelta(minutes=6):
-        PhoneStatus.objects.create(action_type=PhoneStatus.ACTION_OFF, **_hydrate_user(last_ping))
-        PhoneStatus.objects.create(action_type=PhoneStatus.ACTION_ON, **_hydrate_user(new_ping))
-
-    current_location_status = get_user_location_status(user_id)
-    if new_ping.get('latitude') == '0.0' and current_location_status != 'False':
-        set_user_location_status(user_id, False)
-        LocationStatus.objects.create(action_type=LocationStatus.ACTION_OFF, **_hydrate_user(last_ping))
-    elif new_ping.get('latitude') != '0.0' and current_location_status == 'False':
-        set_user_location_status(user_id, True)
-        LocationStatus.objects.create(action_type=LocationStatus.ACTION_ON, **_hydrate_user(new_ping))
+    update_phone_status(new_ping, last_ping, user_id)
+    update_location_status(new_ping, user_id)
 
 def set_last_known_location(user_id, location_data):
     if settings.DEBUG:
