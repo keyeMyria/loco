@@ -151,7 +151,7 @@ def raw_user_maps(request):
     return render_to_response('maps_raw.html', context)
 
 class LocationSubscriptionList(APIView):
-    # permission_classes = (permissions.IsAuthenticated, IsTeamMember, IsAdminManagerOrReadOnly)
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember, IsAdminManagerOrReadOnly)
 
     def put(self, request, team_id, format=None):
         team = get_object_or_404(Team, id=team_id)

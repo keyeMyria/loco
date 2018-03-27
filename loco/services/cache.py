@@ -21,6 +21,7 @@ KEY_PING = "ping_"
 KEY_LAST_LOCATION = "last_location_"
 KEY_STATUS = "status_"
 KEY_STATUS_SIGNIN = "signin"
+KEY_TIME_SIGNIN = "signin_time_"
 KEY_STATUS_LOCATION = "location"
 KEY_GROUP_MEMBERS = 'members_'
 
@@ -72,7 +73,7 @@ def get_user_status(user_id):
 
     return USER_STATUS_SIGNEDIN
 
-def set_user_signin_status(user_id, status):
+def set_user_signin_status(user_id, status, timestamp):
     if settings.DEBUG:
         raise Exception("Cannot use cache in developement")
 
@@ -81,6 +82,17 @@ def set_user_signin_status(user_id, status):
         
     key = KEY_STATUS + str(user_id)
     cache.hset(key, KEY_STATUS_SIGNIN, status)
+
+    key = KEY_TIME_SIGNIN + str(user_id)
+    cache.set(key, timestamp)
+
+
+def get_user_signin_timestamp(user_id):
+    if not user_id:
+        return
+        
+    key = KEY_TIME_SIGNIN + str(user_id)
+    return cache.set(key)
 
 def set_user_location_status(user_id, status):
     if settings.DEBUG:
@@ -114,7 +126,8 @@ def set_user_ping(user_id, new_ping):
 
     new_ping_time = parse(new_ping.get('timestamp'))
     last_ping_time = parse(last_ping.get('timestamp'))
-    if new_ping_time - last_ping_time > timedelta(minutes=11):
+    signin_time = parse(get_user_signin_timestamp(user_id))
+    if new_ping_time - last_ping_time > timedelta(minutes=6) and new_ping_time - signin_time > timedelta(minutes=6):
         PhoneStatus.objects.create(action_type=PhoneStatus.ACTION_OFF, **_hydrate_user(last_ping))
         PhoneStatus.objects.create(action_type=PhoneStatus.ACTION_ON, **_hydrate_user(new_ping))
 

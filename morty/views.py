@@ -69,9 +69,9 @@ def set_user_attendance(request, format=None):
         try:        
             attendance = serializer.save()
             if attendance.action_type==attendance.ACTION_SIGNIN:
-                cache.set_user_signin_status(attendance.user.id, True)
+                cache.set_user_signin_status(attendance.user.id, True, attendance.timestamp)
             else:
-                cache.set_user_signin_status(attendance.user.id, False)
+                cache.set_user_signin_status(attendance.user.id, False, attendance.timestamp)
         except IntegrityError:
             pass
 
