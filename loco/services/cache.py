@@ -123,7 +123,8 @@ def update_phone_status(new_ping, last_ping, user_id):
             PhoneStatus.objects.create(action_type=PhoneStatus.ACTION_OFF, **_hydrate_user(last_ping))
             PhoneStatus.objects.create(action_type=PhoneStatus.ACTION_ON, **_hydrate_user(new_ping))
     except Exception as e:
-        logger.error("Failed to update phone status", exc_info=True, extra={'new_ping': new_ping, 'last_ping': last_ping})
+        logger.error("Failed to update phone status for user_id: {0}".format(user_id),
+            exc_info=True, extra={'new_ping': new_ping, 'last_ping': last_ping})
 
 def update_location_status(new_ping, user_id):
     try:
@@ -135,7 +136,8 @@ def update_location_status(new_ping, user_id):
             set_user_location_status(user_id, True)
             LocationStatus.objects.create(action_type=LocationStatus.ACTION_ON, **_hydrate_user(new_ping))
     except Exception as e:
-        logger.error("Failed to update location status", exc_info=True, extra={'new_ping': new_ping})
+        logger.error("Failed to update location status for user_id: {0}".format(user_id),
+            exc_info=True, extra={'new_ping': new_ping})
 
 def set_user_ping(user_id, new_ping):
     if settings.DEBUG:
