@@ -12,7 +12,7 @@ from rest_framework.views import APIView
 from loco import utils as loco_utils
 from loco.services import cache
 
-from . import utils
+from . import utils, analyzer
 from .filters import is_noise, is_stop_point
 from .models import UserLocation
 from .serializers import UserLocationSerializer
@@ -230,3 +230,15 @@ class UserLocationList(APIView):
         polyline = utils.to_polyline(filtered_locations)
         rich_polyline = utils.to_rich_polyline(filtered_locations)
         return Response({'polyline': polyline, 'rich_polyline': rich_polyline})
+
+class UserLocationList1(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsAdminOrMe)
+
+    def get(self, request, team_id, user_id, format=None):
+        membership = get_object_or_404(TeamMembership, team=team_id, user=user_id)
+        self.check_object_permissions(self.request, membership)
+
+        PARAM_DATE = 'date'
+        date = request.query_params.get(PARAM_DATE, str(datetime.now().date()))
+        rich_polyline = analyzer.get_analyzed_user_locations(membership.user, date)
+        return Response({'rich_polyline': rich_polyline})

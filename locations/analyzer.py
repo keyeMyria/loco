@@ -1,7 +1,7 @@
 from dateutil.parser import parse
 import pytz
 
-from datetime import timedelta
+from datetime import timedelta, datetime
 
 from .models import UserLocation, UserStopLocation, UserAnalyzedLocation
 from .filters import is_noise, is_stop_point
@@ -79,6 +79,9 @@ def process_special_locations(init, locations):
     return special_locations
 
 def aggregate_pitstops(locations):
+    if not locations:
+        return []
+        
     filtered_locations = []
     counter = 0
 
@@ -129,6 +132,9 @@ def aggregate_pitstops(locations):
     return filtered_locations
 
 def filter_noise(locations):
+    if not locations:
+        return []
+
     filtered_locations = [locations[0]]
     last_valid_location = locations[0]
 
@@ -163,6 +169,9 @@ def fetch_location_set(location_set, start_time):
     return [l for l in locations]
 
 def analyze_user_locations(user, timestamp):
+    if not user or not timestamp:
+        return ''
+
     locations = []
 
     locations += fetch_location_set(user.attendance_set, timestamp)
@@ -181,6 +190,9 @@ def get_analyzed_user_locations(user, date):
     timezone = pytz.timezone('Asia/Kolkata')
     date = parse(date)
     date = timezone.localize(date)
+    if datetime.now(timezone) - date < timedelta(days=1, hours=12):
+        return analyze_user_locations(user, date)
+
     try:
         polyline = UserAnalyzedLocation.objects.get(user=user, date=date.date()).polyline
     except UserAnalyzedLocation.DoesNotExist:
