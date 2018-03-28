@@ -26,7 +26,7 @@ def is_speed_noise(test_location, last_location):
 def is_noise(test_location, last_location):
     return is_time_noise(test_location, last_location) or is_distance_noise(test_location, last_location) or is_speed_noise(test_location, last_location) or is_less_accurate(test_location)
 
-def is_pitstop(test_location, last_location):
+def is_stop_point(test_location, last_location):
     distance =  utils.get_distance(test_location, last_location)
     time = test_location.timestamp - last_location.timestamp
     distance = distance - (test_location.accuracy + last_location.accuracy)/1000

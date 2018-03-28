@@ -9,6 +9,8 @@ class BaseModel(models.Model):
 		abstract = True
 
 class BaseLocationModel(BaseModel):
+	LOCATION_TYPE = -1
+
 	latitude = models.FloatField()
 	longitude = models.FloatField()
 	timestamp = models.DateTimeField()
@@ -20,3 +22,12 @@ class BaseLocationModel(BaseModel):
 
 	class Meta:
 		abstract = True
+
+	def get_type(self):
+		return self.LOCATION_TYPE
+
+	def get_start_time(self):
+		return self.timestamp
+
+	def get_end_time(self):
+		return self.timestamp

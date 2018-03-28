@@ -194,6 +194,9 @@ class Checkin(BaseLocationModel):
     team = models.ForeignKey(Team, on_delete=models.DO_NOTHING)
     description = models.TextField(blank=True)
 
+    def get_type(self):
+        return 8
+
 def checkin_media_path(instance, filename):
     return 'teams/{0}/users/{1}/checkins/{2}/{3}'.format(
         instance.team.id, instance.user.id, instance.unique_id, filename)
@@ -218,6 +221,12 @@ class Attendance(BaseLocationModel):
     team = models.ForeignKey(Team, on_delete=models.DO_NOTHING)
     action_type = models.CharField(max_length=10, choices=ACTION_CHOICES)
     message_id = models.CharField(max_length=40, unique=True)
+
+    def get_type(self):
+        if self.action_type == self.ACTION_SIGNIN:
+            return 6
+            
+        return 7
 
 def user_media_path(instance, filename):
     return 'teams/{0}/users/{1}/{2}/{3}'.format(

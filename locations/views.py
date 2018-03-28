@@ -13,7 +13,7 @@ from loco import utils as loco_utils
 from loco.services import cache
 
 from . import utils
-from .filters import is_noise, is_pitstop
+from .filters import is_noise, is_stop_point
 from .models import UserLocation
 from .serializers import UserLocationSerializer
 
@@ -115,7 +115,7 @@ def raw_user_maps(request):
     # final_locations = [(last_location.latitude, last_location.longitude, last_location.accuracy, False, 0)]
     # pitstops = []
     # for l in filtered_locations[1:]:
-    #     if is_pitstop(l, last_location):
+    #     if is_stop_point(l, last_location):
     #         # if l.accuracy < 25:
     #         # if not pitstops:
     #         #     pitstops.append(final_locations.pop())
@@ -208,7 +208,7 @@ class UserLocationList(APIView):
             if is_noise(test_location, last_valid_location):
                 continue
 
-            if is_pitstop(test_location, last_valid_location):
+            if is_stop_point(test_location, last_valid_location):
                 if not pitstops and filtered_locations:
                     pitstops.append(filtered_locations.pop())
 
