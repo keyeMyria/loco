@@ -91,8 +91,8 @@ class GroupMembershipList(APIView):
 class GroupMembershipDetail(APIView):
     permission_classes = (permissions.IsAuthenticated, CanAlterGroupMembership)
 
-    def put(self, request, group_id, membership_id, format=None):
-        membership = get_object_or_404(GroupMembership, id=membership_id)
+    def put(self, request, group_id, user_id, format=None):
+        membership = get_object_or_404(GroupMembership, user_id=user_id, group_id=group_id)
         self.check_object_permissions(self.request, membership)
         serializer = GroupMembershipSerializer(membership, data=request.data, partial=True)
         
@@ -102,8 +102,8 @@ class GroupMembershipDetail(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, group_id, membership_id, format=None):
-        membership = get_object_or_404(GroupMembership, id=membership_id)
+    def delete(self, request, group_id, user_id, format=None):
+        membership = get_object_or_404(GroupMembership, user_id=user_id, group_id=group_id)
         self.check_object_permissions(self.request, membership)
         group_id = membership.group.id
         membership.delete()

@@ -7,7 +7,7 @@ from . import views
 urlpatterns = [
 	url(r'^(?P<group_id>[0-9]+)/$', views.GroupDetail.as_view()),
 	url(r'^(?P<group_id>[0-9]+)/members/$', views.GroupMembershipList.as_view()),
-	url(r'^(?P<group_id>[0-9]+)/members/(?P<membership_id>[0-9]+)/$', views.GroupMembershipDetail.as_view()),
+	url(r'^(?P<group_id>[0-9]+)/members/(?P<user_id>[0-9]+)/$', views.GroupMembershipDetail.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
