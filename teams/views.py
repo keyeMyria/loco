@@ -135,6 +135,23 @@ class TeamMemberDetail(APIView):
         serializer = UserSerializer(user)
         return Response(data=serializer.data)
 
+    def put(self, request, team_id, user_id, format=None):
+        membership = get_object_or_404(TeamMembership, user_id=user_id, team_id=team_id)
+        self.check_object_permissions(self.request, membership)
+        serializer = TeamMembershipSerializer(membership, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, team_id, user_id, format=None):
+        membership = get_object_or_404(TeamMembership, user_id=user_id, team_id=team_id)
+        self.check_object_permissions(self.request, membership)
+        membership.delete()
+        return Response(status=204)
+
 class TeamMembershipStatus(APIView):
     permission_classes = (permissions.IsAuthenticated, )
 
