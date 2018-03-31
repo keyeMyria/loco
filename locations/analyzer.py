@@ -186,10 +186,18 @@ def analyze_user_locations(user, timestamp):
     polyline = to_rich_polyline(locations)
     return polyline
 
-def get_analyzed_user_locations(user, date):
+def parse_localize_date(date):
+    if not date:
+        date = datetime.now()
+    elif not isinstance(date, datetime):
+        date = parse(date)
+
     timezone = pytz.timezone('Asia/Kolkata')
-    date = parse(date)
-    date = timezone.localize(date)
+    return timezone.localize(date)
+
+def get_analyzed_user_locations(user, date):
+    date = parse_localize_date(date)
+    timezone = pytz.timezone('Asia/Kolkata')
     if datetime.now(timezone) - date < timedelta(days=1, hours=12):
         return analyze_user_locations(user, date)
 
@@ -197,10 +205,13 @@ def get_analyzed_user_locations(user, date):
         polyline = UserAnalyzedLocation.objects.get(user=user, date=date.date()).polyline
     except UserAnalyzedLocation.DoesNotExist:
         polyline = analyze_user_locations(user, date)
-        UserAnalyzedLocation.objects.create(
-            user=user,
-            date=date.date(),
-            polyline=polyline)
+        try:
+            UserAnalyzedLocation.objects.create(
+                user=user,
+                date=date.date(),
+                polyline=polyline)
+        except:
+            pass
 
     return polyline
 

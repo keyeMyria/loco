@@ -1,5 +1,6 @@
 import json, requests, polyline
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render_to_response
@@ -14,7 +15,7 @@ from loco.services import cache
 
 from . import utils, analyzer
 from .filters import is_noise, is_stop_point
-from .models import UserLocation
+from .models import UserLocation, UserAnalyzedLocation
 from .serializers import UserLocationSerializer
 
 from accounts.models import User
@@ -104,7 +105,8 @@ def raw_user_maps(request):
     for i in range(1, len(locations)):
         l = locations[i]
         if filter_noise and not is_noise(l, locations[i-1]):
-            filtered_locations.append((l.latitude, l.longitude, l.accuracy, False, str(l.timestamp), str(l.created), str(l.updated)))
+            filtered_locations.append((l.latitude, l.longitude, l.accuracy, False, 0))
+            # filtered_locations.append((l.latitude, l.longitude, l.accuracy, False, str(l.timestamp), str(l.created), str(l.updated)))
         elif not filter_noise:
             filtered_locations.append((l.latitude, l.longitude, l.accuracy, False, 0))
 
@@ -242,3 +244,40 @@ class UserLocationList1(APIView):
         date = request.query_params.get(PARAM_DATE, str(datetime.now().date()))
         rich_polyline = analyzer.get_analyzed_user_locations(membership.user, date)
         return Response({'rich_polyline': rich_polyline})
+
+class UserAttendanceList(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsAdminOrMe)
+
+    def get(self, request, team_id, user_id, format=None):
+        membership = get_object_or_404(TeamMembership, team=team_id, user=user_id)
+        self.check_object_permissions(self.request, membership)
+
+        start, limit = loco_utils.get_query_start_limit(request)
+        start = int(start)
+        limit = int(limit)
+
+        end_date = datetime.now() 
+        if start:
+            end_date -= relativedelta(months=start - 1)
+            end_date = end_date.replace(day=1)
+            end_date -= relativedelta(days=1)
+
+        start_date = end_date - relativedelta(months=limit)
+        start_date = start_date.replace(day=1, hour=0, minute=0, second=0)
+
+        rows = UserAnalyzedLocation.objects.filter(user=membership.user,
+            date__gte=start_date, date__lte=end_date)
+
+        results = []
+        if rows.count() + 2 < (end_date-start_date).days:
+            delta = relativedelta(days=1)
+            while end_date >= start_date:
+                polyline = analyzer.get_analyzed_user_locations(membership.user, end_date)
+                if polyline:
+                    results.append(end_date.date())
+                end_date = end_date - delta
+        else:
+            results = [row.polyline for row in rows if row.polyline]
+            results = [row.date for row in rows if row.polyline]
+
+        return Response(results)

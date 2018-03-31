@@ -20,6 +20,7 @@ urlpatterns = [
 	url(r'^(?P<team_id>[0-9]+)/users/(?P<user_id>[0-9]+)/events/$', views.get_user_events),
 	url(r'^(?P<team_id>[0-9]+)/users/(?P<user_id>[0-9]+)/locations/$', location_views.UserLocationList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/users/(?P<user_id>[0-9]+)/locations1/$', location_views.UserLocationList1.as_view()),
+	url(r'^(?P<team_id>[0-9]+)/users/(?P<user_id>[0-9]+)/attendance/$', location_views.UserAttendanceList.as_view()),
     url(r'^(?P<team_id>[0-9]+)/media$', views.user_media_upload),
     url(r'^(?P<team_id>[0-9]+)/media/checkins$', views.checkin_media_upload),
 	url(r'^(?P<team_id>[0-9]+)/subscriptions/$', location_views.LocationSubscriptionList.as_view()),

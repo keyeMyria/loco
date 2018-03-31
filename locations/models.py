@@ -63,3 +63,6 @@ class UserAnalyzedLocation(BaseModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     polyline = models.TextField()
     date = models.DateField()
+
+    class Meta:
+        unique_together = ('user', 'date',)
