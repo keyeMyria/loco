@@ -57,6 +57,7 @@ def send_checkin_gcm(checkin_id):
 		team=checkin.team, role=TeamMembership.ROLE_ADMIN).exclude(user=checkin.user)
 	message = "{0} checked in".format(author.name.title())
 	data = {'checkin_id': str(checkin.id)}
+	data['team_id'] = checkin.team.id
 	data['type'] = GCM_TYPE_CHECKIN
 
 	for target in targets:

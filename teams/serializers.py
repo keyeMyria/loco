@@ -72,7 +72,7 @@ class CheckinSerializer(serializers.ModelSerializer):
     class Meta:
         model = Checkin
         fields = ('latitude', 'longitude', 'timestamp', 'accuracy', 'created', 'updated',
-            'spoofed', 'battery', 'session', 'user', 'media', 'team', 'description')
+            'spoofed', 'battery', 'session', 'user', 'media', 'team', 'description', 'id')
         read_only_fields = ('created', 'updated')
 
 class AttendanceSerializer(serializers.ModelSerializer):

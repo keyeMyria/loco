@@ -192,17 +192,22 @@ def parse_localize_date(date):
     elif not isinstance(date, datetime):
         date = parse(date)
 
-    timezone = pytz.timezone('Asia/Kolkata')
-    return timezone.localize(date)
+    if not date.tzinfo:
+        timezone = pytz.timezone('Asia/Kolkata')
+        date = timezone.localize(date)
+
+    return date
 
 def get_analyzed_user_locations(user, date):
     date = parse_localize_date(date)
     timezone = pytz.timezone('Asia/Kolkata')
-    if datetime.now(timezone) - date < timedelta(days=1, hours=12):
-        return analyze_user_locations(user, date)
+    if datetime.now(timezone) - date < timedelta(days=1, minutes=10):
+        return (analyze_user_locations(user, date), False)
 
+    is_cached = False
     try:
         polyline = UserAnalyzedLocation.objects.get(user=user, date=date.date()).polyline
+        is_cached = True
     except UserAnalyzedLocation.DoesNotExist:
         polyline = analyze_user_locations(user, date)
         try:
@@ -213,6 +218,6 @@ def get_analyzed_user_locations(user, date):
         except:
             pass
 
-    return polyline
+    return (polyline, is_cached)
 
 

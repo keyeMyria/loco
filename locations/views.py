@@ -1,7 +1,7 @@
-import json, requests, polyline
+import json, requests, polyline, pytz
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-
+from django.utils.cache import patch_response_headers
 from django.shortcuts import get_object_or_404
 from django.shortcuts import render_to_response
 
@@ -242,8 +242,12 @@ class UserLocationList1(APIView):
 
         PARAM_DATE = 'date'
         date = request.query_params.get(PARAM_DATE, str(datetime.now().date()))
-        rich_polyline = analyzer.get_analyzed_user_locations(membership.user, date)
-        return Response({'rich_polyline': rich_polyline})
+        rich_polyline, is_cached = analyzer.get_analyzed_user_locations(membership.user, date)
+        response = Response({'rich_polyline': rich_polyline})
+        if is_cached:
+            patch_response_headers(response, 2592000)
+
+        return response
 
 class UserAttendanceList(APIView):
     permission_classes = (permissions.IsAuthenticated, IsAdminOrMe)
@@ -252,15 +256,19 @@ class UserAttendanceList(APIView):
         membership = get_object_or_404(TeamMembership, team=team_id, user=user_id)
         self.check_object_permissions(self.request, membership)
 
+        results = []
         start, limit = loco_utils.get_query_start_limit(request)
         start = int(start)
         limit = int(limit)
 
-        end_date = datetime.now() 
+        timezone = pytz.timezone('Asia/Kolkata')
+        end_date = datetime.now(timezone) 
         if start:
             end_date -= relativedelta(months=start - 1)
             end_date = end_date.replace(day=1)
             end_date -= relativedelta(days=1)
+        else:
+            results = [end_date.date()]
 
         start_date = end_date - relativedelta(months=limit)
         start_date = start_date.replace(day=1, hour=0, minute=0, second=0)
@@ -268,16 +276,16 @@ class UserAttendanceList(APIView):
         rows = UserAnalyzedLocation.objects.filter(user=membership.user,
             date__gte=start_date, date__lte=end_date)
 
-        results = []
-        if rows.count() + 2 < (end_date-start_date).days:
+        if rows.count() + 1 < (end_date-start_date).days:
             delta = relativedelta(days=1)
             while end_date >= start_date:
-                polyline = analyzer.get_analyzed_user_locations(membership.user, end_date)
+                polyline, is_cached = analyzer.get_analyzed_user_locations(membership.user, end_date)
                 if polyline:
                     results.append(end_date.date())
                 end_date = end_date - delta
         else:
-            results = [row.polyline for row in rows if row.polyline]
-            results = [row.date for row in rows if row.polyline]
+            results += [row.date for row in rows if row.polyline]
 
-        return Response(results)
+        response = Response(results)
+        patch_response_headers(response, 3600*10)
+        return response
