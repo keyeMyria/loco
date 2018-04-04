@@ -137,7 +137,8 @@ class TeamMemberDetail(APIView):
 
     def put(self, request, team_id, user_id, format=None):
         membership = get_object_or_404(TeamMembership, user_id=user_id, team_id=team_id)
-        self.check_object_permissions(self.request, membership)
+        team = membership.team
+        self.check_object_permissions(self.request, team)
         serializer = TeamMembershipSerializer(membership, data=request.data, partial=True)
         
         if serializer.is_valid():
@@ -148,7 +149,8 @@ class TeamMemberDetail(APIView):
 
     def delete(self, request, team_id, user_id, format=None):
         membership = get_object_or_404(TeamMembership, user_id=user_id, team_id=team_id)
-        self.check_object_permissions(self.request, membership)
+        team = membership.team
+        self.check_object_permissions(self.request, team)
         membership.delete()
         return Response(status=204)
 
