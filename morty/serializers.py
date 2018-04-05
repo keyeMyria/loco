@@ -49,7 +49,7 @@ def parse_message(data):
     result['target'] = message.get('@to').replace('@localhost', '')
     result['sender'] = message.get('@from').replace('@localhost/Rooster', '')
     result['team'] = message.get('team', {}).get('@id')
-    result['body'] = message.get('body')
+    result['body'] = message.get('body', '')
     result['original'] = data.get('original')
     
     thread = message.get('thread')
