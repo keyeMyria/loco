@@ -242,7 +242,7 @@ class UserLocationList1(APIView):
 
         PARAM_DATE = 'date'
         date = request.query_params.get(PARAM_DATE, str(datetime.now().date()))
-        rich_polyline, is_cached = analyzer.get_analyzed_user_locations(membership.user, date)
+        rich_polyline, is_cached = analyzer.get_analyzed_user_location(membership.user, date)
         response = Response({'rich_polyline': rich_polyline})
         if is_cached:
             patch_response_headers(response, 2592000)
@@ -256,7 +256,9 @@ class UserAttendanceList(APIView):
         membership = get_object_or_404(TeamMembership, team=team_id, user=user_id)
         self.check_object_permissions(self.request, membership)
 
-        results = []
+        PARAM_POLYLINE = 'polyline'
+        include_polyline = request.query_params.get(PARAM_POLYLINE, 0)
+
         start, limit = loco_utils.get_query_start_limit(request)
         start = int(start)
         limit = int(limit)
@@ -267,25 +269,16 @@ class UserAttendanceList(APIView):
             end_date -= relativedelta(months=start - 1)
             end_date = end_date.replace(day=1)
             end_date -= relativedelta(days=1)
-        else:
-            results = [end_date.date()]
 
         start_date = end_date - relativedelta(months=limit)
         start_date = start_date.replace(day=1, hour=0, minute=0, second=0)
 
-        rows = UserAnalyzedLocation.objects.filter(user=membership.user,
-            date__gte=start_date, date__lte=end_date)
-
-        if rows.count() + 1 < (end_date-start_date).days:
-            delta = relativedelta(days=1)
-            while end_date >= start_date:
-                polyline, is_cached = analyzer.get_analyzed_user_locations(membership.user, end_date)
-                if polyline:
-                    results.append(end_date.date())
-                end_date = end_date - delta
+        locations = analyzer.get_analyzed_user_locations(membership.user, start_date, end_date)
+        dates = {l[0]:analyzer.remove_location_events(l[1]) for l in locations if l[1]}
+        if include_polyline:
+            response = Response(dates)
         else:
-            results += [row.date for row in rows if row.polyline]
-
-        response = Response(results)
+            response = Response(dates.keys())
+            
         patch_response_headers(response, 3600*10)
         return response

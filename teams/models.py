@@ -256,7 +256,7 @@ class Message(BaseModel):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES)
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="sent_messages")
     target = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="recv_messages")
-    body = models.TextField()
+    body = models.TextField(blank=True)
     original = models.TextField()
 
     objects = MessageManager()

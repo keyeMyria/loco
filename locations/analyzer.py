@@ -198,7 +198,7 @@ def parse_localize_date(date):
 
     return date
 
-def get_analyzed_user_locations(user, date):
+def get_analyzed_user_location(user, date):
     date = parse_localize_date(date)
     timezone = pytz.timezone('Asia/Kolkata')
     if datetime.now(timezone) - date < timedelta(days=1, minutes=10):
@@ -220,4 +220,29 @@ def get_analyzed_user_locations(user, date):
 
     return (polyline, is_cached)
 
+def get_analyzed_user_locations(user, start_date, end_date):
+    results = []
+    rows = UserAnalyzedLocation.objects.filter(user=user,
+        date__gte=start_date, date__lte=end_date)
+    locations = {str(row.date):row.polyline for row in rows}
+    dates_found = locations.keys()
+    date_counter = start_date
+    while date_counter <= end_date:
+        str_date_counter = str(date_counter.date())
+        if str_date_counter in dates_found:
+            polyline = locations[str_date_counter]
+        else:
+            polyline, is_cached = get_analyzed_user_location(user, date_counter)
 
+        results.append((str_date_counter, polyline))
+        date_counter += timedelta(days=1)
+
+    return results
+
+def remove_location_events(input_polyline):
+    if not input_polyline:
+        return ''
+
+    points = polyline.decode_time_aware_polyline(input_polyline)
+    points = [p for p in points if p[-1] != UserLocation.LOCATION_TYPE]
+    return polyline.encode_time_aware_polyline(points)
