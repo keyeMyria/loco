@@ -270,7 +270,7 @@ class UserAttendanceList(APIView):
             end_date = end_date.replace(day=1)
             end_date -= relativedelta(days=1)
 
-        start_date = end_date - relativedelta(months=limit)
+        start_date = end_date - relativedelta(months=limit-1)
         start_date = start_date.replace(day=1, hour=0, minute=0, second=0)
 
         locations = analyzer.get_analyzed_user_locations(membership.user, start_date, end_date)

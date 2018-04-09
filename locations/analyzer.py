@@ -89,7 +89,7 @@ def aggregate_pitstops(locations):
     if special_locations:
         filtered_locations += special_locations
         last_valid_location = filtered_locations[-1]
-        counter += len(special_locations) + 1
+        counter += len(special_locations)
 
     stop_point_holder = []
     while counter < len(locations):
@@ -103,11 +103,11 @@ def aggregate_pitstops(locations):
                 filtered_locations.append(midpoint)
                 stop_point_holder = []
 
-            special_locations = process_special_locations(counter-1, locations)
+            special_locations = process_special_locations(counter, locations)
             if special_locations:
                 filtered_locations += special_locations
                 last_valid_location = filtered_locations[-1]
-                counter += len(special_locations) + 1
+                counter += len(special_locations)
 
             continue
         elif is_stop_point(test_location, last_valid_location):

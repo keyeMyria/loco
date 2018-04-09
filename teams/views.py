@@ -272,9 +272,9 @@ class EventList(APIView):
     def get(self, request, team_id, format=None):
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
-        date = utils.get_query_date(request)
-        if date:
-            events = team.get_visible_events_by_date(request.user, date)
+        timestamp = utils.get_query_datetime(request)
+        if timestamp:
+            events = team.get_visible_events_by_date(request.user, timestamp)
         else:
             start, limit = utils.get_query_start_limit(request)
             events = team.get_visible_events_by_page(request.user, start, limit)
@@ -291,11 +291,11 @@ def get_user_events(request, team_id, user_id, format=None):
 
     add_last_location = False
     user = team.members.get(id=user_id)
-    date = utils.get_query_date(request)
+    timestamp = utils.get_query_datetime(request)
 
-    if date:
-        events = team.get_visible_events_by_date(user, date)
-        if date == datetime.now().date():
+    if timestamp:
+        events = team.get_visible_events_by_date(user, timestamp)
+        if timestamp.date() == datetime.now().date():
             add_last_location = True
     else:
         start, limit = utils.get_query_start_limit(request)

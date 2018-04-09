@@ -1,4 +1,5 @@
 import uuid, random
+from datetime import timedelta
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
@@ -112,14 +113,29 @@ class Team(BaseModel):
         events.sort(key=lambda e: e.timestamp, reverse=True)
         return events
 
+    def _fetch_location_set(self, location_set, start_time):
+        if not location_set:
+            return
+
+        end_time = start_time + timedelta(days=1)
+
+        locations = location_set.filter(
+            timestamp__gte=start_time).filter(
+            timestamp__lt=end_time).exclude(
+            latitude__isnull=True).exclude(
+            latitude=0)
+
+        data = [l for l in locations]
+        return data
+
     def get_visible_events_by_date(self, user, date):
         try:
             phone_events = []
-            attendance = user.attendance_set.filter(timestamp__date=date)
-            checkins = user.checkin_set.filter(timestamp__date=date)
-            location_events = user.locationstatus_set.filter(timestamp__date=date)
+            attendance = self._fetch_location_set(user.attendance_set,date)
+            checkins = self._fetch_location_set(user.checkin_set,date)
+            location_events = self._fetch_location_set(user.locationstatus_set,date)
             # phone_events = user.phonestatus_set.filter(timestamp__date=date)
-            events = list(attendance) + list(checkins) + list(location_events) + list(phone_events)
+            events = attendance + checkins + location_events + phone_events
             return self._sort_events(events)
 
         except ObjectDoesNotExist:
