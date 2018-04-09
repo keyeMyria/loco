@@ -1,4 +1,4 @@
-import datetime
+import datetime, pytz
 from dateutil.parser import parse
 
 
@@ -32,16 +32,25 @@ def validate_phone(phone):
 
     return True
 
-def get_query_date(request, default=None):
+def get_query_datetime(request, default=None):
     PARAM_DATE = 'date'
     date = request.query_params.get(PARAM_DATE)
 
     try:
-        return parse(date).date()
+        timestamp = parse(date)
+        tz = pytz.timezone('Asia/Kolkata')
+        return tz.localize(timestamp)
     except:
         pass
 
     return default
+
+def get_query_date(request, default=None):
+    timestamp = get_query_datetime(request, default)
+    if timestamp:
+        return timestamp.date()
+
+    return timestamp
 
 def get_query_start_limit(request):
     PARAM_START = 'start'
