@@ -168,19 +168,24 @@ def fetch_location_set(location_set, start_time):
 
     return [l for l in locations]
 
-def analyze_user_locations(user, timestamp):
+def get_user_locations(user, timestamp):
     if not user or not timestamp:
         return ''
 
     locations = []
-
     locations += fetch_location_set(user.attendance_set, timestamp)
     locations += fetch_location_set(user.checkin_set, timestamp)
     locations += fetch_location_set(user.locationstatus_set, timestamp)
     locations += fetch_location_set(user.phonestatus_set, timestamp)
     locations += fetch_location_set(user.userlocation_set, timestamp)
-
     locations.sort(key=lambda x: x.timestamp)
+    return locations
+
+def analyze_user_locations(user, timestamp):
+    if not user or not timestamp:
+        return ''
+
+    locations = get_user_locations(user, timestamp)
     locations = filter_noise(locations)
     locations = aggregate_pitstops(locations)
     polyline = to_rich_polyline(locations)

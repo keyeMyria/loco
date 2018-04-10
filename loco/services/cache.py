@@ -126,7 +126,7 @@ def update_phone_status(new_ping, last_ping, user_id):
         logger.error("Failed to update phone status for user_id: {0}".format(user_id),
             exc_info=True, extra={'new_ping': new_ping, 'last_ping': last_ping})
 
-def update_location_status(new_ping, user_id):
+def update_location_status(new_ping, last_ping, user_id):
     try:
         current_location_status = get_user_location_status(user_id)
         if new_ping.get('latitude') == '0.0' and current_location_status != 'False':
@@ -153,7 +153,7 @@ def set_user_ping(user_id, new_ping):
         return
 
     update_phone_status(new_ping, last_ping, user_id)
-    update_location_status(new_ping, user_id)
+    update_location_status(new_ping, last_ping, user_id)
 
 def set_last_known_location(user_id, location_data):
     if settings.DEBUG:
