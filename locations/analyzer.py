@@ -48,7 +48,7 @@ def merge_stop_points(locations):
     if count == 0:
         count = 1
 
-    if count < 5 or end_time-start_time < timedelta(minutes=10):
+    if len(locations) < 5 or end_time-start_time < timedelta(minutes=10):
         stop_point = UserLocation()
         stop_point.latitude = latitude/count
         stop_point.longitude = longitude/count
