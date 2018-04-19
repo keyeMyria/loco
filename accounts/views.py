@@ -130,6 +130,7 @@ class UpdateGCMToken(APIView):
         return Response()
 
 class UserDumpView(APIView):
+    parser_classes = (FormParser, MultiPartParser, JSONParser)
 
     def get(self, request, format=None):
         start = request.GET.get('start', 0)
@@ -152,8 +153,12 @@ class UserDumpView(APIView):
         if not data:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
-        data = UserDump.objects.create(data=data)
-        return Response(UserDumpSerializer(data).data)
+        dump = UserDumpSerializer(data=request.data)
+        if dump.is_valid():
+            dump.save()
+            return Response(dump.data)
+
+        return Response(data=dump.errors)
 
 
 @api_view(['GET'])

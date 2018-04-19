@@ -100,7 +100,7 @@ else:
             'NAME': 'loko',
             'USER': 'root',
             'PASSWORD': 'toor',
-            'HOST': 'localhost',
+            'HOST': 'loco.masterpeace.in',
             'PORT': '',
             'OPTIONS': {'charset': 'utf8mb4'},
         }

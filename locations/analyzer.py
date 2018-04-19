@@ -168,6 +168,14 @@ def fetch_location_set(location_set, start_time):
 
     return [l for l in locations]
 
+def print_locations(locations):
+    for i in range(1, len(locations)):
+        location = locations[i]
+        delta = location.timestamp - locations[i-1].timestamp
+        if delta > timedelta(minutes=6):
+            print (delta)
+        # print (location.get_type(), location.accuracy, location.timestamp)
+
 def get_user_locations(user, timestamp):
     if not user or not timestamp:
         return ''
@@ -186,6 +194,7 @@ def analyze_user_locations(user, timestamp):
         return ''
 
     locations = get_user_locations(user, timestamp)
+    print_locations(locations)
     locations = filter_noise(locations)
     locations = aggregate_pitstops(locations)
     polyline = to_rich_polyline(locations)

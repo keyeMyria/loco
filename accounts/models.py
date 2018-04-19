@@ -74,4 +74,5 @@ class UserOtp(BaseModel):
     objects = UserOtpManager()
 
 class UserDump(BaseModel):
+    file = models.FileField(upload_to='file_dump/', blank=True, null=True)
     data = models.TextField(blank=True, null=True)

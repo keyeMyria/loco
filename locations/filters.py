@@ -23,6 +23,38 @@ def is_speed_noise(test_location, last_location):
     speed = (distance*60*60)/time.total_seconds()
     return speed > NOISE_SPEED
 
+def is_history_noise(test_location, last_valid_location, last_location):
+    distance =  utils.get_distance(test_location, last_valid_location)
+    time = test_location.timestamp - last_location.timestamp
+    if time.total_seconds() == 0:
+        return True
+
+    speed = (distance, time.total_seconds(), (distance*60*60)/time.total_seconds())
+    if speed < 100:
+        return False
+
+    distance =  utils.get_distance(test_location, last_location)
+    distance_valid =  utils.get_distance(test_location, last_valid_location)
+    print (distance, distance_valid)
+    return distance_valid > 5*distance
+ 
+
+
+def get_speed(test_location, last_location):
+    distance =  utils.get_distance(test_location, last_location)
+    time = test_location.timestamp - last_location.timestamp
+    if time.total_seconds() == 0:
+        return True
+
+    return (distance, time.total_seconds(), (distance*60*60)/time.total_seconds())
+
+def is_closer_to_noise(test_location, last_valid_location, last_location):
+    distance =  utils.get_distance(test_location, last_location)
+    distance_valid =  utils.get_distance(test_location, last_valid_location)
+    print (distance, distance_valid)
+    return distance_valid > 5*distance
+ 
+
 def is_noise(test_location, last_location):
     return is_time_noise(test_location, last_location) or is_distance_noise(test_location, last_location) or is_speed_noise(test_location, last_location) or is_less_accurate(test_location)
 

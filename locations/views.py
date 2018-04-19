@@ -14,7 +14,7 @@ from loco import utils as loco_utils
 from loco.services import cache
 
 from . import utils, analyzer
-from .filters import is_noise, is_stop_point
+from .filters import is_noise, is_stop_point, get_speed, is_history_noise
 from .models import UserLocation, UserAnalyzedLocation
 from .serializers import UserLocationSerializer
 
@@ -97,58 +97,39 @@ def raw_user_maps(request):
     start = request.GET.get('start')
     end = request.GET.get('end')
     filter_noise = request.GET.get('filter_noise', False)
+    show_noise = request.GET.get('show_noise', False)
     filter_dis = float(request.GET.get('filter_dis', 0.1))
     locations = list(UserLocation.objects.filter(user_id=uid, timestamp__gte=start, timestamp__lte=end).order_by('timestamp'))
-    # filtered_locations = [locations[0]]
+    # locations = locations[1:]
+    last_valid_location = locations[0]
+    # filtered_locations = [(last_valid_location.latitude, last_valid_location.longitude, False, last_valid_location.accuracy, str(last_valid_location.timestamp))]
     filtered_locations = []
+    print (last_valid_location.latitude, last_valid_location.longitude, last_valid_location.timestamp, last_valid_location.accuracy)
+
 
     for i in range(1, len(locations)):
         l = locations[i]
-        if filter_noise and not is_noise(l, locations[i-1]):
-            filtered_locations.append((l.latitude, l.longitude, l.accuracy, False, 0))
-            # filtered_locations.append((l.latitude, l.longitude, l.accuracy, False, str(l.timestamp), str(l.created), str(l.updated)))
+        if filter_noise and not is_noise(l, last_valid_location) and not is_history_noise(l, last_valid_location, locations[i-1]):
+            print (len(filtered_locations), False)
+            print (l.id, l.latitude, l.longitude, l.timestamp, l.created, l.accuracy)
+            print (get_speed(l, last_valid_location))
+            print (is_history_noise(l, last_valid_location, locations[i-1]))
+            last_valid_location = l
+            filtered_locations.append((l.latitude, l.longitude, False, l.accuracy, str(l.timestamp)))
+        elif filter_noise and not is_noise(l, last_valid_location) and is_history_noise(l, last_valid_location, locations[i-1]):
+            print (len(filtered_locations), True)
+            print (l.id, l.latitude, l.longitude, l.timestamp, l.created, l.accuracy)
+            print (get_speed(l, last_valid_location))
+            print (is_history_noise(l, last_valid_location, locations[i-1]))
+            filtered_locations.append((l.latitude, l.longitude, True, l.accuracy, str(l.timestamp)))
         elif not filter_noise:
-            filtered_locations.append((l.latitude, l.longitude, l.accuracy, False, 0))
+            filtered_locations.append((l.latitude, l.longitude, False, l.accuracy, str(l.timestamp)))
 
-    final_locations = filtered_locations
-
-    # last_location = filtered_locations[0]
-    # last_valid_location = filtered_locations[0]
-    # final_locations = [(last_location.latitude, last_location.longitude, last_location.accuracy, False, 0)]
-    # pitstops = []
-    # for l in filtered_locations[1:]:
-    #     if is_stop_point(l, last_location):
-    #         # if l.accuracy < 25:
-    #         # if not pitstops:
-    #         #     pitstops.append(final_locations.pop())
-
-    #         pitstops.append(l)
-    #             # last_valid_location = final_locations[-1]
-    #             # if last_valid_location[2] > 25:
-    #             #     final_locations.append((l.latitude, l.longitude, l.accuracy, False, 0))
-    #             # else:
-    #             #     midpoint = utils.get_midpoint(l.latitude, l.longitude, last_valid_location[0], last_valid_location[1], last_valid_location[4])
-    #             #     final_locations.append((midpoint[0], midpoint[1], l.accuracy, True, last_valid_location[4]+1))
-    #         pass
-    #         # if l.accuracy < 25:
-    #         #     midpoint = utils.get_midpoint(l.latitude, l.longitude, last_valid_location.latitude, last_valid_location.longitude)
-    #         #     # final_locations.append((l.latitude, l.longitude, l.accuracy, True))
-    #         #     final_locations.append((midpoint[0], midpoint[1], l.accuracy, True))
-    #     else:
-    #         if pitstops:
-    #             final_locations.append(utils.get_midpoint(pitstops))
-    #             pitstops = []
-                
-    #         final_locations.append((l.latitude, l.longitude, l.accuracy, False, 0))
-    #     last_location = l
-
-
-    len_locations = len(final_locations)
+    final_locations = [(l[:3]) for l in filtered_locations]
 
     context = {
-        'locations': json.dumps(final_locations),
-        'filtered_locations': final_locations, 
-        'len_locations': len_locations, 
+        'draw_locations': json.dumps(final_locations),
+        'data_locations': filtered_locations, 
     }
     return render_to_response('maps_raw.html', context)
 
