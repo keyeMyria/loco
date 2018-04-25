@@ -141,8 +141,7 @@ class LocationSubscriptionList(APIView):
         self.check_object_permissions(self.request, team)
         user_ids = request.data.get('user_ids', [])
         memberships = TeamMembership.objects.filter(
-            team=team, 
-            status=team_constants.STATUS_ACCEPTED,
+            team=team,
             user__id__in=user_ids)
         if request.user.teammembership_set.get(team=team).role==TeamMembership.ROLE_MANAGER:
             memberships = [m for m in memberships 

@@ -65,7 +65,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         self.save()
 
     def get_memberships(self):
-        return self.teammembership_set.exclude(status=teams_constants.STATUS_ACCEPTED)
+        return self.teammembership_set.all()
 
 class UserOtp(BaseModel):
     otp = models.CharField(max_length=6)
