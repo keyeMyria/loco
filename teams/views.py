@@ -30,9 +30,15 @@ class TeamList(APIView):
         return Response(data=serializer.data)
 
     def post(self, request, format=None):
+        PARAM_MEMBERSHIP = 'membership'
+        result_membership = request.query_params.get(PARAM_MEMBERSHIP, False)
         serializer = TeamSerializer(data=request.data)
         if serializer.is_valid():
             team = serializer.save(created_by=request.user)
+            if result_membership:
+                membership = TeamMembership.objects.get(team=team, user=request.user)
+                serializer = TeamMembership(membership)
+
             return Response(serializer.data)
 
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
