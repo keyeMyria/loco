@@ -37,7 +37,7 @@ class TeamList(APIView):
             team = serializer.save(created_by=request.user)
             if result_membership:
                 membership = TeamMembership.objects.get(team=team, user=request.user)
-                serializer = TeamMembership(membership)
+                serializer = TeamMembershipSerializer(membership)
 
             return Response(serializer.data)
 
