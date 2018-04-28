@@ -116,9 +116,17 @@ def get_user_location_status(user_id):
 
 def update_phone_status(new_ping, last_ping, user_id):
     try:
-        new_ping_time = parse(new_ping.get('timestamp'))
-        last_ping_time = parse(last_ping.get('timestamp'))
-        signin_time = parse(get_user_signin_timestamp(user_id))
+        new_ping_time = new_ping.get('timestamp')
+        last_ping_time = last_ping.get('timestamp')
+        signin_time = get_user_signin_timestamp(user_id)
+
+        if not new_ping_time or not last_ping_time or not signin_time:
+            return
+
+        new_ping_time = parse(new_ping_time)
+        last_ping_time = parse(last_ping_time)
+        signin_time = parse(signin_time)
+
         if new_ping_time - last_ping_time > timedelta(minutes=6) and new_ping_time - signin_time > timedelta(minutes=6):
             logger.error("Phone status for user_id: {0}".format(user_id),
             exc_info=True, extra={'new_ping': new_ping, 'last_ping': last_ping})
