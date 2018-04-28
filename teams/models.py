@@ -259,6 +259,7 @@ class Message(BaseModel):
     sender = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="sent_messages")
     target = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="recv_messages")
     body = models.TextField(blank=True)
+    attachment = models.TextField(blank=True)
     original = models.TextField()
 
     objects = MessageManager()
