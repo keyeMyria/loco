@@ -1,3 +1,4 @@
+import json
 from rest_framework import serializers
 
 from teams.models import  Attendance, Message
@@ -49,7 +50,7 @@ def parse_message(data):
     result['target'] = message.get('@to').replace('@localhost', '')
     result['sender'] = message.get('@from').replace('@localhost/Rooster', '')
     result['team'] = message.get('team', {}).get('@id')
-    result['attachment'] = message.get('attachment', {}).get('@url')
+    result['attachment'] = json.dumps(message.get('attachment', {}))
     result['body'] = message.get('body', '')
     result['original'] = data.get('original')
     
