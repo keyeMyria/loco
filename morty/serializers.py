@@ -50,7 +50,11 @@ def parse_message(data):
     result['target'] = message.get('@to').replace('@localhost', '')
     result['sender'] = message.get('@from').replace('@localhost/Rooster', '')
     result['team'] = message.get('team', {}).get('@id')
-    result['attachment'] = json.dumps(message.get('attachment', {}))
+    attachment = message.get('attachment', {})
+    if attachment:
+        attachment = json.dumps(attachment).replace('@', '')
+        result['attachment'] = attachment
+
     result['body'] = message.get('body', '')
     result['original'] = data.get('original')
     

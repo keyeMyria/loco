@@ -1,3 +1,4 @@
+import json
 from rest_framework import serializers
 from .models import Team, TeamMembership, Checkin, CheckinMedia, Attendance, UserMedia, Message
 
@@ -121,6 +122,7 @@ def serialize_events(events):
 
 class MessageSerializer(serializers.ModelSerializer):
     id = serializers.CharField(max_length=16)
+    attachment = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
@@ -132,6 +134,15 @@ class MessageSerializer(serializers.ModelSerializer):
             return ''
 
         return value.strip().encode('utf-8')
+
+    def get_attachment(self, obj):
+        if obj:
+            try:
+                return json.loads(obj)
+            except:
+                pass
+
+        return ''
 
 class ConversationMessageSerializer(serializers.ModelSerializer):
     id = serializers.CharField(max_length=16)
