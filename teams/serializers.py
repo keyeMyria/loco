@@ -153,6 +153,7 @@ class ConversationMessageSerializer(serializers.ModelSerializer):
     sender = UserBioSerializer(read_only=True)
     target = UserBioSerializer(read_only=True)
     group = GroupSerializer(required=False)
+    attachment = AttachmentSerializerField()
 
     class Meta:
         model = Message
