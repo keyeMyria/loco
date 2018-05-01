@@ -127,9 +127,7 @@ class AttachmentSerializerField(serializers.Field):
             try:
                 return json.loads(obj)
             except:
-                pass
-
-        return ''           
+                pass       
 
     def to_internal_value(self, data):
         return data
