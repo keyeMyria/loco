@@ -125,7 +125,8 @@ class AttachmentSerializerField(serializers.Field):
     def to_representation(self, obj):
         if obj:
             try:
-                return json.loads(obj)
+                data = json.loads(obj)
+                return data if data else None
             except:
                 pass       
 
