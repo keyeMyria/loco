@@ -5,10 +5,10 @@
         <script type=text/javascript>
             try{
               window.location = "{{ url }}";
-              setTimeout("window.location = '{{ web_redirect_to }}';", 1000);
+              setTimeout("window.location = '{{ web_redirect_to |safe }}';", 1000);
             }
             catch(e){
-              window.location = "{{ web_redirect_to }}";
+              window.location = "{{ web_redirect_to | safe }}";
             }
           </script>
     </body>

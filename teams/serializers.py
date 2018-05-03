@@ -135,7 +135,7 @@ class AttachmentSerializerField(serializers.Field):
 
 class MessageSerializer(serializers.ModelSerializer):
     id = serializers.CharField(max_length=16)
-    attachment = AttachmentSerializerField()
+    attachment = AttachmentSerializerField(required=False)
 
     class Meta:
         model = Message
