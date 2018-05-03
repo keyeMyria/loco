@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework import permissions, status
 from rest_framework.views import APIView
 
+import tasks
 from .models import Group, GroupMembership
-from .tasks import update_group_members_async
 from .serializers import GroupSerializer, GroupMembershipSerializer
 from .permissions import IsGroupMember, IsGroupAdminOrReadOnly, CanAlterGroupMembership
 
@@ -52,7 +52,8 @@ class GroupDetail(APIView):
         serializer = GroupSerializer(group, data=request.data)
         
         if serializer.is_valid():
-            serializer.save()
+            group = serializer.save()
+            tasks.send_named_group_async.delay(group, request.user)
             return Response(data=serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -82,7 +83,10 @@ class GroupMembershipList(APIView):
 
         group_memberships = group.add_members(user_ids, request.user)
         if group_memberships:
-            update_group_members_async.delay(group_id)
+            tasks.update_group_members_async.delay(group_id)
+            for membership in group_memberships:
+                tasks.send_added_group_async.delay(group, request.user, membership.user)
+
             serializer = GroupMembershipSerializer(group_memberships, many=True)
             return Response(serializer.data)
 
@@ -97,7 +101,9 @@ class GroupMembershipDetail(APIView):
         serializer = GroupMembershipSerializer(membership, data=request.data, partial=True)
         
         if serializer.is_valid():
-            serializer.save()
+            membership = serializer.save()
+            if membership.role == GroupMembership.ROLE_ADMIN:
+                tasks.send_admin_group_async.delay(membership.group, membership.user)
             return Response(data=serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -107,5 +113,6 @@ class GroupMembershipDetail(APIView):
         self.check_object_permissions(self.request, membership)
         group_id = membership.group.id
         membership.delete()
-        update_group_members_async.delay(group_id)
+        tasks.update_group_members_async.delay(group_id)
+        tasks.send_removed_group_async(membership.group, request.user, membership.user)
         return Response(status=204)
