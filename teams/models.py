@@ -159,7 +159,6 @@ class Team(BaseModel):
 
         return []
 
-
 class TeamMembership(BaseModel):
     ROLE_MEMBER = 'member'
     ROLE_ADMIN = 'admin'
@@ -252,6 +251,7 @@ class Message(BaseModel):
     )
 
     id = models.CharField(max_length=16, primary_key=True, editable=False)
+    original_id = models.CharField(max_length=16, blank=True)
     thread = models.CharField(max_length=32)
     team = models.ForeignKey(Team, on_delete=models.DO_NOTHING)
     group = models.ForeignKey("groups.Group", on_delete=models.DO_NOTHING, blank=True, null=True)

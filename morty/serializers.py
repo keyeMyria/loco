@@ -33,6 +33,10 @@ def parse_message(data):
         return (None, "Message not found")
 
     id = message.get('@id')
+    original_id = message.get('@originalID')
+    if not original_id:
+        original_id = id
+    
     status = Message.STATUS_SENT
 
     delivery = message.get('delivery')
@@ -46,6 +50,7 @@ def parse_message(data):
         id = read.get("#text")
     
     result['id'] = id
+    result['original_id'] = original_id
     result['status'] = status
     result['target'] = message.get('@to').replace('@localhost', '')
     result['sender'] = message.get('@from').replace('@localhost/Rooster', '')
