@@ -4,7 +4,7 @@ from django.conf import settings
 from django.utils import timezone
 
 URL = 'http://loco.masterpeace.in:5280/api/send_stanza'
-HEADERS = {'Content-Type': 'application/xml', 'X-Admin': 'true'}
+HEADERS = {'X-Admin': 'true'}
 AUTH = ('admin@localhost', 'temppass')
 
 def send_message(data):
