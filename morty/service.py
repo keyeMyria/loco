@@ -47,7 +47,7 @@ def send_group_message(message_template, group, actor, target=None):
 			team_name=group.team.name,
 			**message_template)
 
-	message = {'to':"{group_id}@groupchat", 
+	message = {'to':"{0}@groupchat".format(group.id), 
 		'from':"0@localhost",
 		'stanza': message}
 
