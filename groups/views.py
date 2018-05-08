@@ -53,7 +53,7 @@ class GroupDetail(APIView):
         
         if serializer.is_valid():
             group = serializer.save()
-            tasks.send_named_group_async.delay(group, request.user)
+            tasks.send_named_group_async.delay(group.id, request.user.id)
             return Response(data=serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -85,7 +85,7 @@ class GroupMembershipList(APIView):
         if group_memberships:
             tasks.update_group_members_async.delay(group_id)
             for membership in group_memberships:
-                tasks.send_added_group_async.delay(group, request.user, membership.user)
+                tasks.send_added_group_async.delay(group.id, request.user.id, membership.user.id)
 
             serializer = GroupMembershipSerializer(group_memberships, many=True)
             return Response(serializer.data)
@@ -103,7 +103,7 @@ class GroupMembershipDetail(APIView):
         if serializer.is_valid():
             membership = serializer.save()
             if membership.role == GroupMembership.ROLE_ADMIN:
-                tasks.send_admin_group_async.delay(membership.group, membership.user)
+                tasks.send_admin_group_async.delay(membership.group.id, membership.user.id)
             return Response(data=serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -114,5 +114,5 @@ class GroupMembershipDetail(APIView):
         group_id = membership.group.id
         membership.delete()
         tasks.update_group_members_async.delay(group_id)
-        tasks.send_removed_group_async(membership.group, request.user, membership.user)
+        tasks.send_removed_group_async.delay(membership.group.id, request.user.id, membership.user.id)
         return Response(status=204)
