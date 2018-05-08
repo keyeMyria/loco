@@ -8,7 +8,7 @@ HEADERS = {'X-Admin': 'true'}
 AUTH = ('admin@localhost', 'temppass')
 
 def send_message(data):
-	response = requests.post(URL, data=data, headers=HEADERS, auth=AUTH)
+	response = requests.post(URL, json=data, headers=HEADERS, auth=AUTH)
 	if response.status_code >= 400:
 		raise Exception("Failed to send message via XMPP")
 
