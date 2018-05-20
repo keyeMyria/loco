@@ -47,7 +47,8 @@ USER_APPS = [
     'morty',
     'locations',
     'notifications',
-    'groups'
+    'groups',
+    'tasks'
 ]
 
 INSTALLED_APPS = SYSTEM_APPS + USER_APPS

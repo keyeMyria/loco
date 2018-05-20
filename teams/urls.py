@@ -4,6 +4,7 @@ from rest_framework.urlpatterns import format_suffix_patterns
 from . import views
 from locations import views as location_views
 from groups import views as groups_views
+from tasks import views as tasks_views
 
 
 urlpatterns = [
@@ -27,6 +28,7 @@ urlpatterns = [
 	url(r'^(?P<team_id>[0-9]+)/threads/$', views.MessagesList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/threads/(?P<thread_id>.+)$', views.MessagesDetail.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/groups/$', groups_views.GroupList.as_view()),
+	url(r'^(?P<team_id>[0-9]+)/tasks/$', tasks_views.TaskList.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
