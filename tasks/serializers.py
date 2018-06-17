@@ -9,9 +9,6 @@ def get_content_serializer(content_type, data):
     if content_type == DeliveryTaskContent.__name__.lower():
         return DeliveryTaskContentSerializer(data=data)
 
-    raise Exception("Unexpected task content type")
-
-
 class DeliveryTaskContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = DeliveryTaskContent
@@ -44,8 +41,8 @@ class TaskSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Task
-        fields = ( 'created', 'updated', 'team', 'description', 'id', 'assigned_to',
-            'created_by', 'title', 'status', 'content', 'content_type')
+        fields = ( 'created', 'updated', 'team', 'id', 'assigned_to',
+            'created_by', 'status', 'content', 'content_type')
         read_only_fields = ('created', 'updated')
 
     def get_content_type(seld, obj):

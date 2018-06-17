@@ -30,9 +30,7 @@ class Task(BaseModel):
         null=True, related_name="assigned_tasks", on_delete=models.DO_NOTHING)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, 
         null=True, related_name="created_tasks", on_delete=models.DO_NOTHING)
-    title = models.CharField(max_length=140)
-    description = models.TextField(blank=True)
-    status = models.CharField(max_length=16, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=STATUS_CREATED)
     content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING,
         blank=True, null=True)
     object_id = models.PositiveIntegerField(blank=True, null=True)

@@ -16,20 +16,21 @@ from teams.permissions import IsTeamMember, IsAdminOrReadOnly, IsAdmin, IsMe
 # from notifications.tasks import send_task_gcm_async
 
 def get_status_rank(status):
-	if status == Task.STATUS_CREATED:
-		return 1
-	elif status == Task.STATUS_ACCEPTED:
-		return 2
-	elif status == Task.STATUS_PROGRESS:
-		return 3
-	elif status == Task.STATUS_DELIVERED:
-		return 4
-	elif status == Task.STATUS_CANCELED:
-		return 5
-	elif status == Task.STATUS_DELETED:
-		return 6
-	else:
-		return 1000
+    if status == Task.STATUS_CREATED:
+        return 1
+    elif status == Task.STATUS_ACCEPTED:
+        return 2
+    elif status == Task.STATUS_PROGRESS:
+        return 3
+    elif status == Task.STATUS_DELIVERED:
+        return 4
+    elif status == Task.STATUS_CANCELED:
+        return 5
+    elif status == Task.STATUS_DELETED:
+        return 6
+    else:
+        return 1000
+
 
 class TaskList(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember, IsAdminOrReadOnly)
@@ -44,9 +45,10 @@ class TaskList(APIView):
         self.check_object_permissions(self.request, team)
         tasks = team.task_set.exclude(status=Task.STATUS_DELETED)
         if filter_assigned_to:
-        	tasks = tasks.filter(assigned_to=filter_assigned_to)
+            tasks = tasks.filter(assigned_to=filter_assigned_to)
         if filter_status:
-        	tasks = tasks.filter(status=filter_status)
+            tasks = tasks.filter(status=filter_status)
+
 
         serialized_tasks = TaskSerializer(tasks, many=True).data
         serialized_tasks.sort(key=lambda x: get_status_rank(x['status']))
@@ -60,11 +62,13 @@ class TaskList(APIView):
         content = request.data.get('content')
         content_type = request.data.get('content_type')
         if content:
-        	content_serializer = get_content_serializer(content_type, content)
-        	if content_serializer.is_valid():
-        		content_object = content_serializer.save()
-        	else:
-        		return Response(content_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            content_serializer = get_content_serializer(content_type, content)
+            if not content_serializer:
+                return Response({"error": "Bad data in content_type"}, status=status.HTTP_400_BAD_REQUEST)
+            if content_serializer.is_valid():
+                content_object = content_serializer.save()
+            else:
+                return Response(content_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = TaskSerializer(data=request.data)
 
