@@ -41,6 +41,7 @@ class TaskList(APIView):
         filter_assigned_to = request.query_params.get(PARAM_ASSIGNED_TO)
         filter_status = request.query_params.get(PARAM_STATUS)
 
+        start, limit = utils.get_query_start_limit(request)
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
         tasks = team.task_set.exclude(status=Task.STATUS_DELETED)
@@ -49,7 +50,7 @@ class TaskList(APIView):
         if filter_status:
             tasks = tasks.filter(status=filter_status)
 
-
+        tasks = tasks[start:limit]
         serialized_tasks = TaskSerializer(tasks, many=True).data
         serialized_tasks.sort(key=lambda x: get_status_rank(x['status']))
         return Response(serialized_tasks)
