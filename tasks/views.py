@@ -52,7 +52,7 @@ class TaskList(APIView):
         if filter_status:
             tasks = tasks.filter(status=filter_status)
 
-        tasks = tasks[start:start+limit]
+        tasks = tasks.order_by('-created')[start:start+limit]
         serialized_tasks = TaskSerializer(tasks, many=True).data
         serialized_tasks.sort(key=lambda x: get_status_rank(x['status']))
         return Response(serialized_tasks)
