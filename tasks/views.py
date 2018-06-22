@@ -13,7 +13,7 @@ from .serializers import TaskSerializer, TaskMediaSerializer, get_content_serial
 from .permissions import IsTaskOwnerOrTeamAdmin
 
 from accounts.models import User
-from teams.models import Team
+from teams.models import Team, TeamMembership
 from teams.permissions import IsTeamMember, IsAdminOrReadOnly, IsAdmin, IsMe
 # from notifications.tasks import send_task_gcm_async
 
@@ -48,7 +48,10 @@ class TaskList(APIView):
         self.check_object_permissions(self.request, team)
         tasks = team.task_set.exclude(status=Task.STATUS_DELETED)
         if filter_assigned_to:
-            tasks = tasks.filter(assigned_to=filter_assigned_to)
+            if filter_assigned_to == "0":
+                tasks = tasks.filter(assigned_to__isnull=True)
+            else:
+                tasks = tasks.filter(assigned_to=filter_assigned_to)
         if filter_status:
             tasks = tasks.filter(status=filter_status)
 
@@ -60,6 +63,13 @@ class TaskList(APIView):
     def post(self, request, team_id, format=None):
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
+
+        assigned_to_user = None
+        assigned_to = request.data.get('assigned_to')
+        if assigned_to:
+            assigned_to_id = assigned_to.get('id')
+            assigned_to_user = TeamMembership.objects.get(
+                user__id=assigned_to_id, team=team).user
 
         content_object = None
         content = request.data.get('content')
@@ -76,7 +86,10 @@ class TaskList(APIView):
         serializer = TaskSerializer(data=request.data)
 
         if serializer.is_valid():
-            task = serializer.save(team=team, created_by=request.user, content_object=content_object)
+            task = serializer.save(team=team, 
+                created_by=request.user, 
+                content_object=content_object,
+                assigned_to=assigned_to_user)
             # send_task_gcm_async.delay(task.id)
             return Response(serializer.data)
 
