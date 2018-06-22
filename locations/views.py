@@ -97,9 +97,17 @@ def raw_user_maps(request):
     start = request.GET.get('start')
     end = request.GET.get('end')
     filter_noise = request.GET.get('filter_noise', False)
-    show_noise = request.GET.get('show_noise', False)
+    show_stops = request.GET.get('show_stops', False)
+    reduce_density = request.GET.get('reduce_density', False)
     filter_dis = float(request.GET.get('filter_dis', 0.1))
-    locations = list(UserLocation.objects.filter(user_id=uid, timestamp__gte=start, timestamp__lte=end).order_by('timestamp'))
+    locations = list(
+        UserLocation.objects.filter(
+            user_id=uid, timestamp__gte=start,
+            timestamp__lte=end).exclude(
+            latitude__isnull=True).exclude(
+            latitude=0).order_by('timestamp'
+        )
+    )
     # locations = locations[1:]
     last_valid_location = locations[0]
     # filtered_locations = [(last_valid_location.latitude, last_valid_location.longitude, False, last_valid_location.accuracy, str(last_valid_location.timestamp))]
@@ -109,27 +117,36 @@ def raw_user_maps(request):
 
     for i in range(1, len(locations)):
         l = locations[i]
-        if filter_noise and not is_noise(l, last_valid_location) and not is_history_noise(l, last_valid_location, locations[i-1]):
-            print (len(filtered_locations), False)
-            print (l.id, l.latitude, l.longitude, l.timestamp, l.created, l.accuracy)
-            print (get_speed(l, last_valid_location))
-            print (is_history_noise(l, last_valid_location, locations[i-1]))
+        if filter_noise and not is_noise(l, last_valid_location):
+            # print (len(filtered_locations), False)
+            # print (l.id, l.latitude, l.longitude, l.timestamp, l.created, l.accuracy)
+            # print (get_speed(l, last_valid_location))
+            # print (is_history_noise(l, last_valid_location, locations[i-1]))
             last_valid_location = l
-            filtered_locations.append((l.latitude, l.longitude, False, l.accuracy, str(l.timestamp)))
-        elif filter_noise and not is_noise(l, last_valid_location) and is_history_noise(l, last_valid_location, locations[i-1]):
-            print (len(filtered_locations), True)
-            print (l.id, l.latitude, l.longitude, l.timestamp, l.created, l.accuracy)
-            print (get_speed(l, last_valid_location))
-            print (is_history_noise(l, last_valid_location, locations[i-1]))
-            filtered_locations.append((l.latitude, l.longitude, True, l.accuracy, str(l.timestamp)))
+            filtered_locations.append(l)
         elif not filter_noise:
-            filtered_locations.append((l.latitude, l.longitude, False, l.accuracy, str(l.timestamp)))
+            filtered_locations.append(l)
 
-    final_locations = [(l[:3]) for l in filtered_locations]
+
+    if show_stops:
+        filtered_locations = analyzer.aggregate_pitstops(filtered_locations)
+        filtered_locations = analyzer.re_aggregate_pitstops(filtered_locations)
+
+    if reduce_density:
+        filtered_locations = analyzer.reduce_density(filtered_locations)
+
+    results = []
+    for l in filtered_locations:
+        if l.get_type() == 1:
+            results.append((l.latitude, l.longitude, True, l.accuracy, str(l.timestamp), str(l.get_end_time())))
+        else:
+            results.append((l.latitude, l.longitude, False, l.accuracy, str(l.timestamp)))
+
+    final_locations = [(l[:3]) for l in results]
 
     context = {
         'draw_locations': json.dumps(final_locations),
-        'data_locations': filtered_locations, 
+        'data_locations': results, 
     }
     return render_to_response('maps_raw.html', context)
 
