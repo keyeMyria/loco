@@ -101,7 +101,6 @@ def to_polyline(locations):
 
     return time_aware_polyline.encode_time_aware_polyline(points)
 
-
 def to_rich_polyline(locations):
     if not locations:
         return ''

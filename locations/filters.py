@@ -35,7 +35,6 @@ def is_history_noise(test_location, last_valid_location, last_location):
 
     distance =  utils.get_distance(test_location, last_location)
     distance_valid =  utils.get_distance(test_location, last_valid_location)
-    print (distance, distance_valid)
     return distance_valid > 5*distance
  
 
@@ -51,7 +50,6 @@ def get_speed(test_location, last_location):
 def is_closer_to_noise(test_location, last_valid_location, last_location):
     distance =  utils.get_distance(test_location, last_location)
     distance_valid =  utils.get_distance(test_location, last_valid_location)
-    print (distance, distance_valid)
     return distance_valid > 5*distance
  
 
