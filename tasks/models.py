@@ -16,6 +16,15 @@ class Task(BaseModel):
     STATUS_CANCELED = 'canceled'
     STATUS_DELETED = 'deleted'
 
+    PRIORITY_MAP = {
+        STATUS_CREATED: 1,
+        STATUS_ACCEPTED: 2,
+        STATUS_PROGRESS: 3,
+        STATUS_DELIVERED: 4,
+        STATUS_CANCELED: 5,
+        STATUS_DELETED: 6
+    }
+
     STATUS_CHOICES = (
         (STATUS_CREATED , 'created'),
         (STATUS_ACCEPTED , 'accepted'),
@@ -31,10 +40,16 @@ class Task(BaseModel):
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, blank=True, 
         null=True, related_name="created_tasks", on_delete=models.DO_NOTHING)
     status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=STATUS_CREATED)
+    status_priority = models.PositiveIntegerField()
     content_type = models.ForeignKey(ContentType, on_delete=models.DO_NOTHING,
         blank=True, null=True)
     object_id = models.PositiveIntegerField(blank=True, null=True)
     content_object = GenericForeignKey('content_type', 'object_id')
+
+    def save(self, *args, **kwargs):
+        self.status_priority = self.PRIORITY_MAP.get(self.status, 0)
+        super(Task, self).save(*args, **kwargs)
+
 
 def task_media_path(instance, filename):
     return 'teams/{0}/users/{1}/tasks/{2}/{3}'.format(
