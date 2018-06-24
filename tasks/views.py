@@ -92,6 +92,11 @@ class TaskList(APIView):
                 created_by=request.user, 
                 content_object=content_object,
                 assigned_to=assigned_to_user)
+            models.TaskHistory.objects.create(
+                actor=request.user,
+                task=task,
+                action="Created task"
+            )
             # send_task_gcm_async.delay(task.id)
             return Response(serializer.data)
 
@@ -107,7 +112,7 @@ class TaskDetail(APIView):
         except:
             return False
 
-    def edit_content(self, request_data, task):
+    def edit_content(self, request_data, task, actor):
         content = request_data.get('content')
         content_type = request_data.get('content_type')
 
@@ -127,6 +132,11 @@ class TaskDetail(APIView):
 
         validated_value = ser_field.run_validation(value)
         task.content_object.update_value(key, validated_value)
+        models.TaskHistory.objects.create(
+            actor=actor,
+            task=task,
+            action="Changed {0} to {1}".format(key, value)
+        )
 
 
     def get(self, request, task_id, format=None):
@@ -141,7 +151,7 @@ class TaskDetail(APIView):
 
         request_data = request.data
         if 'content' in request_data:
-            self.edit_content(request_data, task)
+            self.edit_content(request_data, task, request.user)
             return Response()
 
         if not self.assert_single_key(request_data):
@@ -161,6 +171,11 @@ class TaskDetail(APIView):
                 user = get_object_or_404(User, id=assigned_to_id)
 
             task.update_assigned_to(user)
+            models.TaskHistory.objects.create(
+                actor=request.user,
+                task=task,
+                action="Assigned to {}".format(user.name.title() if user else "Unassigned")
+            )
             return Response()
 
         task_serializer = serializers.TaskSerializer()
@@ -170,6 +185,11 @@ class TaskDetail(APIView):
 
         validated_value = ser_field.run_validation(value)
         task.update_value(key, validated_value)
+        models.TaskHistory.objects.create(
+            actor=request.user,
+            task=task,
+            action="Changed {0} to {1}".format(key, value.title())
+        )
         return Response()
 
     def delete(self, request, task_id, format=None):

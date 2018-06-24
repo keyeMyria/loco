@@ -79,6 +79,9 @@ class TaskHistory(BaseModel):
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     action = models.TextField()
 
+    def __str__(self):
+        return "{} {}".format(self.actor.name, self.action)
+
 class DeliveryTaskContent(BaseModel):
     order_id = models.CharField(max_length=16)
     latitude = models.FloatField(blank=True, null=True)
