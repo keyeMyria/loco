@@ -15,7 +15,7 @@ from . import permissions as task_permissions
 from accounts.models import User
 from teams.models import Team, TeamMembership
 from teams.permissions import IsTeamMember, IsAdminOrReadOnly, IsAdmin, IsMe
-# from notifications.tasks import send_task_gcm_async
+from notifications.tasks import send_task_gcm_async
 
 def get_status_rank(status):
     if status == models.Task.STATUS_CREATED:
@@ -92,12 +92,12 @@ class TaskList(APIView):
                 created_by=request.user, 
                 content_object=content_object,
                 assigned_to=assigned_to_user)
-            models.TaskHistory.objects.create(
+            history = models.TaskHistory.objects.create(
                 actor=request.user,
                 task=task,
                 action="Created task"
             )
-            # send_task_gcm_async.delay(task.id)
+            send_task_gcm_async.delay(history.id)
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -132,12 +132,12 @@ class TaskDetail(APIView):
 
         validated_value = ser_field.run_validation(value)
         task.content_object.update_value(key, validated_value)
-        models.TaskHistory.objects.create(
+        history = models.TaskHistory.objects.create(
             actor=actor,
             task=task,
             action="Changed {0} to {1}".format(key, value)
         )
-
+        send_task_gcm_async.delay(history.id)
 
     def get(self, request, task_id, format=None):
         task = get_object_or_404(models.Task, id=task_id)
@@ -171,11 +171,12 @@ class TaskDetail(APIView):
                 user = get_object_or_404(User, id=assigned_to_id)
 
             task.update_assigned_to(user)
-            models.TaskHistory.objects.create(
+            history = models.TaskHistory.objects.create(
                 actor=request.user,
                 task=task,
                 action="Assigned to {}".format(user.name.title() if user else "Unassigned")
             )
+            send_task_gcm_async.delay(history.id)
             return Response()
 
         task_serializer = serializers.TaskSerializer()
@@ -185,11 +186,12 @@ class TaskDetail(APIView):
 
         validated_value = ser_field.run_validation(value)
         task.update_value(key, validated_value)
-        models.TaskHistory.objects.create(
+        history = models.TaskHistory.objects.create(
             actor=request.user,
             task=task,
             action="Changed {0} to {1}".format(key, value.title())
         )
+        send_task_gcm_async.delay(history.id)
         return Response()
 
     def delete(self, request, task_id, format=None):

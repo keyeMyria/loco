@@ -11,6 +11,10 @@ def send_checkin_gcm_async(checkin_id):
     send_checkin_gcm(checkin_id)
 
 @shared_task
+def send_task_gcm_async(task_history_id):
+    send_task_gcm(task_history_id)
+
+@shared_task
 def send_chat_gcm_async(gcm_token):
     send_chat_gcm(gcm_token)
 

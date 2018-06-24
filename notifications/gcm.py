@@ -1,8 +1,11 @@
+from __future__ import absolute_import
+
 import requests, json
 from  oauth2client.service_account import ServiceAccountCredentials
 
 from teams.models import Checkin, TeamMembership
 from teams.serializers import CheckinSerializer
+from tasks.models import TaskHistory
 
 url = 'https://fcm.googleapis.com/v1/projects/bd-tracker/messages:send'
 
@@ -19,6 +22,7 @@ headers = {
 
 GCM_TYPE_CHAT = 'chat'
 GCM_TYPE_CHECKIN = 'checkin'
+GCM_TYPE_TASK = 'task'
 
 def send_message_gcm(gcm_token, message_data):
 	data= {
@@ -59,6 +63,19 @@ def send_checkin_gcm(checkin_id):
 	data = {'checkin_id': str(checkin.id)}
 	data['team_id'] = checkin.team.id
 	data['type'] = GCM_TYPE_CHECKIN
+
+	for target in targets:
+		send_notification_gcm(target.user.gcm_token, message, data)
+
+def send_task_gcm(task_histroy_id):
+	task_histroy = TaskHistory.objects.get(id=task_histroy_id)
+	task = task_histroy.task
+	author = task_histroy.actor
+	targets = [task.assigned_to, task.created_by]
+	message = "{0} {1}".format(author.name.title(), task_histroy.action)
+	data = {'task_id': str(task.id)}
+	data['team_id'] = task.team.id
+	data['type'] = GCM_TYPE_TASK
 
 	for target in targets:
 		send_notification_gcm(target.user.gcm_token, message, data)
