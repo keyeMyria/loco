@@ -50,6 +50,17 @@ class Task(BaseModel):
         self.status_priority = self.PRIORITY_MAP.get(self.status, 0)
         super(Task, self).save(*args, **kwargs)
 
+    def update_value(self, key, value):
+        if not key or not value:
+            return
+
+        setattr(self, key, value)
+        self.save()
+
+    def update_assigned_to(self, user):
+        self.assigned_to = user
+        self.save()
+
 
 def task_media_path(instance, filename):
     return 'teams/{0}/users/{1}/tasks/{2}/{3}'.format(
@@ -75,3 +86,10 @@ class DeliveryTaskContent(BaseModel):
     phone = models.CharField(max_length=10, blank=True, null=True)
     name = models.CharField(max_length=10, blank=True, null=True)
     address = models.CharField(max_length=10, blank=True, null=True)
+
+    def update_value(self, key, value):
+        if not key or not value:
+            return
+
+        setattr(self, key, value)
+        self.save()

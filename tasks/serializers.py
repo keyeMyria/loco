@@ -5,9 +5,9 @@ from .models import Task, TaskMedia, DeliveryTaskContent
 from accounts.serializers import UserSerializer
 from teams.serializers import TeamSerializer
 
-def get_content_serializer(content_type, data):
+def get_content_serializer(content_type, **kwargs):
     if content_type == DeliveryTaskContent.__name__.lower():
-        return DeliveryTaskContentSerializer(data=data)
+        return DeliveryTaskContentSerializer(**kwargs)
 
 class DeliveryTaskContentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -37,7 +37,7 @@ class TaskSerializer(serializers.ModelSerializer):
     assigned_to = UserSerializer(read_only=True)
     team = TeamSerializer(read_only=True)
     content = ContentObjectRelatedField(source='content_object', read_only=True)
-    content_type = serializers.SerializerMethodField()
+    content_type = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Task
