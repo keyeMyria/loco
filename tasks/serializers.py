@@ -1,6 +1,6 @@
 import json
 from rest_framework import serializers
-from .models import Task, TaskMedia, DeliveryTaskContent
+from .models import Task, TaskMedia, DeliveryTaskContent, TaskHistory
 
 from accounts.serializers import UserSerializer
 from teams.serializers import TeamSerializer
@@ -48,3 +48,11 @@ class TaskSerializer(serializers.ModelSerializer):
     def get_content_type(seld, obj):
         if obj.content_type:
             return obj.content_type.model
+
+class TaskHistorySerializer(serializers.ModelSerializer):
+    actor = UserSerializer(read_only=True)
+
+    class Meta:
+        model = TaskHistory
+        fields = ('id', 'created', 'updated', 'actor', 'action', 'task')
+        read_only_fields = ('created', 'updated')

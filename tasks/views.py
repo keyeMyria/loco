@@ -57,7 +57,6 @@ class TaskList(APIView):
 
         tasks = tasks.order_by('status_priority', '-created')[start:start+limit]
         serialized_tasks = serializers.TaskSerializer(tasks, many=True).data
-        serialized_tasks.sort(key=lambda x: get_status_rank(x['status']))
         return Response(serialized_tasks)
 
     def post(self, request, team_id, format=None):
@@ -215,3 +214,16 @@ def task_media_upload(request, team_id):
         return Response(serializer.data)
     else:
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class TaskHistoryList(APIView):
+    permission_classes = (permissions.IsAuthenticated, task_permissions.IsTaskTeamMember)
+
+    def get(self, request, task_id, format=None):
+        start, limit = utils.get_query_start_limit(request)
+        task = get_object_or_404(models.Task, id=task_id)
+        self.check_object_permissions(self.request, task)
+        history = task.history.all()
+        history = history.order_by('-created')[start:start+limit]
+        data = serializers.TaskHistorySerializer(history, many=True).data
+        return Response(data)
