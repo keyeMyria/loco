@@ -3,7 +3,7 @@ import json
 
 from celery import shared_task
 
-from .gcm import send_checkin_gcm, send_chat_gcm
+from .gcm import send_checkin_gcm, send_chat_gcm, send_task_gcm
 
 
 @shared_task

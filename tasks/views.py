@@ -33,7 +33,6 @@ def get_status_rank(status):
     else:
         return 1000
 
-
 class TaskList(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember, IsAdminOrReadOnly)
 
@@ -48,7 +47,7 @@ class TaskList(APIView):
         self.check_object_permissions(self.request, team)
         tasks = team.task_set.exclude(status=models.Task.STATUS_DELETED)
         if filter_assigned_to:
-            if filter_assigned_to == "0":
+            if filter_assigned_to == "0" or filter_assigned_to == 0:
                 tasks = tasks.filter(assigned_to__isnull=True)
             else:
                 tasks = tasks.filter(assigned_to=filter_assigned_to)

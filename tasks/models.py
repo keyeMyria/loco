@@ -83,12 +83,12 @@ class TaskHistory(BaseModel):
         return "{} {}".format(self.actor.name, self.action)
 
 class DeliveryTaskContent(BaseModel):
-    order_id = models.CharField(max_length=16)
+    order_id = models.CharField(max_length=140)
     latitude = models.FloatField(blank=True, null=True)
     longitude = models.FloatField(blank=True, null=True)
-    phone = models.CharField(max_length=10, blank=True, null=True)
-    name = models.CharField(max_length=10, blank=True, null=True)
-    address = models.CharField(max_length=10, blank=True, null=True)
+    phone = models.CharField(max_length=10, blank=True)
+    name = models.CharField(max_length=80, blank=True)
+    address = models.TextField(max_length=10, blank=True)
 
     def update_value(self, key, value):
         if not key or not value:
