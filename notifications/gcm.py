@@ -78,7 +78,7 @@ def send_task_gcm(task_histroy_id):
 	data['type'] = GCM_TYPE_TASK
 
 	for target in targets:
-		send_notification_gcm(target.user.gcm_token, message, data)
+		send_notification_gcm(target.gcm_token, message, data)
 
 def send_chat_gcm(gcm_token):
 	data = {}
