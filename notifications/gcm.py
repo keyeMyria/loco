@@ -61,7 +61,7 @@ def send_checkin_gcm(checkin_id):
 		team=checkin.team, role=TeamMembership.ROLE_ADMIN).exclude(user=checkin.user)
 	message = "{0} checked in".format(author.name.title())
 	data = {'checkin_id': str(checkin.id)}
-	data['team_id'] = checkin.team.id
+	data['team_id'] = str(checkin.team.id)
 	data['type'] = GCM_TYPE_CHECKIN
 
 	for target in targets:
@@ -74,7 +74,7 @@ def send_task_gcm(task_histroy_id):
 	targets = [task.assigned_to, task.created_by]
 	message = "{0} {1}".format(author.name.title(), task_histroy.action)
 	data = {'task_id': str(task.id)}
-	data['team_id'] = task.team.id
+	data['team_id'] = str(task.team.id)
 	data['type'] = GCM_TYPE_TASK
 
 	for target in targets:
