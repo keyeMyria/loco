@@ -51,7 +51,7 @@ def send_notification_gcm(gcm_token, message_title, message_data='', message_bod
 		data['message']['data'] = message_data
 		
 	res = requests.post(url, headers=headers, json=data)
-	if res.status_code >= 400:
+	if res.status_code >= 400 and res.status_code != 404:
 		raise Exception("GCMError")
 
 def send_checkin_gcm(checkin_id):
