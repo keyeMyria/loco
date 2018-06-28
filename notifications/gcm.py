@@ -87,7 +87,7 @@ def send_task_gcm(task_histroy_id):
 	actor = task_histroy.actor
 	targets = []
 	if task.created_by.id != actor.id:
-		targets.add(task.created_by)
+		targets.append(task.created_by)
 	if task.assigned_to and task.assigned_to.id != actor.id:
 		targets.append(task.assigned_to)
 
