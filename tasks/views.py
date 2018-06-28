@@ -102,8 +102,7 @@ class TaskList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TaskDetail(APIView):
-    permission_classes = (permissions.IsAuthenticated, 
-        task_permissions.IsTaskOwnerOrTeamAdmin, task_permissions.IsTaskTeamMember)
+    permission_classes = (permissions.IsAuthenticated, task_permissions.IsTaskTeamMember)
 
     def assert_single_key(self, data):
         try:

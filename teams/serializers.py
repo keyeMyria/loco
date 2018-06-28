@@ -15,7 +15,7 @@ class TeamSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Team
-        exclude = ('members', 'code')
+        exclude = ('members', 'code', 'admin')
         read_only_fields = ('created_by', 'created', 'updated')
 
     def create(self, validated_data):

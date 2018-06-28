@@ -5,17 +5,21 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 from django.db import models
 
+from rest_framework.authtoken.models import Token
+
 from loco.models import BaseModel, BaseLocationModel
 
 from . import constants
 from .managers import MessageManager
 
+from accounts.models import User
+
 _CODE_BASE = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0']
 
-def get_team_code():
+def get_team_code(size=6):
     code = ''
     secure_random = random.SystemRandom()
-    for i in range(6):
+    for i in range(size):
         code += secure_random.choice(_CODE_BASE)
 
     return code
@@ -25,6 +29,8 @@ class Team(BaseModel):
     description = models.TextField(blank=True, null=True)
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='creator', on_delete=models.DO_NOTHING)
+    admin = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name='admin', on_delete=models.DO_NOTHING)
     members = models.ManyToManyField(
         settings.AUTH_USER_MODEL, 
         through='TeamMembership',
@@ -36,6 +42,9 @@ class Team(BaseModel):
         newly_created = True
         if self.id:
             newly_created = False
+        else:
+            admin_phone = get_team_code(10)
+            self.admin = User.objects.create(name="Admin", phone=admin_phone)
 
         super(Team, self).save(*args, **kwargs)
 
@@ -48,8 +57,13 @@ class Team(BaseModel):
                 status = constants.STATUS_ACCEPTED
             )
 
+            Token.objects.create(user=self.admin)
+
     def is_member(self, user):
         return TeamMembership.objects.filter(team=self, user=user).exists()
+
+    def is_admin_account(self, user):
+        return user.id == self.admin.id
 
     def is_admin(self, user):
         return TeamMembership.objects.filter(
