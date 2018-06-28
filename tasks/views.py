@@ -93,7 +93,8 @@ class TaskList(APIView):
             history = models.TaskHistory.objects.create(
                 actor=request.user,
                 task=task,
-                action="Created task"
+                action="Created task",
+                action_type=TaskHistory.ACTION_CREATED
             )
             send_task_gcm_async.delay(history.id)
             return Response(serializer.data)
@@ -133,7 +134,8 @@ class TaskDetail(APIView):
         history = models.TaskHistory.objects.create(
             actor=actor,
             task=task,
-            action="Changed {0} to {1}".format(key, value)
+            action="Changed {0} to {1}".format(key, value),
+            action_type=TaskHistory.ACTION_CONTENT
         )
         send_task_gcm_async.delay(history.id)
 
@@ -172,7 +174,8 @@ class TaskDetail(APIView):
             history = models.TaskHistory.objects.create(
                 actor=request.user,
                 task=task,
-                action="Assigned to {}".format(user.name.title() if user else "Unassigned")
+                action="Assigned to {}".format(user.name.title() if user else "Unassigned"),
+                action_type=TaskHistory.ACTION_ASSIGNED
             )
             send_task_gcm_async.delay(history.id)
             return Response()
@@ -187,7 +190,8 @@ class TaskDetail(APIView):
         history = models.TaskHistory.objects.create(
             actor=request.user,
             task=task,
-            action="Changed {0} to {1}".format(key, value.title())
+            action="Changed {0} to {1}".format(key, value.title()),
+            action_type=TaskHistory.ACTION_STATUS
         )
         send_task_gcm_async.delay(history.id)
         return Response()

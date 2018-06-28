@@ -74,10 +74,23 @@ class TaskMedia(BaseModel):
     unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
 class TaskHistory(BaseModel):
+    ACTION_CREATED = 'created'
+    ACTION_ASSIGNED = 'assigned'
+    ACTION_STATUS = 'status'
+    ACTION_CONTENT = 'content'
+
+    ACTION_CHOICES = (
+        (ACTION_CREATED, 'created'),
+        (ACTION_ASSIGNED , 'assigned'),
+        (ACTION_STATUS , 'status'),
+        (ACTION_CONTENT , 'content'),
+    )
+
     task = models.ForeignKey(
         Task, on_delete=models.DO_NOTHING, related_name="history")
     actor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     action = models.TextField()
+    action_type = models.CharField(max_length=16, choices=ACTION_CHOICES)
 
     def __str__(self):
         return "{} {}".format(self.actor.name, self.action)

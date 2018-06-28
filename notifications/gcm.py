@@ -36,13 +36,13 @@ def send_message_gcm(gcm_token, message_data):
 	if res.status_code >= 400:
 		raise Exception("GCMError")
 
-def send_notification_gcm(gcm_token, message, message_data=''):
+def send_notification_gcm(gcm_token, message_title, message_data='', message_body=""):
 	data= {
 	  	"message":{
 		    "token" : gcm_token,
 		    "notification" : {
-		      "body" : "",
-		      "title" : message,
+		      "body" : message_body,
+		      "title" : message_title,
 		    }
 	   }
 	}
@@ -70,15 +70,37 @@ def send_checkin_gcm(checkin_id):
 def send_task_gcm(task_histroy_id):
 	task_histroy = TaskHistory.objects.get(id=task_histroy_id)
 	task = task_histroy.task
-	author = task_histroy.actor
-	targets = [task.assigned_to, task.created_by]
-	message = "{0} {1}".format(author.name.title(), task_histroy.action)
+
+	title = ''
+	action_type = task_histroy.action_type
+	if action_type == TaskHistory.ACTION_CREATED or action_type == TaskHistory.ACTION_ASSIGNED:
+		if task.assigned_to:
+			title = "Assigned to {}".format(task.assigned_to.name)
+		else:
+			title = "Unassigned"
+	elif action_type == TaskHistory.ACTION_STATUS:
+		title = "Changed to {}".format(task.stats)
+
+	if not title:
+		return
+
+	actor = task_histroy.actor
+	targets = []
+	if task.created_by.id != actor.id:
+		targets.add(task.created_by)
+	if task.assigned_to and task.assigned_to.id != actor.id:
+		targets.append(task.assigned_to)
+
+	if not targets:
+		return
+
+	body = task.content_object.order_id
 	data = {'task_id': str(task.id)}
 	data['team_id'] = str(task.team.id)
 	data['type'] = GCM_TYPE_TASK
 
 	for target in targets:
-		send_notification_gcm(target.gcm_token, message, data)
+		send_notification_gcm(target.gcm_token, title, data, body)
 
 def send_chat_gcm(gcm_token):
 	data = {}
