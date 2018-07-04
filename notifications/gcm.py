@@ -79,7 +79,7 @@ def send_task_gcm(task_histroy_id):
 		else:
 			title = "Unassigned"
 	elif action_type == TaskHistory.ACTION_STATUS:
-		title = "Changed to {}".format(task.stats)
+		title = "Changed to {}".format(task.status)
 
 	if not title:
 		return
