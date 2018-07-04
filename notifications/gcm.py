@@ -91,6 +91,8 @@ def send_task_gcm(task_histroy_id):
 	if task.assigned_to and task.assigned_to.id != actor.id:
 		targets.append(task.assigned_to)
 
+	targets = set(targets)
+
 	if not targets:
 		return
 

@@ -34,7 +34,7 @@ def get_status_rank(status):
         return 1000
 
 class TaskList(APIView):
-    permission_classes = (permissions.IsAuthenticated, IsTeamMember, IsAdminOrReadOnly)
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
 
     def get(self, request, team_id, format=None):
         PARAM_ASSIGNED_TO = 'assigned_to'
