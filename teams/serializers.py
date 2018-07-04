@@ -24,6 +24,7 @@ class TeamSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
+        instance.save()
         return instance
 
 class TeamMembershipSerializer(serializers.ModelSerializer):
