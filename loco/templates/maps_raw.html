@@ -64,6 +64,11 @@
       window.draw_markers = function(results, new_marker) {
         var bounds = new google.maps.LatLngBounds();
         var image = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+        var image1 = '/static/images/pin1.png';
+        var image2 = '/static/images/pin2.png';
+        var image3 = '/static/images/pin3.png';
+        var image4 = '/static/images/pin4.png';
+        var image5 = '/static/images/pin5.png';
         console.log("locations", results);
 
         for (var i = 0; i <results.length ; i++) {
@@ -76,10 +81,10 @@
                 var latitude = data[0];
                 var longitude = data[1];
                 var latLng = new google.maps.LatLng(latitude,longitude);
-                if (data[2]) {
+                if (data[2] > 0) {
                     var marker = new google.maps.Marker({
                       position: latLng,
-                      icon: image,
+                      icon: '/static/images/pin' + data[2] + '.png',
                       map: map,
                       label: i.toString()
                     });

@@ -291,11 +291,9 @@ def filter_noise(locations):
 
     return filtered_locations
 
-def fetch_location_set(location_set, start_time):
+def fetch_location_set(location_set, start_time, end_time):
     if not location_set:
         return
-
-    end_time = start_time + timedelta(days=1)
 
     locations = location_set.filter(
         timestamp__gte=start_time).filter(
@@ -305,28 +303,32 @@ def fetch_location_set(location_set, start_time):
 
     return [l for l in locations]
 
-def get_user_locations(user, timestamp):
-    if not user or not timestamp:
+def get_user_locations(user, start_time, end_time):
+    if not user or not start_time or not end_time:
         return ''
 
     locations = []
-    locations += fetch_location_set(user.attendance_set, timestamp)
-    locations += fetch_location_set(user.checkin_set, timestamp)
-    locations += fetch_location_set(user.locationstatus_set, timestamp)
-    locations += fetch_location_set(user.phonestatus_set, timestamp)
-    locations += fetch_location_set(user.userlocation_set, timestamp)
+    locations += fetch_location_set(user.attendance_set, start_time, end_time)
+    locations += fetch_location_set(user.checkin_set, start_time, end_time)
+    locations += fetch_location_set(user.locationstatus_set, start_time, end_time)
+    locations += fetch_location_set(user.phonestatus_set, start_time, end_time)
+    locations += fetch_location_set(user.userlocation_set, start_time, end_time)
     locations.sort(key=lambda x: x.timestamp)
     return locations
 
-def analyze_user_locations(user, timestamp):
-    if not user or not timestamp:
+def analyze_user_locations(user, start_time, return_polyline=True):
+    if not user or not start_time:
         return ''
 
-    locations = get_user_locations(user, timestamp)
+    end_time = start_time + timedelta(days=1)
+
+    locations = get_user_locations(user, start_time, end_time)
     locations = filter_noise(locations)
-    locations = aggregate_pitstops(locations)
-    polyline = to_rich_polyline(locations)
-    return polyline
+    results = aggregate_pitstops(locations)
+    if return_polyline:
+        results = to_rich_polyline(locations)
+        
+    return results
 
 def parse_localize_date(date):
     if not date:

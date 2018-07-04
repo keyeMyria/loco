@@ -130,7 +130,7 @@ def raw_user_maps(request):
 
     if show_stops:
         filtered_locations = analyzer.aggregate_pitstops(filtered_locations)
-        filtered_locations = analyzer.re_aggregate_pitstops(filtered_locations)
+        # filtered_locations = analyzer.re_aggregate_pitstops(filtered_locations)
 
     if reduce_density:
         filtered_locations = analyzer.reduce_density(filtered_locations)
@@ -141,6 +141,43 @@ def raw_user_maps(request):
             results.append((l.latitude, l.longitude, True, l.accuracy, str(l.timestamp), str(l.get_end_time())))
         else:
             results.append((l.latitude, l.longitude, False, l.accuracy, str(l.timestamp)))
+
+    final_locations = [(l[:3]) for l in results]
+
+    context = {
+        'draw_locations': json.dumps(final_locations),
+        'data_locations': results, 
+    }
+    return render_to_response('maps_raw.html', context)
+
+def app_user_maps(request):
+    uid = request.GET.get('uid')
+    start = request.GET.get('start')
+    end = request.GET.get('end')
+    filter_noise = request.GET.get('filter_noise', False)
+    show_stops = request.GET.get('show_stops', False)
+    reduce_density = request.GET.get('reduce_density', False)
+    filter_dis = float(request.GET.get('filter_dis', 0.1))
+    
+
+    user = User.objects.get(id=uid)
+    filtered_locations = analyzer.get_user_locations(user, start, end)
+    if filtered_locations:
+        filtered_locations = analyzer.filter_noise(filtered_locations)
+
+    if show_stops:
+        filtered_locations = analyzer.aggregate_pitstops(filtered_locations)
+        # filtered_locations = analyzer.re_aggregate_pitstops(filtered_locations)
+
+    if reduce_density:
+        filtered_locations = analyzer.reduce_density(filtered_locations)
+
+    results = []
+    for l in filtered_locations:
+        if l.get_type() == 1:
+            results.append((l.latitude, l.longitude, 1, l.accuracy, str(l.timestamp), str(l.get_end_time())))
+        else:
+            results.append((l.latitude, l.longitude, l.get_type(), l.accuracy, str(l.timestamp)))
 
     final_locations = [(l[:3]) for l in results]
 
