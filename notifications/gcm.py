@@ -34,7 +34,7 @@ def send_message_gcm(gcm_token, message_data):
 
 	res = requests.post(url, headers=headers, json=data)
 	if res.status_code >= 400:
-		raise Exception("GCMError")
+		raise Exception("GCMError", res.content)
 
 def send_notification_gcm(gcm_token, message_title, message_data='', message_body=""):
 	data= {
@@ -52,7 +52,7 @@ def send_notification_gcm(gcm_token, message_title, message_data='', message_bod
 		
 	res = requests.post(url, headers=headers, json=data)
 	if res.status_code >= 400 and res.status_code != 404:
-		raise Exception("GCMError")
+		raise Exception("GCMError", res.content)
 
 def send_checkin_gcm(checkin_id):
 	checkin = Checkin.objects.get(id=checkin_id)
