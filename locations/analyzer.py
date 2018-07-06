@@ -320,7 +320,8 @@ def analyze_user_locations(user, start_time, return_polyline=True):
 
     locations = get_user_locations(user, start_time, end_time)
     locations = filter_noise(locations)
-    results = aggregate_pitstops(locations)
+    locations = aggregate_pitstops(locations)
+    results = re_aggregate_pitstops(locations)
     if return_polyline:
         results = to_rich_polyline(locations)
         

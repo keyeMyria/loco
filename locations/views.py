@@ -14,7 +14,7 @@ from loco import utils as loco_utils
 from loco.services import cache
 
 from . import utils, analyzer
-from .filters import is_noise, is_stop_point, get_speed, is_history_noise
+from .filters import is_noise, is_stop_point, get_speed
 from .models import UserLocation, UserAnalyzedLocation
 from .serializers import UserLocationSerializer
 

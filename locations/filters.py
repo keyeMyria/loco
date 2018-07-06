@@ -1,4 +1,5 @@
 import utils
+from datetime import timedelta
 
 NOISE_TIME = 10
 NOISE_DISTANCE = 0.010
@@ -68,5 +69,4 @@ def is_stop_point(test_location, last_location):
 def are_close_stop_points(test_location, last_location):
     distance = utils.get_distance(test_location, last_location)
     time_diff = test_location.timestamp - last_location.get_end_time()
-    print (distance, time_diff.seconds)
     return time_diff <= timedelta(minutes=15) and distance < .120
