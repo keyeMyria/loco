@@ -4,7 +4,7 @@ import pytz
 from datetime import timedelta, datetime
 
 from .models import UserLocation, UserStopLocation, UserAnalyzedLocation
-from .filters import is_noise, is_stop_point, get_speed
+from .filters import is_noise, is_stop_point, get_speed, are_close_stop_points
 import polyline, utils
 
 def to_rich_polyline(locations):
@@ -33,6 +33,9 @@ def merge_location_points(locations):
     end_time = locations[0].timestamp
 
     for location in locations:
+        if location.get_type() != UserLocation.LOCATION_TYPE:
+            continue
+
         timestamp = location.timestamp
         if start_time > timestamp:
             start_time = timestamp
@@ -77,7 +80,7 @@ def process_special_locations(init, locations):
 
     return special_locations
 
-def aggregate_pitstops(locations):
+def aggregate_pitstops_old(locations):
     if not locations:
         return []
         
@@ -130,6 +133,41 @@ def aggregate_pitstops(locations):
 
     return filtered_locations
 
+def aggregate_pitstops(locations):
+    if not locations:
+        return []
+        
+    filtered_locations = [locations[0]]
+    last_valid_location = locations[0]
+    counter = 1
+
+    stop_point_holder = []
+    while counter < len(locations):
+        test_location = locations[counter]
+        counter += 1
+
+        if is_stop_point(test_location, last_valid_location):
+            if not stop_point_holder and filtered_locations:
+                stop_point_holder.append(filtered_locations.pop())
+
+            stop_point_holder.append(test_location)
+        else:
+            if stop_point_holder:
+                midpoint = merge_location_points(stop_point_holder)
+                filtered_locations.append(midpoint)
+                stop_point_holder = []
+
+            filtered_locations.append(test_location)
+        
+        last_valid_location = test_location
+
+    if stop_point_holder:
+        midpoint = merge_location_points(stop_point_holder)
+        filtered_locations.append(midpoint)
+        stop_point_holder = []
+
+    return filtered_locations
+
 def converge_stop_points(locations):
     if not locations:
         return
@@ -156,93 +194,51 @@ def collapse_stop_window(locations):
     if not locations:
         return
 
-    location_window = []
+    trailing_location_window = []
+    starting_location_window = []
     stop_points = []
+    last_stop_location = None
     for location in locations:
         if location.get_type() == UserStopLocation.LOCATION_TYPE:
+            last_stop_location = location
             stop_points.append(location)
-            location_window = []
+            trailing_location_window = []
         else:
-            location_window.append(location)
+            if not last_stop_location:
+                starting_location_window.append(location)
+            else:
+                trailing_location_window.append(location)
 
     if stop_points:
-        location_window.insert(0, converge_stop_points(stop_points))
+        stop_points = [converge_stop_points(stop_points)]
 
-    return location_window
-
-def re_aggregate_pitstdops(locations):
-    if not locations:
-        return []
-
-    stop_points = [location for location in locations if location.get_type() == UserStopLocation.LOCATION_TYPE]
-    last_stop_location = None
-    stop_point_window = []
-    results = []
-    for location in stop_points:
-        if not last_stop_location:
-            last_stop_location = location
-            continue
-
-        distance = utils.get_distance(location, last_stop_location)
-        time_diff = location.timestamp - last_stop_location.get_end_time()
-        if time_diff <= timedelta(minutes=10) and distance < 120:
-            # last_stop_location = merge_stop_points(location, last_stop_location)
-            if not stop_point_window:
-                stop_point_window.append(last_stop_location)
-            stop_point_window.append(location)
-            last_stop_location = location
-        else:
-            if stop_point_window:
-                mid_point = merge_stop_points(stop_point_window)
-                results.append(last_stop_location)
-                stop_point_window = []
-            else:
-                results.append(last_stop_location)
-
-            last_stop_location = location
-
-    if stop_point_window:
-        midpoint = merge_stop_points(stop_point_window)
-        results.append(midpoint)
-    elif last_stop_location:
-        results.append(last_stop_location)
-
-    return results
+    return starting_location_window+stop_points+trailing_location_window
 
 def re_aggregate_pitstops(locations):
     if not locations:
         return []
 
-    last_stop_location = None
-    stop_point_window = []
     results = []
+    stop_point_window = []
+    last_stop_location = None
     for location in locations:
-        if location.get_type() != UserStopLocation.LOCATION_TYPE:
-            if not stop_point_window:
-                results.append(location)
-                continue
-
-            stop_point_window.append(location)    
-        else:
+        if location.get_type() == UserStopLocation.LOCATION_TYPE:
             if not last_stop_location:
                 last_stop_location = location
-                stop_point_window.append(last_stop_location)
+                stop_point_window.append(location)
                 continue
 
-            distance = utils.get_distance(location, last_stop_location)
-            time_diff = location.timestamp - last_stop_location.get_end_time()
-            print (distance*1000, time_diff.seconds)
-            if time_diff <= timedelta(minutes=15) and distance < 120:
+            if are_close_stop_points(location, last_stop_location):
                 stop_point_window.append(location)
                 last_stop_location = location
             else:
                 if stop_point_window:
                     results += collapse_stop_window(stop_point_window)
-                    stop_point_window = [location]
-                    last_stop_location = location
-                else:
-                    raise Exception("Unexpected code flow")
 
+                last_stop_location = location
+                stop_point_window = [location]
+        else:
+            stop_point_window.append(location)
 
     if stop_point_window:
         results += collapse_stop_window(stop_point_window)

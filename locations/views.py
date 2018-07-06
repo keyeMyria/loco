@@ -162,11 +162,15 @@ def app_user_maps(request):
 
     user = User.objects.get(id=uid)
     filtered_locations = analyzer.get_user_locations(user, start, end)
-    if filtered_locations:
+    if filter_noise:
         filtered_locations = analyzer.filter_noise(filtered_locations)
 
-    if show_stops:
+    if show_stops and show_stops != '1':
         filtered_locations = analyzer.aggregate_pitstops(filtered_locations)
+        filtered_locations = analyzer.re_aggregate_pitstops(filtered_locations)
+
+    if show_stops and show_stops== '1':
+        filtered_locations = analyzer.aggregate_pitstops_old(filtered_locations)
         # filtered_locations = analyzer.re_aggregate_pitstops(filtered_locations)
 
     if reduce_density:

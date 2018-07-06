@@ -23,22 +23,20 @@ def is_speed_noise(test_location, last_location):
     speed = (distance*60*60)/time.total_seconds()
     return speed > NOISE_SPEED
 
-def is_history_noise(test_location, last_valid_location, last_location):
-    distance =  utils.get_distance(test_location, last_valid_location)
-    time = test_location.timestamp - last_location.timestamp
-    if time.total_seconds() == 0:
-        return True
+# def is_history_noise(test_location, last_valid_location, last_location):
+#     distance =  utils.get_distance(test_location, last_valid_location)
+#     time = test_location.timestamp - last_location.timestamp
+#     if time.total_seconds() == 0:
+#         return True
 
-    speed = (distance, time.total_seconds(), (distance*60*60)/time.total_seconds())
-    if speed < 100:
-        return False
+#     speed = (distance, time.total_seconds(), (distance*60*60)/time.total_seconds())
+#     if speed < 100:
+#         return False
 
-    distance =  utils.get_distance(test_location, last_location)
-    distance_valid =  utils.get_distance(test_location, last_valid_location)
-    return distance_valid > 5*distance
+#     distance =  utils.get_distance(test_location, last_location)
+#     distance_valid =  utils.get_distance(test_location, last_valid_location)
+#     return distance_valid > 5*distance
  
-
-
 def get_speed(test_location, last_location):
     distance =  utils.get_distance(test_location, last_location)
     time = test_location.timestamp - last_location.timestamp
@@ -60,8 +58,6 @@ def is_stop_point(test_location, last_location):
     distance =  utils.get_distance(test_location, last_location)
     time = test_location.timestamp - last_location.timestamp
     distance = distance - (test_location.accuracy + last_location.accuracy)/1000
-    # if distance > 2*NOISE_DISTANCE:
-    #     return False
 
     if time.total_seconds() == 0:
         return True
@@ -69,3 +65,8 @@ def is_stop_point(test_location, last_location):
     speed = (distance*60*60)/time.total_seconds()
     return speed < 3
 
+def are_close_stop_points(test_location, last_location):
+    distance = utils.get_distance(test_location, last_location)
+    time_diff = test_location.timestamp - last_location.get_end_time()
+    print (distance, time_diff.seconds)
+    return time_diff <= timedelta(minutes=15) and distance < .120
