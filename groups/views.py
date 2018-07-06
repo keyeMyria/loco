@@ -38,7 +38,7 @@ class GroupList(APIView):
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class GroupDetail(APIView):
-    permission_classes = (permissions.IsAuthenticated, IsGroupMember, IsGroupAdminOrReadOnly)
+    permission_classes = (permissions.IsAuthenticated, IsGroupMember)
 
     def get(self, request, group_id, format=None):
         group = get_object_or_404(Group, id=group_id)
@@ -61,7 +61,7 @@ class GroupDetail(APIView):
     def delete(self, request, group_id, format=None):
         group = get_object_or_404(Group, id=group_id)
         self.check_object_permissions(self.request, group)
-        group.delete()
+        # group.delete()
         return Response(status=204)
 
 class GroupMembershipList(APIView):
