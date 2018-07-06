@@ -7,6 +7,7 @@ from . import views
 urlpatterns = [
 	url(r'^$', views.new_user_maps),
 	url(r'^raw', views.raw_user_maps),
+	url(r'^app', views.app_user_maps),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

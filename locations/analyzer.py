@@ -4,8 +4,8 @@ import pytz
 from datetime import timedelta, datetime
 
 from .models import UserLocation, UserStopLocation, UserAnalyzedLocation
-from .filters import is_noise, is_stop_point
-import polyline
+from .filters import is_noise, is_stop_point, get_speed, are_close_stop_points
+import polyline, utils
 
 def to_rich_polyline(locations):
     if not locations:
@@ -21,7 +21,7 @@ def to_rich_polyline(locations):
 
     return polyline.encode_time_aware_polyline(points)
    
-def merge_stop_points(locations):
+def merge_location_points(locations):
     if not locations:
         return
 
@@ -33,6 +33,9 @@ def merge_stop_points(locations):
     end_time = locations[0].timestamp
 
     for location in locations:
+        if location.get_type() != UserLocation.LOCATION_TYPE:
+            continue
+
         timestamp = location.timestamp
         if start_time > timestamp:
             start_time = timestamp
@@ -45,10 +48,9 @@ def merge_stop_points(locations):
             accuracy += location.accuracy
             count += 1
 
-    if count == 0:
-        count = 1
-
-    if len(locations) < 5 or end_time-start_time < timedelta(minutes=10):
+    if count == 0 and len(locations):
+        stop_point = locations[0]
+    elif len(locations) < 5 or end_time-start_time < timedelta(minutes=10):
         stop_point = UserLocation()
         stop_point.latitude = latitude/count
         stop_point.longitude = longitude/count
@@ -78,7 +80,7 @@ def process_special_locations(init, locations):
 
     return special_locations
 
-def aggregate_pitstops(locations):
+def aggregate_pitstops_old(locations):
     if not locations:
         return []
         
@@ -99,7 +101,7 @@ def aggregate_pitstops(locations):
 
         if test_location.get_type() != UserLocation.LOCATION_TYPE:
             if stop_point_holder:
-                midpoint = merge_stop_points(stop_point_holder)
+                midpoint = merge_location_points(stop_point_holder)
                 filtered_locations.append(midpoint)
                 stop_point_holder = []
 
@@ -117,7 +119,7 @@ def aggregate_pitstops(locations):
             stop_point_holder.append(test_location)
         else:
             if stop_point_holder:
-                midpoint = merge_stop_points(stop_point_holder)
+                midpoint = merge_location_points(stop_point_holder)
                 filtered_locations.append(midpoint)
                 stop_point_holder = []
             filtered_locations.append(test_location)
@@ -125,11 +127,142 @@ def aggregate_pitstops(locations):
         last_valid_location = test_location
 
     if stop_point_holder:
-        midpoint = merge_stop_points(stop_point_holder)
+        midpoint = merge_location_points(stop_point_holder)
         filtered_locations.append(midpoint)
         stop_point_holder = []
 
     return filtered_locations
+
+def aggregate_pitstops(locations):
+    if not locations:
+        return []
+        
+    filtered_locations = [locations[0]]
+    last_valid_location = locations[0]
+    counter = 1
+
+    stop_point_holder = []
+    while counter < len(locations):
+        test_location = locations[counter]
+        counter += 1
+
+        if is_stop_point(test_location, last_valid_location):
+            if not stop_point_holder and filtered_locations:
+                stop_point_holder.append(filtered_locations.pop())
+
+            stop_point_holder.append(test_location)
+        else:
+            if stop_point_holder:
+                midpoint = merge_location_points(stop_point_holder)
+                filtered_locations.append(midpoint)
+                stop_point_holder = []
+
+            filtered_locations.append(test_location)
+        
+        last_valid_location = test_location
+
+    if stop_point_holder:
+        midpoint = merge_location_points(stop_point_holder)
+        filtered_locations.append(midpoint)
+        stop_point_holder = []
+
+    return filtered_locations
+
+def converge_stop_points(locations):
+    if not locations:
+        return
+
+    latitude = 0
+    longitude = 0
+    accuracy = 0
+    count = len(locations)
+
+    for location in locations:
+        latitude += location.latitude
+        longitude += location.longitude
+        accuracy += location.accuracy
+
+    stop_point = UserStopLocation()
+    stop_point.latitude = latitude/count
+    stop_point.longitude = longitude/count
+    stop_point.timestamp = locations[0].timestamp
+    stop_point.end_timestamp = locations[-1].get_end_time()
+    stop_point.accuracy = accuracy/count
+    return stop_point
+
+def collapse_stop_window(locations):
+    if not locations:
+        return
+
+    trailing_location_window = []
+    starting_location_window = []
+    stop_points = []
+    last_stop_location = None
+    for location in locations:
+        if location.get_type() == UserStopLocation.LOCATION_TYPE:
+            last_stop_location = location
+            stop_points.append(location)
+            trailing_location_window = []
+        else:
+            if not last_stop_location:
+                starting_location_window.append(location)
+            else:
+                trailing_location_window.append(location)
+
+    if stop_points:
+        stop_points = [converge_stop_points(stop_points)]
+
+    return starting_location_window+stop_points+trailing_location_window
+
+def re_aggregate_pitstops(locations):
+    if not locations:
+        return []
+
+    results = []
+    stop_point_window = []
+    last_stop_location = None
+    for location in locations:
+        if location.get_type() == UserStopLocation.LOCATION_TYPE:
+            if not last_stop_location:
+                last_stop_location = location
+                stop_point_window.append(location)
+                continue
+
+            if are_close_stop_points(location, last_stop_location):
+                stop_point_window.append(location)
+                last_stop_location = location
+            else:
+                if stop_point_window:
+                    results += collapse_stop_window(stop_point_window)
+
+                last_stop_location = location
+                stop_point_window = [location]
+        else:
+            stop_point_window.append(location)
+
+    if stop_point_window:
+        results += collapse_stop_window(stop_point_window)
+
+    return results
+
+def reduce_density(locations):
+    results = []
+    last_location = ''
+    for location in locations:
+        if not location.get_type() == UserLocation.LOCATION_TYPE:
+            results.append(location)
+            continue
+
+        if not last_location:
+            last_location = location
+            results.append(location)
+            continue
+
+        if location.timestamp - last_location.timestamp > timedelta(seconds=20):
+            results.append(location)
+            last_location = location
+
+    return results
 
 def filter_noise(locations):
     if not locations:
@@ -154,11 +287,9 @@ def filter_noise(locations):
 
     return filtered_locations
 
-def fetch_location_set(location_set, start_time):
+def fetch_location_set(location_set, start_time, end_time):
     if not location_set:
         return
-
-    end_time = start_time + timedelta(days=1)
 
     locations = location_set.filter(
         timestamp__gte=start_time).filter(
@@ -168,37 +299,32 @@ def fetch_location_set(location_set, start_time):
 
     return [l for l in locations]
 
-def print_locations(locations):
-    for i in range(1, len(locations)):
-        location = locations[i]
-        delta = location.timestamp - locations[i-1].timestamp
-        if delta > timedelta(minutes=6):
-            print (delta)
-        # print (location.get_type(), location.accuracy, location.timestamp)
-
-def get_user_locations(user, timestamp):
-    if not user or not timestamp:
+def get_user_locations(user, start_time, end_time):
+    if not user or not start_time or not end_time:
         return ''
 
     locations = []
-    locations += fetch_location_set(user.attendance_set, timestamp)
-    locations += fetch_location_set(user.checkin_set, timestamp)
-    locations += fetch_location_set(user.locationstatus_set, timestamp)
-    locations += fetch_location_set(user.phonestatus_set, timestamp)
-    locations += fetch_location_set(user.userlocation_set, timestamp)
+    locations += fetch_location_set(user.attendance_set, start_time, end_time)
+    locations += fetch_location_set(user.checkin_set, start_time, end_time)
+    locations += fetch_location_set(user.locationstatus_set, start_time, end_time)
+    locations += fetch_location_set(user.phonestatus_set, start_time, end_time)
+    locations += fetch_location_set(user.userlocation_set, start_time, end_time)
     locations.sort(key=lambda x: x.timestamp)
     return locations
 
-def analyze_user_locations(user, timestamp):
-    if not user or not timestamp:
+def analyze_user_locations(user, start_time, return_polyline=True):
+    if not user or not start_time:
         return ''
 
-    locations = get_user_locations(user, timestamp)
-    print_locations(locations)
+    end_time = start_time + timedelta(days=1)
+
+    locations = get_user_locations(user, start_time, end_time)
     locations = filter_noise(locations)
-    locations = aggregate_pitstops(locations)
-    polyline = to_rich_polyline(locations)
-    return polyline
+    results = aggregate_pitstops(locations)
+    if return_polyline:
+        results = to_rich_polyline(locations)
+        
+    return results
 
 def parse_localize_date(date):
     if not date:
