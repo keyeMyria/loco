@@ -8,7 +8,7 @@ from rest_framework import permissions, status
 from rest_framework.views import APIView
 from rest_framework.parsers import JSONParser
 
-from loco.services import cache
+from loco.services import cache, kafka
 
 from .parsers import XmlParser
 from .permissions import IsSuperUser
@@ -102,6 +102,8 @@ class MessageList(APIView):
         new_message = False
         if not message_data:
             return Response(data=error, status=400)
+
+        kafka.send_message(message_data)
 
         message = Message.objects.filter(id=message_data.get('id'))
         if message:

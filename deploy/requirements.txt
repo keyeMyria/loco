@@ -11,3 +11,4 @@ redis==2.10.5
 celery==4.0.2
 time-aware-polyline==0.1.2
 google-api-python-client==1.6.5
+kafka-python==1.4.3
