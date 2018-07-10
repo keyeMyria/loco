@@ -1,6 +1,6 @@
 import json
 from rest_framework import serializers
-from .models import Task, TaskMedia, DeliveryTaskContent, TaskHistory
+from .models import Task, TaskMedia, DeliveryTaskContent, TaskHistory, SalesTaskContent
 
 from accounts.serializers import UserSerializer
 from teams.serializers import TeamSerializer
@@ -8,10 +8,18 @@ from teams.serializers import TeamSerializer
 def get_content_serializer(content_type, **kwargs):
     if content_type == DeliveryTaskContent.__name__.lower():
         return DeliveryTaskContentSerializer(**kwargs)
+    elif content_type == SalesTaskContent.__name__.lower():
+        return SalesTaskContentSerializer(**kwargs)
 
 class DeliveryTaskContentSerializer(serializers.ModelSerializer):
     class Meta:
         model = DeliveryTaskContent
+        fields = '__all__'
+        read_only_fields = ('created', 'updated')
+
+class SalesTaskContentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalesTaskContent
         fields = '__all__'
         read_only_fields = ('created', 'updated')
 
@@ -21,6 +29,8 @@ class ContentObjectRelatedField(serializers.RelatedField):
 
         if isinstance(value, DeliveryTaskContent):
             serializer = DeliveryTaskContentSerializer(value)
+        elif isinstance(value, SalesTaskContent):
+            serializer = SalesTaskContentSerializer(value)
         else:
             raise Exception('Unexpected task content type')
 
@@ -29,7 +39,7 @@ class ContentObjectRelatedField(serializers.RelatedField):
 class TaskMediaSerializer(serializers.ModelSerializer):
     class Meta:
         model = TaskMedia
-        exclude = ('team', 'user')
+        exclude = ('team', 'created_by')
         read_only_fields = ('created', 'updated', 'unique_id')
 
 class TaskSerializer(serializers.ModelSerializer):

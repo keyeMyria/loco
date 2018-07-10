@@ -207,7 +207,7 @@ class TaskDetail(APIView):
 @parser_classes((MultiPartParser,))
 def task_media_upload(request, team_id):
     team = get_object_or_404(Team, id=team_id)
-    if not team.is_member(request.user):
+    if not team.is_member(request.user) and not team.is_admin_account(request.user):
         return Response(status=403)
 
     serializer = serializers.TaskMediaSerializer(data=request.data)

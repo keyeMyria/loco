@@ -8,7 +8,7 @@ from rest_framework.parsers import MultiPartParser
 
 from loco import utils
 
-from . import serializers, models
+from . import serializers, models, tasks
 from . import permissions as crm_permissions
 
 from accounts.models import User
@@ -99,84 +99,17 @@ class MerchantUpload(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)
     parser_classes = (MultiPartParser, )
 
-    def validate_rows(self, team, rows):
-        if not rows:
-            return ([], None)
-
-        merchants = []
-        states = []
-        cities = []
-        results = []
-
-        counter = 0
-        for row in rows:
-            counter += 1
-            entries = row.strip().split(",") + [None]*4
-            name, state, city, address = entries[:4]
-            if not name:
-                return (None, "Empty name at row: {0}".format(counter))
-
-            if city:
-                city = city.lower()
-                cities.append(city)
-            else:
-                city = None
-
-            if state:
-                state = state.lower()
-                states.append(state)
-            else:
-                state = None
-
-            merchants.append({
-                'name': name,
-                'city': city,
-                'state': state,
-                'address': address if address else "",
-                'team': team
-                })
-
-        states_list = models.State.objects.filter(name_lower__in=set(states))
-        state_map = {s.name_lower: s for s in states_list}
-        cities_list = models.City.objects.filter(name_lower__in=set(cities))
-        city_map = {c.name_lower: c for c in cities_list}
-
-        for merchant in merchants:
-            merchant_state = merchant.get('state')
-            if merchant_state:
-                state = state_map.get(merchant_state)
-                if not state:
-                    return (None, "Invalid state {}".format(merchant_state))
-
-                merchant['state'] = state
-
-            merchant_city = merchant.get('city')
-            if merchant_city:
-                city = city_map.get(merchant_city)
-                if not city:
-                    return (None, "Invalid city {}".format(merchant_city))
-
-                merchant['city'] = city
-
-            results.append(models.Merchant(**merchant))
-
-        return (results, None)
-
-
     def post(self, request, team_id, format=None):
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
 
-        file = request.FILES.get("data")
-        file_data = file.readlines()
-        results, err = self.validate_rows(team, file_data)
-
-        if err:
-            return Response(err, status=status.HTTP_400_BAD_REQUEST)
-
-        merchants = models.Merchant.objects.bulk_create(results)
-        ser = serializers.MerchantSerializer(merchants, many=True)
-        return Response(ser.data)
+        serializer = serializers.MerchantUploadSerializer(data=request.data)
+        if serializer.is_valid():
+            upload = serializer.save(created_by=request.user, team=team)
+            tasks.upload_merchants_async(upload.id)
+            return Response(serializer.data)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         
 
 class ItemList(APIView):
@@ -234,54 +167,15 @@ class ItemUpload(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)
     parser_classes = (MultiPartParser, )
 
-    def validate_rows(self, team, rows):
-        if not rows:
-            return ([], None)
-
-        items = []
-        results = []
-
-        counter = 0
-        for row in rows:
-            counter += 1
-            entries = row.strip().split(",") + [None]*3
-            name, price, serial_number = entries[:3]
-            if not name:
-                return (None, "Empty name at row: {0}".format(counter))
-
-            if not price:
-                return (None, "Empty price at row: {0}".format(counter))
-
-            item = {
-                'name': name,
-                'price': price,
-                'serial_number': serial_number if serial_number else "",
-                'team': team
-                }
-
-            serializer = serializers.ItemSerializer(data=item)
-            if not serializer.is_valid():
-                return (None, "Error in row {0} {1}".format(counter, serializer.errors))
-
-            items.append(item)
-
-        for item in items:
-            results.append(models.Item(**item))
-
-        return (results, None)
-
-
     def post(self, request, team_id, format=None):
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
 
-        file = request.FILES.get("data")
-        file_data = file.readlines()
-        results, err = self.validate_rows(team, file_data)
+        serializer = serializers.ItemUploadSerializer(data=request.data)
+        if serializer.is_valid():
+            upload = serializer.save(created_by=request.user, team=team)
+            tasks.upload_items_async(upload.id)
+            return Response(serializer.data)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        if err:
-            return Response(err, status=status.HTTP_400_BAD_REQUEST)
-
-        merchants = models.Item.objects.bulk_create(results)
-        ser = serializers.ItemSerializer(merchants, many=True)
-        return Response(ser.data)

@@ -30,6 +30,7 @@ urlpatterns = [
 	url(r'^(?P<team_id>[0-9]+)/threads/(?P<thread_id>.+)$', views.MessagesDetail.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/groups/$', groups_views.GroupList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/tasks/$', tasks_views.TaskList.as_view()),
+	url(r'^(?P<team_id>[0-9]+)/tasks/files/$', tasks_views.task_media_upload),
 	url(r'^(?P<team_id>[0-9]+)/merchants/$', crm_views.MerchantList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/merchants/upload/$', crm_views.MerchantUpload.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/items/$', crm_views.ItemList.as_view()),

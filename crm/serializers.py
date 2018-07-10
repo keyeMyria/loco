@@ -33,3 +33,19 @@ class ItemSerializer(serializers.ModelSerializer):
 		model = models.Item
 		exclude = ("created_by", )
         read_only_fields = ('id', 'created', 'updated', 'team')
+
+class MerchantUploadSerializer(serializers.ModelSerializer):
+	team = TeamSerializer(read_only=True)
+
+	class Meta:
+		model = models.MerchantUpload
+		fields = '__all__'
+        read_only_fields = ('id', 'created', 'updated', 'team', 'unique_id', 'created_by')
+
+class ItemUploadSerializer(serializers.ModelSerializer):
+	team = TeamSerializer(read_only=True)
+
+	class Meta:
+		model = models.ItemUpload
+		fields = '__all__'
+        read_only_fields = ('id', 'created', 'updated', 'team', 'unique_id', 'created_by')

@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import uuid
 from django.conf import settings
 from django.db import models
@@ -7,6 +9,8 @@ from django.contrib.contenttypes.models import ContentType
 from loco.models import BaseModel
 
 from teams.models import Team
+from accounts.models import User
+from crm.models import Merchant, Item
 
 class Task(BaseModel):
     STATUS_CREATED = 'created'
@@ -64,11 +68,12 @@ class Task(BaseModel):
 
 def task_media_path(instance, filename):
     return 'teams/{0}/users/{1}/tasks/{2}/{3}'.format(
-        instance.team.id, instance.user.id, instance.unique_id, filename)
+        instance.team.id, instance.created_by.id, instance.unique_id, filename)
 
 class TaskMedia(BaseModel):
     task = models.ForeignKey(
-        Task, on_delete=models.DO_NOTHING, related_name="media")
+        Task, on_delete=models.DO_NOTHING, related_name="media", blank=True, null=True)
+    team = models.ForeignKey(Team)
     media = models.FileField(upload_to=task_media_path)
     created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -109,3 +114,9 @@ class DeliveryTaskContent(BaseModel):
 
         setattr(self, key, value)
         self.save()
+
+class SalesTaskContent(BaseModel):
+    description = models.TextField(max_length=140)
+    merchant = models.ForeignKey(Merchant)
+    items = models.ManyToManyField(Item)
+    amount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
