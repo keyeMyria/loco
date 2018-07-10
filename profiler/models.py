@@ -115,15 +115,6 @@ class ProfilingRecord(models.Model):
         try:
             resolution = resolve(request.path)
             self.view_name = resolution.view_name
-
-            from feed.views import get_posts
-            from hop.utils import str_to_bool
-
-            if resolution.func == get_posts:
-                PARAM_NEW_USER = 'is_new_user'
-                is_new_user = request.GET.get(PARAM_NEW_USER, False)
-                is_new_user = str_to_bool(is_new_user)
-                self.view_name += '_new_user' if is_new_user else ''
         except Exception as e:
             print(e)
 

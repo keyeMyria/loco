@@ -32,6 +32,7 @@ urlpatterns += [
     url(r'^locations/', include('locations.urls')),
     url(r'^groups/', include('groups.urls')),
     url(r'^tasks/', include('tasks.urls')),
+    url(r'^crm/', include('crm.urls')),
     url(r'^dump', views.UserDumpView.as_view()),
     url(r'^download', views.get_download_link),
 ]

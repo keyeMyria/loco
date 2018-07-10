@@ -5,6 +5,7 @@ from . import views
 from locations import views as location_views
 from groups import views as groups_views
 from tasks import views as tasks_views
+from crm import views as crm_views
 
 
 urlpatterns = [
@@ -29,6 +30,10 @@ urlpatterns = [
 	url(r'^(?P<team_id>[0-9]+)/threads/(?P<thread_id>.+)$', views.MessagesDetail.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/groups/$', groups_views.GroupList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/tasks/$', tasks_views.TaskList.as_view()),
+	url(r'^(?P<team_id>[0-9]+)/merchants/$', crm_views.MerchantList.as_view()),
+	url(r'^(?P<team_id>[0-9]+)/merchants/upload/$', crm_views.MerchantUpload.as_view()),
+	url(r'^(?P<team_id>[0-9]+)/items/$', crm_views.ItemList.as_view()),
+	url(r'^(?P<team_id>[0-9]+)/items/upload/$', crm_views.ItemUpload.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
