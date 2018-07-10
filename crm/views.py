@@ -179,3 +179,27 @@ class ItemUpload(APIView):
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class StateList(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, format=None):
+        states = models.State.objects.all().order_by('name')
+        data = serializers.StateSerializer(states, many=True).data
+        return Response(data)
+
+class CityList(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, format=None):
+        PARAM_STATE = 'state'
+        filter_state = request.query_params.get(PARAM_STATE)
+
+        start, limit = utils.get_query_start_limit(request)
+        cities = models.City.objects.all()
+        if filter_state:
+            cities = cities.filter(state__name__icontains=filter_state)
+
+        cities = cities.order_by('-created')[start:start+limit]
+        data = serializers.CitySerializer(cities, many=True).data
+        return Response(data)
+

@@ -49,3 +49,14 @@ class ItemUploadSerializer(serializers.ModelSerializer):
 		model = models.ItemUpload
 		fields = '__all__'
         read_only_fields = ('id', 'created', 'updated', 'team', 'unique_id', 'created_by')
+
+
+class StateSerializer(serializers.ModelSerializer):
+	class Meta:
+		model = models.State
+		fields = "__all__"
+
+class CitySerializer(serializers.ModelSerializer):
+	class Meta:
+		model = models.City
+		fields = "__all__"
