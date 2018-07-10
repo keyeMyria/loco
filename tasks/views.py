@@ -73,11 +73,12 @@ class TaskList(APIView):
         content = request.data.get('content')
         content_type = request.data.get('content_type')
         if content:
-            content_serializer = serializers.get_content_serializer(content_type, data=content)
-            if not content_serializer:
-                return Response(
-                    {"error": "Bad data in content_type"}, 
+            content_serializer, error = serializers.get_content_serializer(
+                content_type, data=content, team=team)
+            if error:
+                return Response({"error": error}, 
                     status=status.HTTP_400_BAD_REQUEST)
+
             if content_serializer.is_valid():
                 content_object = content_serializer.save()
             else:

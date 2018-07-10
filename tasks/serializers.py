@@ -4,12 +4,60 @@ from .models import Task, TaskMedia, DeliveryTaskContent, TaskHistory, SalesTask
 
 from accounts.serializers import UserSerializer
 from teams.serializers import TeamSerializer
+from crm.models import Merchant, City, State
+from crm import serializers as crm_serializers
 
 def get_content_serializer(content_type, **kwargs):
+    team = kwargs.pop('team')
     if content_type == DeliveryTaskContent.__name__.lower():
-        return DeliveryTaskContentSerializer(**kwargs)
+        return (DeliveryTaskContentSerializer(**kwargs), None)
     elif content_type == SalesTaskContent.__name__.lower():
-        return SalesTaskContentSerializer(**kwargs)
+        data = kwargs.get("data")
+        merchant = data.get('merchant')
+        if isinstance(merchant, dict):
+            local_id = merchant.get('local_id')
+            if not local_id:
+                return (None, "No local id")
+
+            existing_merchant = Merchant.objects.filter(local_id=local_id)
+            if existing_merchant:
+                merchant_id = existing_merchant[0].id
+            else:
+                city_id = merchant.get('city', 0)
+                if city_id:
+                    city = City.objects.filter(id=city_id)
+                    if not city:
+                        return (None, "Could not find city for id {}".format(city_id))
+
+                    city = city[0]
+                else:
+                    city = None
+
+                merchant['city'] = city
+
+                state_id = merchant.get('state', 0)
+                if state_id:
+                    state = State.objects.filter(id=state_id)
+                    if not state:
+                        return (None, "Could not find state for id {}".format(state_id))
+
+                    state = state[0]
+                else:
+                    state = None
+
+                merchant['state'] = state
+                merchant['team'] = team
+                ser = crm_serializers.MerchantSerializer(data=merchant)
+                if ser.is_valid():
+                    merchant_id = ser.save(team=team, city=city, state=state).id
+                else:
+                    return (None, ser.errors)
+
+            data['merchant'] = merchant_id
+        
+        return (SalesTaskContentSerializer(**kwargs), None)
+
+    return(None, "Bad data in content")
 
 class DeliveryTaskContentSerializer(serializers.ModelSerializer):
     class Meta:

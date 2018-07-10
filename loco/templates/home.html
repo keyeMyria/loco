@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title_block %}
+    <title>Manage Teams on field | Anuvad</title>
+{%endblock%}
+
+{% block meta_block %}
+    <link rel="canonical" href="https://anivad.io/" />
+    <meta name="description" content="Best way to manage teams and operations on field"/>
+{%endblock%}
+
+{% block css_block %}
+    <!-- build:css /static/build/home.css -->
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/home/main.css">
+    <!-- endbuild -->
+{%endblock%}
+
+{% block content_block %}
+    <section class="section-hero">
+      <img class="hero-logo" src="/static/images/logo.png">
+      <H1 class=hero-title>Anuvad</H1>
+    </section>
+
+    <form class="login-form">
+      <input class="login-phone" type="" name="" placeholder="Phone">
+      <input class="login-password" type="" name="" placeholder="Password">
+      <button class="login-action">Login</button>
+    </form>
+    
+{% endblock %}
+
+{% block script_block %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script>
+        window.props =  JSON.parse('{{ pageProps | safe }}');
+    </script>
+
+    <script src="{% static 'js/build/Home.js' %}"></script>
+{% endblock %}

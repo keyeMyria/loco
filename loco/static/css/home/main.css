@@ -1,0 +1,63 @@
+body {
+	background: #2D2D2D;
+}
+
+/*--------Hero-------*/
+
+.section-hero {
+	max-width: 600px;
+	margin: 0 auto;
+	padding-top: 120px;
+	display: block;
+	vertical-align: top;
+	text-align: center;
+}
+
+.section-hero .hero-logo {
+	width: 96px;
+	height: 96px;
+	display: inline;
+}
+
+.section-hero .hero-title {
+	display: inline;
+	vertical-align: top;
+	color: white;
+	font-size: 96px;
+}
+
+/*----------Login Form----------*/
+
+.login-form {
+	max-width: 300px;
+	margin: 0 auto;
+	padding-top: 16px;
+	text-align: center;
+}
+
+.login-form input {
+	display: block;
+	border: none;
+	background: white;
+	width: 100%;
+	margin-bottom: 16px;
+	padding: 8px;
+	font-size: 20px;
+	border-radius: 2px;
+}
+
+.login-form .login-action {
+	background: white;
+	border: none;
+	border: 1px solid white;
+	border-radius: 2px;
+	padding: 8px 64px;
+	color: #CB202D;
+	font-size: 20px;
+	cursor: pointer;
+	transition: 0.3s;
+}
+
+.login-form .login-action:hover {
+    /*box-shadow: 0 8px 16px 0 rgba(255,255,255,0.1);*/
+	border-color: #CB202D;

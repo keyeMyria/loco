@@ -116,7 +116,7 @@ class DeliveryTaskContent(BaseModel):
         self.save()
 
 class SalesTaskContent(BaseModel):
-    description = models.TextField(max_length=140)
+    description = models.TextField(blank=True)
     merchant = models.ForeignKey(Merchant)
     items = models.ManyToManyField(Item)
     amount = models.DecimalField(max_digits=11, decimal_places=2, default=0)

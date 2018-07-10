@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 
-from accounts import views
+from accounts import views, web_views as accounts_web_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -35,6 +35,12 @@ urlpatterns += [
     url(r'^crm/', include('crm.urls')),
     url(r'^dump', views.UserDumpView.as_view()),
     url(r'^download', views.get_download_link),
+]
+
+
+#Web urls
+urlpatterns += [
+    url(r'^/?', accounts_web_views.home),
 ]
 
 

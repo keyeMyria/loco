@@ -34,6 +34,7 @@ class Merchant(BaseModel):
     team = models.ForeignKey(Team)
     created_by = models.ForeignKey(User, blank=True, null=True)
     name = models.CharField(max_length=100)
+    local_id = models.CharField(max_length=16, blank=True, default="")
     state = models.ForeignKey(State, blank=True, null=True)
     city = models.ForeignKey(City, blank=True, null=True)
     address = models.TextField(blank=True)
