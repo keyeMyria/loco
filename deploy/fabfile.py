@@ -12,7 +12,6 @@ def deploy():
     _get_latest_source(source_folder)
     _update_settings(source_folder, env.host)
     _update_virtualenv(source_folder)
-    _install_client(source_folder)
     _update_npm(source_folder)
     _build_client(source_folder)
     _update_static_files(source_folder)
