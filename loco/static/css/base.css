@@ -94,3 +94,19 @@ a {
   text-decoration: none;
   color: black;
 }
+
+/*---------- Loader ------------*/
+
+.loader {
+    border: 4px solid #CB202D; /* Light grey */
+    border-top: 4px solid #ffffff; /* Blue */
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}

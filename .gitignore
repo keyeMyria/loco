@@ -1,2 +1,5 @@
 *.pyc
 rough
+bower_components/
+node_modules/
+build/

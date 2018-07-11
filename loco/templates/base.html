@@ -53,9 +53,7 @@
 
     <!-- Scripts Here -->
     <script src="{% static 'js/base/main.js' %}"></script>
-    <script type="text/javascript">
-        intitNotifications();
-    </script>
+
     <script>
         window.baseProps =  JSON.parse('{{ baseProps | safe }}');
         window.pageName =  "{{ page_name }}";
