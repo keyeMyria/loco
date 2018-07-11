@@ -13,6 +13,8 @@ def deploy():
     _update_settings(source_folder, env.host)
     _update_virtualenv(source_folder)
     _install_client(source_folder)
+    _update_npm(source_folder)
+    _build_client(source_folder)
     _update_static_files(source_folder)
     _update_database(source_folder)
     _restart_service()
@@ -39,7 +41,7 @@ def _update_settings(source_folder, site_name):
     sed(settings_path, "DEBUG = True", "DEBUG = False")
     sed(settings_path,
         'ALLOWED_HOSTS =.+$',
-        'ALLOWED_HOSTS = ["%s", "localhost"]' % (site_name,)
+        'ALLOWED_HOSTS = ["%s", "localhost", "anuvad.io"]' % (site_name,)
         )
 
     secret_key_file = source_folder + '/loco/secret_key.py'
@@ -57,10 +59,13 @@ def _update_virtualenv(source_folder):
     run('%s/bin/pip install -r %s/deploy/requirements.txt' % (
         virtualenv_folder, source_folder))
 
-def _install_client(source_folder):
-    client_folder = source_folder + '/loco/static'
-    # run('cd %s && bower install' % (client_folder,))
+def _update_npm(source_folder):
+    npm_folder = source_folder + '/loco'
+    run('cd %s && npm install' % (npm_folder,))
 
+def _build_client(source_folder):
+    client_folder = source_folder + '/loco'
+    run('cd %s && npm run build && grunt build' % (client_folder,))
 
 def _update_static_files(source_folder):
     run('cd %s && ../virtualenv/bin/python manage.py collectstatic --noinput' % (

@@ -125,17 +125,6 @@ module.exports = function (grunt) {
 	    'copy:preusemin',
 	    'filerev',
 	    'usemin',
-	    'string-replace'
-	]);
-
-	grunt.registerTask('test-build', [
-    	'copy:prehtmlmin',
-	    'useminPrepare',
-	    'concat:generated',
-	    'cssmin:generated',
-	    'copy:preusemin',
-	    'filerev',
-	    'usemin'
 	]);
 
 	grunt.registerTask('cleanBuild', ['copy:cleanBuild', 'clean']);
