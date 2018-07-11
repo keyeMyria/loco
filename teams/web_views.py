@@ -12,3 +12,12 @@ def teams(request):
     }
 
     return render(request, "teams.html", context)
+
+def dashboard(request):
+    context = {
+        'baseProps' : json.dumps({}),
+        'pageProps': json.dumps({}),
+        "page_name": "dashboardpage",   
+    }
+
+    return render(request, "dashboard.html", context)
