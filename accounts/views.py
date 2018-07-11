@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response
 
 from rest_framework.decorators import api_view, permission_classes
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework import permissions, status
 from rest_framework.authtoken.models import Token
@@ -37,18 +38,25 @@ def getOtp(request, format=None):
     UserOtp.objects.create_or_update(user = user, otp=otp)
     return Response() 
 
+@csrf_exempt
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
 def login_user(request, format=None):
     otp = request.data.get('otp')
     phone = request.data.get('phone')
+    password = request.data.get('password')
 
-    if utils.validate_otp(otp) and utils.validate_phone(phone):
+    if otp:
         return login_otp(otp, phone)
+    elif password:
+        return login_password(phone, password, request)
     else:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 def login_otp(otp, phone):
+    if utils.validate_otp(otp) and utils.validate_phone(phone):
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
     if (UserOtp.objects.checkOtp(otp, phone)):
         user = User.objects.get(phone=phone)
         if not user.is_active:
@@ -63,6 +71,22 @@ def login_otp(otp, phone):
         return Response(data=data)
     else:
         return Response(data={"error": "Invalid OTP"}, status=status.HTTP_401_UNAUTHORIZED)
+
+def login_password(phone, password, request):
+    try:
+        user = User.objects.get(phone=phone)
+        user = authenticate(username=phone, password=password)
+
+        if user is None:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        login(request, user)
+        Token.objects.filter(user=user).delete()
+        return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated,))

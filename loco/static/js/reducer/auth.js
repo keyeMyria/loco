@@ -24,7 +24,7 @@ export default function auth(state = INITIAL_STATE, action={}) {
 export function login(phone, password) {
 	return {
 		types: [LOGIN_START, LOGIN_SUCCESS, LOGIN_FAILURE],
-		promise: (client) => client.local.post('/accounts/login',
+		promise: (client) => client.local.post('/users/login/',
 			{
 				data: {
 					phone: phone,

@@ -66,6 +66,10 @@ class UserLogin extends React.Component {
     		)
     	}
 
+        if (this.props.auth.isLoggedIn) {
+            window.location.href = "/";
+        }
+
         return (
             <form className="login-form">
 		      <input className="login-phone" value={this.state.phone} onChange={this.handlePhoneChange} type="number" name="phone" placeholder="Phone" />

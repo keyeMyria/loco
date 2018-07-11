@@ -1,0 +1,42 @@
+body {
+	background: #2D2D2D;
+}
+
+/*-------------Teams List ----------*/
+.section-user-teams {
+	max-width: 800px;
+	width: 60%;
+	margin: 0 auto;
+	display: block;
+	text-align: center;
+}
+
+.section-user-teams h1 {
+	font-size: 44px;
+	color: white;
+	padding-top: 88px;
+}
+
+.section-user-teams .user-teams {
+	max-width: 400px;
+	margin: 0 auto;
+	margin-top: 16px;
+}
+
+.user-teams .user-team {
+	width: 100%;
+	padding: 16px 8px;
+	cursor: pointer;
+	border: 1px solid white;
+	transition: 0.3s;
+	margin-bottom: 8px;
+	background: white;
+	border-radius: 2px;
+	display: block;
+	font-size: 20px;
+}
+
+.user-teams .user-team:hover {
+	border-color: #CB202D;
+	color: #CB202D;
+}

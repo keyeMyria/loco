@@ -1,7 +1,7 @@
 var webpack = require('webpack');
 module.exports = {
   entry: {
-    Home : './static/js/home.js',
+    Login : './static/js/login.js',
   },
   output: {
     path: __dirname + '/js/build',

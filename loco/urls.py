@@ -19,6 +19,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 from accounts import views, web_views as accounts_web_views
+from teams import web_views as teams_web_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -40,7 +41,9 @@ urlpatterns += [
 
 #Web urls
 urlpatterns += [
-    url(r'^/?', accounts_web_views.home),
+    url(r'^/?$', accounts_web_views.home),
+    url(r'^web/login/?$', accounts_web_views.login),
+    url(r'^web/teams/?$', teams_web_views.teams),
 ]
 
 

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title_block %}
+    <title>Manage Teams on field | Anuvad</title>
+{%endblock%}
+
+{% block meta_block %}
+    <link rel="canonical" href="https://anivad.io/" />
+    <meta name="description" content="Best way to manage teams and operations on field"/>
+{%endblock%}
+
+{% block css_block %}
+    <!-- build:css /static/build/teams.css -->
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/teams/main.css">
+    <!-- endbuild -->
+{%endblock%}
+
+{% block content_block %}
+    <section class="teams-header">
+        <section class="site-handler">
+            <img class="site-logo" src="/static/images/logo.png">
+            <div class="site-name">Anuvad</div>
+        </section>
+        <section class="profile-menu">
+            <img src="">
+        </section>
+    </section>
+
+    <section class="section-user-teams">
+        <h1>Select your team</h1>
+        <ul class="user-teams">
+            <a class="user-team" href="">
+                Create
+            </a>
+            <a class="user-team" href="">
+                Field Sales
+            </a>
+        </ul>
+    </section>
+    
+{% endblock %}
+
+{% block script_block %}
+    <script>
+        window.pageProps = JSON.parse('{{ pageProps | safe }}');
+        window.mountUserTeams = document.getElementById('user-teams-react');
+    </script>
+
+    <script src="{% static 'js/build/Teams.js' %}"></script>
+{% endblock %}
