@@ -16,20 +16,36 @@ class UserTeams extends React.Component {
         super(props);
     }
 
+    componentDidMount() {
+        this.props.getTeams();
+    }
+
     render()
     {
+        var teams = this.props.teams.teams.map((team) => 
+            <a className="user-team" href={'/web/teams/' + team.team.id}>{team.team.name}</a>
+        );
 
+        let content;
+        if (this.props.teams.inProgress) {
+            content = (
+                <div className="teams-loader-container">
+                    <div className="loader teams-loader"></div>
+                </div>
+            )
+        } else {
+            content = (
+                <ul className="user-teams">
+                    {teams}
+                </ul>
+            )
+        }
+        
         return (
-            <form className="login-form">
-		      <input className="login-phone" value={this.state.phone} onChange={this.handlePhoneChange} type="number" name="phone" placeholder="Phone" />
-		      <input className="login-password" value={this.state.password} onChange={this.handlePasswordChange} type="password" name="password" placeholder="Password" />
-		      <div className="login-error">
-		      	{this.state.error || this.props.auth.error}
-		      </div>
-		      <button className={loginActionClass} onClick={this.handleLogin}>
-		      	{loginActionContent}
-		      </button>
-		    </form>
+            <section className="section-user-teams">
+                <h1>Select team</h1>
+                {content}
+            </section>
         );
 	}
 }
@@ -38,6 +54,7 @@ const UserTeamsContainer = connect(
     ((state) => ({ teams: state.teams })) ,
     {getTeams: getTeams,}
 )(UserTeams);
+
 
 if (window.mountUserTeams){
     ReactDOM.render(

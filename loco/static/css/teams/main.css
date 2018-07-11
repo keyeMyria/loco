@@ -2,11 +2,48 @@ body {
 	background: #2D2D2D;
 }
 
+/*-------------- Header------------*/
+.teams-header {
+	width: 100%;
+}
+
+.teams-header .teams-header-container {
+	max-width: 1300px;
+	margin: 0 auto;
+	padding: 16px 8px;
+	position: relative;
+}
+
+.site-handler .site-logo {
+	display: inline;
+	width: 28px;
+	height: 28px;
+}
+
+.site-handler .site-name {
+	display: inline;
+	color: white;
+	vertical-align: top;
+	font-size: 26px;
+}
+
+.profile-menu {
+	position: absolute;
+	right: 8px;
+	top: 16px;
+	cursor: pointer;
+}
+
 /*-------------Teams List ----------*/
-.section-user-teams {
+.user-teams-holder {
 	max-width: 800px;
 	width: 60%;
+	display: block;
 	margin: 0 auto;
+}
+
+.section-user-teams {
+	width: 100%;
 	display: block;
 	text-align: center;
 }
@@ -15,6 +52,18 @@ body {
 	font-size: 44px;
 	color: white;
 	padding-top: 88px;
+}
+
+.section-user-teams .teams-loader-container {
+	width: 100%;
+	display: block;
+	text-align: center;
+	margin-top: 48px;
+}
+
+.teams-loader-container .teams-loader {
+	width: 32px;
+	height: 32px;
 }
 
 .section-user-teams .user-teams {

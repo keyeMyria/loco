@@ -19,26 +19,18 @@
 
 {% block content_block %}
     <section class="teams-header">
-        <section class="site-handler">
-            <img class="site-logo" src="/static/images/logo.png">
-            <div class="site-name">Anuvad</div>
-        </section>
-        <section class="profile-menu">
-            <img src="">
-        </section>
+        <div class="teams-header-container clearfix">
+            <section class="site-handler">
+                <img class="site-logo" src="/static/images/logo.png">
+                <div class="site-name">Anuvad</div>
+            </section>
+            <section class="profile-menu">
+                <img src="/static/images/person_white.png">
+            </section>
+        </div>
     </section>
 
-    <section class="section-user-teams">
-        <h1>Select your team</h1>
-        <ul class="user-teams">
-            <a class="user-team" href="">
-                Create
-            </a>
-            <a class="user-team" href="">
-                Field Sales
-            </a>
-        </ul>
-    </section>
+    <section class="user-teams-holder" id="user-teams-react"></section>
     
 {% endblock %}
 
