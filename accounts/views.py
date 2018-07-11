@@ -54,7 +54,7 @@ def login_user(request, format=None):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 def login_otp(otp, phone):
-    if utils.validate_otp(otp) and utils.validate_phone(phone):
+    if not utils.validate_otp(otp) or not utils.validate_phone(phone):
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     if (UserOtp.objects.checkOtp(otp, phone)):
