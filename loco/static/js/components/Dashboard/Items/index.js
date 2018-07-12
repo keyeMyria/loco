@@ -30,6 +30,13 @@ class Items extends Component {
 			<div>
                 <header className="header">
 				    <h1 className="title">Items</h1>
+                    <section className="header-team">
+                        <p className="header-team-name">Austro</p>
+                        <i className="material-icons header-team-icon">arrow_drop_down</i>
+                    </section>
+                    <section class="profile-menu">
+                        <img src="/static/images/person_white.png" />
+                    </section>
                 </header>
                 <section className="filter-bar">
                     <section className="section-chip-filter">

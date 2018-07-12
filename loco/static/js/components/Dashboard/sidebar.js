@@ -21,10 +21,11 @@ export default class Sidebar extends Component {
         return (
             <HashRouter>
                 <div>
-                    <div className="sidebar-holder">
-                        <div className="logo-holder">
-                            <img src=""/>
-                        </div>
+                    <section className="sidebar-holder">
+                        <section className="site-label">
+                            <img className="site-logo" src="/static/images/logo.png"/>
+                            <p className="site-name">Anuvad</p>
+                        </section>
                         <ul className="nav-holder">
                             <li className="nav-link">
                                 <NavLink to="/orders">Orders</NavLink>
@@ -36,7 +37,7 @@ export default class Sidebar extends Component {
                                 <NavLink to="/items">Items</NavLink>
                             </li>
                         </ul>
-                    </div>
+                    </section>
                     <div className="content">
                         <Route path="/orders" component={Orders}/>
                         <Route path="/merchants" component={Merchants}/>

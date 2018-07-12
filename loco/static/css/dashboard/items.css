@@ -49,11 +49,17 @@
 .section-chip-filter .filter-chip.active {
 	background: #CB202D;
 	border-color: #CB202D;
+	cursor: default;
+}
+
+.filter-chip.active .filter-chip-icon:hover {
+	cursor: pointer;
+	color: white;
 }
 
 .filter-chip.active .filter-chip-icon,
 .filter-chip.active .filter-chip-text {
-	color: white;
+	color: rgba(255, 255, 255, 0.8);
 }
 
 /*------------- Query Filter-----------*/
@@ -117,7 +123,12 @@
 	cursor: pointer;
 }
 
+.DateRangePicker div {
+	background: transparent;
+}
+
 .DateRangePickerInput__withBorder {
+	background: transparent;
 	border: none;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.26);
 }
@@ -128,6 +139,7 @@
 
 .DateInput {
 	width: 92px;
+	background: transparent;
 }
 
 .DateRangePickerInput_arrow {
@@ -140,6 +152,7 @@
 	padding-top: 4px;
 	font-size: 16px;
 	line-height: 1em;
+	background: transparent;
 }
 
 .DateInput_input__focused {

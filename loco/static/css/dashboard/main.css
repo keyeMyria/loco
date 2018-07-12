@@ -7,14 +7,58 @@
     height: 100vh;
 }
 
-.sidebar-holder .nav-holder {
-    margin-top: 32px;
-    margin-left: 40px;
-    line-height: 2;
+.sidebar-holder .site-label {
+    width: 100%;
+    padding: 12px 16px;
+    padding-bottom: 11px;
+    background: #262626;
 }
 
-.nav-holder .active {
+.site-label .site-logo {
+    width: 30px;
+    height: 30px;
+    display: inline-block;
+}
+
+.site-label .site-name {
+    font-size: 28px;
+    vertical-align: top;
+    display: inline-block;
+    color: white;
+}
+
+.sidebar-holder .nav-holder {
+    width: 100%;
+}
+
+.nav-holder .nav-link {
+    display: block;
+    width: 100%;
+}
+
+.nav-holder .nav-link a {
+    display: block;
+    width: 100%;
+    cursor: pointer;
+    padding: 16px;
+    padding-left: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 18px;
+}
+
+.nav-holder .nav-link a {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.nav-holder .nav-link:hover a{
+    background: #333333;
     color: #fff;
+}
+
+.nav-holder .nav-link a.active {
+    color: #fff;
+    background-color: #2D2D2D;
+
 }
 
 
@@ -23,18 +67,52 @@
     width: 80%;
     display: inline-block;
     vertical-align: top;
-
+    background: rgba(252, 233, 234, 0.25);
 }
 
 .content .header {
     background-color: #CB202D;
     color: #fff;
     padding: 16px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
+    position: relative;
 }
 
 .header .title {
-    font-weight: bold;
     font-size: 24px;
+    display: inline-block;
+    margin-right: 4px;
+}
+
+.header .header-team {
+    padding: 0 8px;
+    padding-right: 24px;
+    color: rgba(255, 255, 255, 0.7);
+    position: relative;
+    display: inline-block;
+    border-radius: 2px;
+    cursor: pointer;
+}
+
+.header-team .header-team-name {
+    display: inline-block;
+}
+
+.header-team .header-team-icon {
+    position: absolute;
+    top: -4px;
+}
+
+.header-team:hover .header-team-name,
+.header-team:hover .header-team-icon {
+    color: white;
+}
+
+.header .profile-menu {
+    position: absolute;
+    right: 8px;
+    top: 16px;
+    cursor: pointer;
 }
 
 /*--------------Data List ----------------*/
@@ -46,7 +124,7 @@
     padding: 16px;
     background-color: #fff;
     border-radius: 4px;
-    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.14);
 }
 
 .table-holder table {
