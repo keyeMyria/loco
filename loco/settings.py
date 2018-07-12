@@ -168,14 +168,6 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/web/login'
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.BasicAuthentication',
-    ),
-}
-
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,

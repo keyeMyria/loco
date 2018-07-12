@@ -17,6 +17,8 @@ class CitySerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'created', 'updated')
 
 class MerchantSerializer(serializers.ModelSerializer):
+	team = serializers.PrimaryKeyRelatedField(read_only=True)
+
 	class Meta:
 		model = models.Merchant
 		exclude = ("created_by", )
