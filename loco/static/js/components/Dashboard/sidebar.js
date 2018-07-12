@@ -5,6 +5,7 @@ import {
   HashRouter
 } from "react-router-dom";
 import Items from "./Items/index";
+import ItemDetail from "./Items/ItemDetail";
 import Merchants from "./Merchants/index";
 import Orders from "./Orders/index";
 
@@ -38,9 +39,10 @@ export default class Sidebar extends Component {
                         </ul>
                     </div>
                     <div className="content">
-                        <Route path="/orders" component={Orders}/>
-                        <Route path="/merchants" component={Merchants}/>
-                        <Route path="/items" component={Items}/>
+                        <Route exact path="/orders" component={Orders}/>
+                        <Route exact path="/merchants" component={Merchants}/>                        
+                        <Route exact path="/items" component={Items}/>
+                        <Route path="/items/:id" component={ItemDetail}/>
                     </div>
                 </div>
             </HashRouter>        

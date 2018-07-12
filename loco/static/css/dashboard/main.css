@@ -78,3 +78,9 @@
     border-bottom: 1px solid #d8dae1;
     vertical-align: middle;
 }
+
+/*--------------------Item Detail Holder----------------*/
+
+.item-detail-holder {
+    margin: 80px;
+}

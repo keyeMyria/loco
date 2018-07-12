@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { getItems } from '../../../reducer/dashboard';
-import DataList from './DataList'
+import ItemList from './ItemList'
 
 class Items extends Component {
     
@@ -30,7 +30,7 @@ class Items extends Component {
                 <header className="header">
 				    <h1 className="title">Items</h1>
                 </header>
-                <DataList itemsData={this.state.itemsData} />
+                <ItemList itemsData={this.state.itemsData} />
 			</div>            
         );
 	}
