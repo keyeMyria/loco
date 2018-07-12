@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title_block %}
+    <title>Dashboard | Anuvad</title>
+{%endblock%}
+
+{% block meta_block %}
+    <link rel="canonical" href="https://anivad.io/" />
+    <meta name="description" content="Best way to manage teams and operations on field"/>
+{%endblock%}
+
+{% block css_block %}
+    <!-- build:css /static/build/home.css -->
+    <link rel="stylesheet" href="/static/css/base.css">
+    <link rel="stylesheet" href="/static/css/dashboard/main.css">
+    <!-- endbuild -->
+{%endblock%}
+
+{% block content_block %}
+
+    <div id="dashboard">
+    </div>
+    
+{% endblock %}
+
+{% block script_block %}
+    <script>
+        window.pageProps = JSON.parse('{{ pageProps | safe }}');
+        window.mountDashboard = document.getElementById('dashboard');
+    </script>
+
+    <script src="{% static 'js/build/Dashboard.js' %}"></script>
+{% endblock %}
