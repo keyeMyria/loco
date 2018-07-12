@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import { Link } from "react-router-dom";
 
-export default class DataList extends Component {
+export default class ItemList extends Component {
 
     render() {
         return (
@@ -17,9 +18,15 @@ export default class DataList extends Component {
                         { this.props.itemsData.map((item, index) => {
                             return (
                                 <tr key={index}>
-                                    <td>{item.serial_number}</td>
-                                    <td>{item.name}</td>
-                                    <td>{item.price}</td>
+                                    <td>
+                                        <Link to={"/items/" + item.id }>{item.serial_number}</Link>
+                                    </td>
+                                    <td>
+                                        <Link to={"/items/" + item.id }>{item.name}</Link>
+                                    </td>
+                                    <td>
+                                        <Link to={"/items/" + item.id }>{item.price}</Link>
+                                    </td>
                                 </tr>
                             )
                             })

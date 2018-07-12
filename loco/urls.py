@@ -44,7 +44,7 @@ urlpatterns += [
     url(r'^/?$', accounts_web_views.home),
     url(r'^web/login/?$', accounts_web_views.login),
     url(r'^web/teams/?$', teams_web_views.teams),
-    url(r'^web/dashboard/?$', teams_web_views.dashboard),
+    url(r'^web/teams/(?P<team_id>[^/]+)/?$', teams_web_views.dashboard),
 ]
 
 

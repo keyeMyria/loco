@@ -1,11 +1,18 @@
 import 'react-dates/initialize';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 import Sidebar from './sidebar';
+import { initTeamId } from '../../reducer/dashboard';
 
-export default class Dashboard extends Component {
+class Dashboard extends Component {
+
+	constructor(props) {
+        super(props);
+        this.props.initTeamId(this.props.team_id);
+    }
 
     render() {
 
@@ -17,5 +24,9 @@ export default class Dashboard extends Component {
 	}
 }
 
+export default Dashboard = connect(
+    (state) => ({}), 
+    {initTeamId: initTeamId}
+)(Dashboard)
 
 
