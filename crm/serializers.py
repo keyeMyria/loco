@@ -17,16 +17,12 @@ class CitySerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'created', 'updated')
 
 class MerchantSerializer(serializers.ModelSerializer):
-	state = StateSerializer(read_only=True)
-	city = CitySerializer(read_only=True)
-
 	class Meta:
 		model = models.Merchant
 		exclude = ("created_by", )
         read_only_fields = ('id', 'created', 'updated', 'team')
 
 class ItemSerializer(serializers.ModelSerializer):
-
 	class Meta:
 		model = models.Item
 		exclude = ("created_by", )
