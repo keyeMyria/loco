@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 export default class DataList extends Component {
 
     render() {
-
         return (
             <div className="table-holder">
                 <table>
@@ -15,11 +14,16 @@ export default class DataList extends Component {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>C7PL1AUH</td>
-                            <td>Adagio tablets</td>
-                            <td>452.5</td>
-                        </tr>
+                        { this.props.itemsData.map((item, index) => {
+                            return (
+                                <tr key={index}>
+                                    <td>{item.serial_number}</td>
+                                    <td>{item.name}</td>
+                                    <td>{item.price}</td>
+                                </tr>
+                            )
+                            })
+                        }
                     </tbody>
                 </table>
             </div>            

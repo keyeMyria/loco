@@ -10,13 +10,13 @@ const INITIAL_STATE = {
 export default function dashboard(state = INITIAL_STATE, action={}) {
     switch(action.type) {
         case GET_ITEMS_START:
-            return { ...state, inProgress: true, error: "", itemsData: {}};
+            return { ...state, inProgress: true, error: "", itemsData: []};
         case GET_ITEMS_SUCCESS:
             var itemsData = JSON.parse(action.result);
             itemsData = parseSolrResponse(itemsData);
             return { ...state, inProgress: false, error: "", itemsData: itemsData};
         case GET_ITEMS_FAILURE:
-            return { ...state, inProgress: false, error: "Get Items Failed.", itemsData: {}};
+            return { ...state, inProgress: false, error: "Get Items Failed.", itemsData: []};
         default:
             return state;
     }

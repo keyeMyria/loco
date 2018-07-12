@@ -9,11 +9,18 @@ class Items extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            "itemsData": []
         } 
     }
 
     componentWillMount() {
         this.props.getItems("61");
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.itemsData) {
+            this.state.itemsData = nextProps.itemsData
+        }
     }
 
     render() {
@@ -23,7 +30,7 @@ class Items extends Component {
                 <header className="header">
 				    <h1 className="title">Items</h1>
                 </header>
-                <DataList />
+                <DataList itemsData={this.state.itemsData} />
 			</div>            
         );
 	}
