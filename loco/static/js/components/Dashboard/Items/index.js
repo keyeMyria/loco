@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 
-import { getItems } from '../reducer/dashboard';
+import { getItems } from '../../../reducer/dashboard';
 import DataList from './DataList'
 
 class Items extends Component {
