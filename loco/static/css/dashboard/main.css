@@ -1,0 +1,80 @@
+/*----------------Sidebar-------------------*/
+
+.sidebar-holder {
+    width: 20%;
+    display: inline-block;
+    background-color: #aaa;
+    height: 100vh;
+}
+
+.sidebar-holder .nav-holder {
+    margin-top: 32px;
+    margin-left: 40px;
+    line-height: 2;
+}
+
+.nav-holder .active {
+    color: #fff;
+}
+
+
+/*-----------------Content------------------*/
+.content {
+    width: 80%;
+    display: inline-block;
+    vertical-align: top;
+
+}
+
+.content .header {
+    background-color: #338aed;
+    color: #fff;
+    padding: 16px;
+}
+
+.header .title {
+    font-weight: bold;
+    font-size: 24px;
+}
+
+/*--------------Data List ----------------*/
+
+.table-holder {
+    width: 80%;
+    text-align: left;
+    margin: 16px auto;
+    padding: 16px;
+    background-color: #fff;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+}
+
+.table-holder table {
+    width: 100%;
+    padding: 16px;
+    border-collapse: collapse;
+}
+
+.table-holder table th {
+    color: #9c27b0
+}
+
+.table-holder table tr {
+    border-bottom: 1px solid black;
+}
+
+.table-holder table th {
+    color: #9c27b0;
+    height: 40px;
+}
+
+.table-holder table td {
+    height: 40px;
+    font-size: 14px;
+}
+
+.table-holder td,
+.table-holder th {
+    border-bottom: 1px solid #d8dae1;
+    vertical-align: middle;
+}

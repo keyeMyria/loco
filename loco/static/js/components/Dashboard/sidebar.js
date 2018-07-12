@@ -21,17 +21,23 @@ export default class Sidebar extends Component {
         return (
             <HashRouter>
                 <div>
-                    <div>
+                    <div className="sidebar-holder">
                         <div className="logo-holder">
                             <img src=""/>
                         </div>
-                        <ul>
-                            <li><NavLink to="/orders">Orders</NavLink></li>
-                            <li><NavLink to="/merchants">Merchants</NavLink></li>
-                            <li><NavLink to="/items">Items</NavLink></li>
+                        <ul className="nav-holder">
+                            <li className="nav-link">
+                                <NavLink to="/orders">Orders</NavLink>
+                            </li>
+                            <li className="nav-link">
+                                <NavLink to="/merchants">Merchants</NavLink>
+                            </li>
+                            <li className="nav-link">
+                                <NavLink to="/items">Items</NavLink>
+                            </li>
                         </ul>
                     </div>
-                    <div className="routes">
+                    <div className="content">
                         <Route path="/orders" component={Orders}/>
                         <Route path="/merchants" component={Merchants}/>
                         <Route path="/items" component={Items}/>
