@@ -17,7 +17,6 @@ class CitySerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'created', 'updated')
 
 class MerchantSerializer(serializers.ModelSerializer):
-	team = TeamSerializer(read_only=True)
 	state = StateSerializer(read_only=True)
 	city = CitySerializer(read_only=True)
 
@@ -27,7 +26,6 @@ class MerchantSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'created', 'updated', 'team')
 
 class ItemSerializer(serializers.ModelSerializer):
-	team = TeamSerializer(read_only=True)
 
 	class Meta:
 		model = models.Item
