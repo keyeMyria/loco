@@ -1,0 +1,147 @@
+/*------------Filter bar----------*/
+
+.filter-bar {
+	width: 100%;
+	max-width: 1300px;
+	padding: 8px 16px;
+}
+
+/*-----------Filter chips-----------*/
+
+.filter-bar .section-chip-filter {
+	width: 33%;
+	display: inline-block;
+}
+
+.section-chip-filter .filter-chip {
+	background: transparent;
+	border: 1px solid rgba(0, 0, 0, 0.26);
+	border-radius: 16px;
+	padding: 4px 8px;
+	padding-bottom: 2px;
+	cursor: pointer;
+	display: inline-block;
+	margin-right: 8px;
+}
+
+.section-chip-filter .filter-chip:hover {
+	border-color: rgba(0, 0, 0, 0.54);
+}
+
+.filter-chip .filter-chip-icon {
+	font-size: 14px;
+	color: 	rgba(0, 0, 0, 0.26);
+}
+
+.filter-chip .filter-chip-text {
+	display: inline-block;
+	color: 	rgba(0, 0, 0, 0.26);
+	font-size: 14px;
+	vertical-align: top;
+	margin-right: 4px;
+}
+
+.filter-chip:hover .filter-chip-text,
+.filter-chip:hover .filter-chip-icon {
+	color: 	rgba(0, 0, 0, 0.54);
+}
+
+.section-chip-filter .filter-chip.active {
+	background: #CB202D;
+	border-color: #CB202D;
+}
+
+.filter-chip.active .filter-chip-icon,
+.filter-chip.active .filter-chip-text {
+	color: white;
+}
+
+/*------------- Query Filter-----------*/
+
+.filter-bar .section-query-filter {
+	width: 33%;
+	text-align: center;
+	display: inline-block;
+	vertical-align: top;
+}
+
+.section-query-filter .query-filter-holder {
+	max-width: 240px;
+	position: relative;
+}
+
+.query-filter-holder .filter-query-icon {
+	color: rgba(0, 0, 0, 0.26);
+	position: absolute;
+	left: 4px;
+	top: 2px;
+}
+
+.query-filter-holder:hover .filter-query-icon {
+	color: #CB202D;
+}
+
+.query-filter-holder .filter-query-input {
+	width: 100%;
+	border: none;
+	border: 1px solid rgba(0, 0, 0, 0.26);
+	border-radius: 16px;
+	background: transparent;
+	display: inline-block;
+	vertical-align: top;
+	font-size: 16px;
+	padding: 4px;
+	padding-left: 32px;
+}
+
+.query-filter-holder .filter-query-input::placeholder {
+	color: rgba(0, 0, 0, 0.26);
+}
+
+.query-filter-holder .filter-query-input:focus {
+	border-color: #CB202D;
+}
+
+/*---------------- Date Filter ----------*/
+.filter-bar .section-date-filter {
+	width: 33%;
+	display: inline-block;
+	vertical-align: top;
+	text-align: right;
+}
+
+.section-date-filter .date-filter-holder {
+	max-width: 280px;
+	text-align: center;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.DateRangePickerInput__withBorder {
+	border: none;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.26);
+}
+
+.DateRangePickerInput__withBorder:hover {
+	border-color: #CB202D;
+}
+
+.DateInput {
+	width: 92px;
+}
+
+.DateRangePickerInput_arrow {
+	/*display: inline;*/
+	margin-right: 4px;
+}
+
+.DateInput_input {
+	padding: 4px;
+	padding-top: 4px;
+	font-size: 16px;
+	line-height: 1em;
+}
+
+.DateInput_input__focused {
+	border-color: #CB202D;
+}

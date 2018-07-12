@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { DateRangePicker } from 'react-dates';
 
 import { getItems } from '../../../reducer/dashboard';
 import DataList from './DataList'
@@ -30,6 +31,37 @@ class Items extends Component {
                 <header className="header">
 				    <h1 className="title">Items</h1>
                 </header>
+                <section className="filter-bar">
+                    <section className="section-chip-filter">
+                        <section className="filter-chip">
+                            <p className="filter-chip-text">Filter</p>
+                            <i className="material-icons filter-chip-icon">filter_list</i>
+                        </section>
+                        <section className="filter-chip active">
+                            <p className="filter-chip-text">Filter</p>
+                            <i className="material-icons filter-chip-icon">close</i>
+                        </section>                        
+                    </section>
+                    <section className="section-query-filter">
+                        <section className="query-filter-holder">
+                            <i className="material-icons filter-query-icon">search</i>
+                            <input className="filter-query-input" type="text" placeholder="Search" />
+                        </section>
+                    </section>
+                    <section className="section-date-filter">
+                        <section className="date-filter-holder">
+                            <DateRangePicker
+                              startDate={this.state.startDate} // momentPropTypes.momentObj or null,
+                              startDateId="your_unique_start_date_id" // PropTypes.string.isRequired,
+                              endDate={this.state.endDate} // momentPropTypes.momentObj or null,
+                              endDateId="your_unique_end_date_id" // PropTypes.string.isRequired,
+                              onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })} // PropTypes.func.isRequired,
+                              focusedInput={this.state.focusedInput} // PropTypes.oneOf([START_DATE, END_DATE]) or null,
+                              onFocusChange={focusedInput => this.setState({ focusedInput })} // PropTypes.func.isRequired,
+                            />
+                        </section>
+                    </section>                    
+                </section>
                 <DataList itemsData={this.state.itemsData} />
 			</div>            
         );

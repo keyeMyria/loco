@@ -3,7 +3,7 @@
 .sidebar-holder {
     width: 20%;
     display: inline-block;
-    background-color: #aaa;
+    background-color: #2D2D2D;
     height: 100vh;
 }
 
@@ -27,7 +27,7 @@
 }
 
 .content .header {
-    background-color: #338aed;
+    background-color: #CB202D;
     color: #fff;
     padding: 16px;
 }
