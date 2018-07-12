@@ -36,25 +36,10 @@ class MerchantList(APIView):
     def post(self, request, team_id, format=None):
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
-
-        city = request.data.get('city', {})
-        if city:
-            city = get_object_or_404(models.City, id=city.get('id', 0))
-        else:
-            city = None
-
-        state = request.data.get('state', {})
-        if state:
-            state = get_object_or_404(models.State, id=state.get('id', 0))
-        else:
-            state = None
-
         serializer = serializers.MerchantSerializer(data=request.data)
         if serializer.is_valid():
             merchant = serializer.save(team=team, 
-                created_by=request.user,
-                city=city,
-                state=state)
+                created_by=request.user)
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -72,24 +57,9 @@ class MerchantDetail(APIView):
     def put(self, request, merchant_id, format=None):
         merchant = get_object_or_404(models.Merchant, id=merchant_id)
         self.check_object_permissions(request, merchant)
-
-        city = request.data.get('city', {})
-        if city:
-            city = get_object_or_404(models.City, id=city.get('id', 0))
-        else:
-            city = None
-
-        state = request.data.get('state', {})
-        if state:
-            state = get_object_or_404(models.State, id=state.get('id', 0))
-        else:
-            state = None
-
         serializer = serializers.MerchantSerializer(merchant, data=request.data)
         if serializer.is_valid():
-            merchant = serializer.save(
-                city=city,
-                state=state)
+            merchant = serializer.save()
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
