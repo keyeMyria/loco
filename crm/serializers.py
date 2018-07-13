@@ -25,6 +25,8 @@ class MerchantSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'created', 'updated', 'team')
 
 class ItemSerializer(serializers.ModelSerializer):
+	team = serializers.PrimaryKeyRelatedField(read_only=True)
+	
 	class Meta:
 		model = models.Item
 		exclude = ("created_by", )
