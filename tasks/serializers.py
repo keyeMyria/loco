@@ -1,10 +1,11 @@
+
 import json
 from rest_framework import serializers
-from .models import Task, TaskMedia, DeliveryTaskContent, TaskHistory, SalesTaskContent
+from .models import Task, TaskMedia, DeliveryTaskContent, TaskHistory, SalesTaskContent, SalesTaskItems
 
 from accounts.serializers import UserSerializer
 from teams.serializers import TeamSerializer
-from crm.models import Merchant, City, State
+from crm.models import Merchant, City, State, Item
 from crm import serializers as crm_serializers
 
 def get_content_serializer(content_type, **kwargs):
@@ -65,11 +66,30 @@ class DeliveryTaskContentSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('created', 'updated')
 
+class SalesTaskItemsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SalesTaskItems
+        fields = '__all__'
+        read_only_fields = ('created', 'updated')
+
 class SalesTaskContentSerializer(serializers.ModelSerializer):
+    items = SalesTaskItemsSerializer(source="get_items", many=True, read_only=True)
+
     class Meta:
         model = SalesTaskContent
         fields = '__all__'
         read_only_fields = ('created', 'updated')
+
+    def create(self, validated_data):
+        content_object = SalesTaskContent.objects.create(**validated_data)
+        if "items" in self.initial_data:
+            items = self.initial_data.get('items')
+            for item in items:
+                item['item'] = Item.objects.get(id=item.get('item'))
+                item['sales_task_content'] = content_object
+                SalesTaskItems.objects.create(**item)
+
+        return content_object
 
 class ContentObjectRelatedField(serializers.RelatedField):
 

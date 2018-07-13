@@ -118,8 +118,7 @@ class DeliveryTaskContent(BaseModel):
 class SalesTaskContent(BaseModel):
     description = models.TextField(blank=True)
     merchant = models.ForeignKey(Merchant)
-    items = models.ManyToManyField(Item)
-    items_temp = models.ManyToManyField(Item,
+    items = models.ManyToManyField(Item,
         through='SalesTaskItems', related_name="items",
         through_fields=('sales_task_content', 'item'))
     amount = models.DecimalField(max_digits=11, decimal_places=2, default=0)
@@ -127,6 +126,9 @@ class SalesTaskContent(BaseModel):
     def copy_items(self):
         for item in self.items.all():
             SalesTaskItems.objects.create(item=item, sales_task_content=self)
+
+    def get_items(self):
+        return SalesTaskItems.objects.filter(sales_task_content=self)
 
 class SalesTaskItems(BaseModel):
     item = models.ForeignKey(Item)
