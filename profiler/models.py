@@ -49,24 +49,27 @@ class ProfilingRecord(models.Model):
         if settings.DEBUG:
             logger.info('Record Timing - %s:%s', api_name, self.duration)
 
-        tags = ['%s:%s' % (k, self.tags.get(k)) for k in self.tags] if self.tags else None
         metric = 'apiserver.timing.%s' % api_name
-        statsd.timing(metric, self.duration, tags=tags)
-
+        statsd.timing(metric, self.duration)
         metric_timing_all = 'apiserver.timing.all'
         statsd.timing(metric_timing_all, self.duration, tags=["api_name:%s" % api_name])
 
     def _record_success_count(self, api_name):
+        if settings.DEBUG:
+            logger.info('Record Success - %s:%s', api_name)
+
         metric = 'apiserver.success.%s' % api_name
         statsd.histogram(metric, 1)
+        metric_success_all = 'apiserver.success.all'
+        statsd.histogram(metric_success_all, 1, tags=["api_name:%s" % api_name])
+
 
     def _record_api_error(self, api_name, error_name):
         if settings.DEBUG:
-            logger.info('Record Timing - %s:%s', api_name, error_name)
+            logger.info('Record Error - %s:%s', api_name, error_name)
 
         metric = 'apiserver.errors.%s.%s' % (error_name, api_name)
         statsd.histogram(metric, 1)
-
         metric_all_errors = 'apiserver.errors.%s.all' % error_name
         statsd.histogram(metric_all_errors, 1, tags=["api_name:%s" % api_name])
 
@@ -75,97 +78,31 @@ class ProfilingRecord(models.Model):
         if not api_name:
             return
 
-        if api_name in ['TemplateView', 'content_data', 'dump_data', 'login_data']:
-            return
-
-        api_name = api_name.split('.')[-1]
-        if 'v1' in self.view_name:
-            api_name = 'v1_' + api_name
-
-        api_name = api_name.replace(" ", "")
-        api_name = api_name.replace("[", "__")
-        api_name = api_name.replace("]", "__")
-
         if self.response_status_code == 200:
             self._record_timing(api_name)
+            self._record_success_count(api_name)
         elif self.response_status_code == 599:
             self._record_api_error(api_name, 'timeout')
         elif self.response_status_code >= 500:
             self._record_api_error(api_name, '5xx')
 
-    def start(self):
-        """Set start_ts from current datetime."""
+    def start(self, metric='all'):
         self.start_ts = timezone.now()
         self.end_ts = None
         self.duration = None
+        self.view_name = metric
         return self
 
-    @property
-    def elapsed(self):
-        """Calculated time elapsed so far."""
-        assert self.start_ts is not None, u"You must 'start' before you can get elapsed time."
-        return (timezone.now() - self.start_ts).total_seconds()
+    def stop(self, response_status_code = 200, api_name=''):
+        if not self.start_ts:
+            return self
 
-    def set_request(self, request):
-        """Extract values from HttpRequest and store locally."""
-        self.request = request
-        self.http_method = request.method
-        self.request_uri = request.path
+        if api_name:
+            self.view_name = api_name
 
-        try:
-            resolution = resolve(request.path)
-            self.view_name = resolution.view_name
-        except Exception as e:
-            print(e)
-
-        self.request_data_get = request.GET
-        # self.request_data_post = request.body
-        self.request_data_post = ''
-        self.http_user_agent = request.META.get('HTTP_USER_AGENT', u'')[:400]
-        # we care about the domain more than the URL itself, so truncating
-        # doesn't lose much useful information
-        self.http_referer = request.META.get('HTTP_REFERER', u'')[:400]
-        # X-Forwarded-For is used by convention when passing through
-        # load balancers etc., as the REMOTE_ADDR is rewritten in transit
-        self.remote_addr = (
-            request.META.get('HTTP_X_FORWARDED_FOR')
-            if 'HTTP_X_FORWARDED_FOR' in request.META
-            else request.META.get('REMOTE_ADDR')
-        )
-        # NB you can't store AnonymouseUsers, so don't bother trying
-        if hasattr(request, 'user') and request.user.is_authenticated():
-            self.user_id = request.user.id
-        return self
-
-    def set_response(self, response):
-        """Extract values from HttpResponse and store locally."""
-        self.response = response
-        self.response_status_code = response.status_code
-        self.response_content_length = len(response.content)
-        return self
-
-    def stop(self):
-        """Set end_ts and duration from current datetime."""
-        assert self.start_ts is not None, u"You must 'start' before you can 'stop'"  # noqa
         self.end_ts = timezone.now()
         duration = (self.end_ts - self.start_ts).total_seconds()
         self.duration = round(duration, 2)
-        if hasattr(self, 'response'):
-            self.response['X-Profiler-Duration'] = self.duration
+        self.response_status_code = response_status_code
+        self.save()
         return self
-
-    def cancel(self):
-        """Cancel the profile by setting is_cancelled to True."""
-        self.start_ts = None
-        self.end_ts = None
-        self.duration = None
-        self.is_cancelled = True
-        return self
-
-    def capture(self):
-        """Call stop() and save() on the profile if is_cancelled is False."""
-        if getattr(self, 'is_cancelled', False) is True:
-            logger.debug(u"%r has been cancelled.", self)
-            return self
-        else:
-            return self.stop().save()

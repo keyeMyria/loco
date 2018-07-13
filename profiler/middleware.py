@@ -14,17 +14,25 @@ class ProfilingMiddleware(MiddlewareMixin):
         return [r for r in rules if r.match_uri(request.path) and r.match_user(user)]  # noqa
 
     def process_request(self, request):
-        request.profiler = ProfilingRecord().start()
+        try:
+            request.profiler = ProfilingRecord().start()
+        except Exception as e:
+            pass
 
     def process_response(self, request, response):
-        assert getattr(request, 'profiler', None) is not None, (
-            u"Request has no profiler attached."
-        )
+        try:
+            if not hasattr(request, 'profiler'):
+                logger.error("Profiler not set for", request.path)
+                return response
 
-        if '/admin' in request.path:
+            current_view = resolve(request.path)
+            if not hasattr(current_view, 'view_name'):
+                return response
+
+            api_name = current_view.view_name
+            api_name = api_name.split('.')[-1]
+            profiler = request.profiler
+            profiler.stop(api_name=api_name)
             return response
-
-        profiler = request.profiler.set_request(request).set_response(response)
-        profiler.capture()
-        profiler.set_response(response)
-        return response
+        except Exception as e:
+            return response

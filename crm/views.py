@@ -40,6 +40,7 @@ class MerchantList(APIView):
         if serializer.is_valid():
             merchant = serializer.save(team=team, 
                 created_by=request.user)
+            tasks.update_merchant_index_async.delay()
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -60,6 +61,7 @@ class MerchantDetail(APIView):
         serializer = serializers.MerchantSerializer(merchant, data=request.data)
         if serializer.is_valid():
             merchant = serializer.save()
+            tasks.update_merchant_index_async.delay()
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -76,7 +78,7 @@ class MerchantUpload(APIView):
         serializer = serializers.MerchantUploadSerializer(data=request.data)
         if serializer.is_valid():
             upload = serializer.save(created_by=request.user, team=team)
-            tasks.upload_merchants_async(upload.id)
+            tasks.upload_merchants_async.delay(upload.id)
             return Response(serializer.data)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -108,6 +110,7 @@ class ItemList(APIView):
         if serializer.is_valid():
             item = serializer.save(team=team, 
                 created_by=request.user)
+            tasks.update_item_index_async.delay()
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -128,6 +131,7 @@ class ItemDetail(APIView):
         serializer = serializers.ItemSerializer(item, data=request.data)
         if serializer.is_valid():
             item = serializer.save()
+            tasks.update_item_index_async.delay()
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -144,7 +148,7 @@ class ItemUpload(APIView):
         serializer = serializers.ItemUploadSerializer(data=request.data)
         if serializer.is_valid():
             upload = serializer.save(created_by=request.user, team=team)
-            tasks.upload_items_async(upload.id)
+            tasks.upload_items_async.delay(upload.id)
             return Response(serializer.data)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
