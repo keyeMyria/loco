@@ -134,3 +134,61 @@ class TaskHistorySerializer(serializers.ModelSerializer):
         model = TaskHistory
         fields = ('id', 'created', 'updated', 'actor', 'action', 'task')
         read_only_fields = ('created', 'updated')
+
+class DeepSalesTaskItemsSerializer(serializers.ModelSerializer):
+    item = crm_serializers.ItemSerializer(read_only=True)
+
+    class Meta:
+        model = SalesTaskItems
+        fields = '__all__'
+        read_only_fields = ('created', 'updated')
+
+class DeepSalesTaskContentSerializer(serializers.ModelSerializer):
+    items = DeepSalesTaskItemsSerializer(source="get_items", many=True, read_only=True)
+    merchant = crm_serializers.MerchantSerializer(read_only=True)
+
+    class Meta:
+        model = SalesTaskContent
+        fields = '__all__'
+        read_only_fields = ('created', 'updated')
+
+    def create(self, validated_data):
+        content_object = SalesTaskContent.objects.create(**validated_data)
+        if "items" in self.initial_data:
+            items = self.initial_data.get('items')
+            for item in items:
+                item['item'] = Item.objects.get(id=item.get('item'))
+                item['sales_task_content'] = content_object
+                SalesTaskItems.objects.create(**item)
+
+        return content_object
+
+class DeepContentObjectRelatedField(serializers.RelatedField):
+
+    def to_representation(self, value):
+
+        if isinstance(value, DeliveryTaskContent):
+            serializer = DeliveryTaskContentSerializer(value)
+        elif isinstance(value, SalesTaskContent):
+            serializer = DeepSalesTaskContentSerializer(value)
+        else:
+            raise Exception('Unexpected task content type')
+
+        return serializer.data
+
+
+class DeepTaskSerializer(serializers.ModelSerializer):
+    created_by = UserSerializer(read_only=True)
+    assigned_to = UserSerializer(read_only=True)
+    team = TeamSerializer(read_only=True)
+    content = DeepContentObjectRelatedField(source='content_object', read_only=True)
+    content_type = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Task
+        fields = "__all__"
+        read_only_fields = ('created', 'updated')
+
+    def get_content_type(seld, obj):
+        if obj.content_type:
+            return obj.content_type.model

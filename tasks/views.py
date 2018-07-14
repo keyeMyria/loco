@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view, permission_classes, parser_classes
@@ -97,6 +98,10 @@ class TaskList(APIView):
                 action="Created task",
                 action_type=models.TaskHistory.ACTION_CREATED
             )
+
+            deep_serializer = serializers.DeepTaskSerializer(task)
+            models.TaskSnapshot.objects.create(task=task,
+                content=json.dumps(deep_serializer.data))
             send_task_gcm_async.delay(history.id)
             return Response(serializer.data)
 

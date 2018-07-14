@@ -65,6 +65,9 @@ class Task(BaseModel):
         self.assigned_to = user
         self.save()
 
+class TaskSnapshot(BaseModel):
+    task = models.ForeignKey(Task, on_delete=models.DO_NOTHING)
+    content = models.TextField()
 
 def task_media_path(instance, filename):
     return 'teams/{0}/users/{1}/tasks/{2}/{3}'.format(
@@ -117,7 +120,7 @@ class DeliveryTaskContent(BaseModel):
 
 class SalesTaskContent(BaseModel):
     description = models.TextField(blank=True)
-    merchant = models.ForeignKey(Merchant)
+    merchant = models.ForeignKey(Merchant, on_delete=models.DO_NOTHING)
     items = models.ManyToManyField(Item,
         through='SalesTaskItems', related_name="items",
         through_fields=('sales_task_content', 'item'))
@@ -132,5 +135,5 @@ class SalesTaskContent(BaseModel):
 
 class SalesTaskItems(BaseModel):
     item = models.ForeignKey(Item)
-    sales_task_content = models.ForeignKey(SalesTaskContent)
+    sales_task_content = models.ForeignKey(SalesTaskContent, on_delete=models.DO_NOTHING)
     quantity = models.PositiveIntegerField(default=1)
