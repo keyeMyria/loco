@@ -163,9 +163,11 @@ def update_merchant_index():
         return None
 
 def update_task_index():
+    import time
+    time.sleep(2)
     url1 = SOLR_HOST + "task/dataimport?command=delta-import"
     url2 = SOLR_HOST + "admin/cores?action=RELOAD&core=task"
-    metric = METRIC + "update_merchant_index"
+    metric = METRIC + "update_task_index"
 
     try:
         profiler = ProfilingRecord().start(metric)
