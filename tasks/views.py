@@ -259,3 +259,24 @@ class TaskSearch(APIView):
         start, limit = utils.get_query_start_limit(request)
         tasks = solr.search_tasks(team.id, search_options, start, limit)
         return Response(tasks)
+
+class TaskCSV(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+
+        PARAM_QUERY = 'query'
+        PARAM_FILTERS = 'filters'
+        search_options = {}
+        query = request.query_params.get(PARAM_QUERY)
+        if query:
+            search_options['query'] = query
+
+        filters = request.query_params.get(PARAM_FILTERS, '')
+        if filters:
+            search_options['filters'] = filters
+
+        tasks = solr.csv_tasks(team.id, search_options)
+        return Response(tasks)

@@ -40,6 +40,16 @@ def get_query_solr(query, query_name='', metric='solr_all'):
         profiler.stop(500)
         return None
 
+def get_csv_solr(query, query_name='', metric='solr_all'):
+    try:
+        profiler = ProfilingRecord().start(metric)
+        response = requests.get(query)
+        profiler.stop(response.status_code)
+        return response.content
+    except:
+        profiler.stop(500)
+        return None
+
 def get_group_solr(query, group_field, query_name='', metric='solr_all'):
     try:
         profiler= ProfilingRecord().start(metric)
@@ -174,6 +184,25 @@ def search_merchants(team_id, search_options, start, limit):
     data, count = get_query_solr(query)
     return {'data': data, 'count': count}
 
+def csv_merchants(team_id, search_options):
+    query = SOLR_HOST + 'merchant/select?q=[[QUERY]]&wt=csv'
+    search_text = search_options.get('query')
+    if search_text:
+        search_text = "*" + str(search_text) + "*"
+    else:
+        search_text = "*:*"
+
+    query = query.replace("[[QUERY]]", search_text)
+
+    filters = search_options.get('filters')
+    if filters:
+        filters += " AND team_id:" + str(team_id)
+    else:
+        filters = "team_id:" + str(team_id)
+
+    query += "&fq="+filters
+    return get_csv_solr(query)
+
 def search_items(team_id, search_options, start, limit):
     query = SOLR_HOST + 'item/select?q=[[QUERY]]&wt=json&start=[[START]]&rows=[[LIMIT]]'
     query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
@@ -196,6 +225,25 @@ def search_items(team_id, search_options, start, limit):
     data, count = get_query_solr(query)
     return {'data': data, 'count': count}
 
+def csv_items(team_id, search_options):
+    query = SOLR_HOST + 'item/select?q=[[QUERY]]&wt=csv'
+    search_text = search_options.get('query')
+    if search_text:
+        search_text = "*" + str(search_text) + "*"
+    else:
+        search_text = "*:*"
+
+    query = query.replace("[[QUERY]]", search_text)
+
+    filters = search_options.get('filters')
+    if filters:
+        filters += " AND team_id:" + str(team_id)
+    else:
+        filters = "team_id:" + str(team_id)
+
+    query += "&fq="+filters
+    return get_csv_solr(query)
+
 def search_tasks(team_id, search_options, start, limit):
     query = SOLR_HOST + 'task/select?q=[[QUERY]]&wt=json&start=[[START]]&rows=[[LIMIT]]'
     query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
@@ -217,3 +265,22 @@ def search_tasks(team_id, search_options, start, limit):
     query += "&fq="+filters
     data, count = get_query_solr(query)
     return {'data': data, 'count': count}
+
+def csv_tasks(team_id, search_options):
+    query = SOLR_HOST + 'task/select?q=[[QUERY]]&wt=csv'
+    search_text = search_options.get('query')
+    if search_text:
+        search_text = "*" + str(search_text) + "*"
+    else:
+        search_text = "*:*"
+
+    query = query.replace("[[QUERY]]", search_text)
+
+    filters = search_options.get('filters')
+    if filters:
+        filters += " AND team_id:" + str(team_id)
+    else:
+        filters = "team_id:" + str(team_id)
+
+    query += "&fq="+filters
+    return get_csv_solr(query)
