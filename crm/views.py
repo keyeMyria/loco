@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 
 from loco import utils
+from loco.services import solr
 
 from . import serializers, models, tasks
 from . import permissions as crm_permissions
@@ -82,6 +83,28 @@ class MerchantUpload(APIView):
             return Response(serializer.data)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MerchantSearch(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+
+        PARAM_QUERY = 'query'
+        PARAM_FILTERS = 'filters'
+        search_options = {}
+        query = request.query_params.get(PARAM_QUERY)
+        if query:
+            search_options['query']
+
+        filters = request.query_params.get(PARAM_FILTERS, '')
+        if filters:
+            search_options['filters'] = filters
+
+        start, limit = utils.get_query_start_limit(request)
+        merchants = solr.search_merchants(team.id, search_options, start, limit)
+        return Response(merchants)
         
 
 class ItemList(APIView):

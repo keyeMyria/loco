@@ -33,6 +33,7 @@ urlpatterns = [
 	url(r'^(?P<team_id>[0-9]+)/tasks/files/$', tasks_views.task_media_upload),
 	url(r'^(?P<team_id>[0-9]+)/merchants/$', crm_views.MerchantList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/merchants/upload/$', crm_views.MerchantUpload.as_view()),
+	url(r'^(?P<team_id>[0-9]+)/merchants/search/$', crm_views.MerchantSearch.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/items/$', crm_views.ItemList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/items/upload/$', crm_views.ItemUpload.as_view()),
 ]

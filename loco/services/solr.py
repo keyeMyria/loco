@@ -1,4 +1,4 @@
-import requests
+import requests, urllib
 from django.conf import settings
 from logger import logger
 from profiler.models import ProfilingRecord
@@ -17,12 +17,18 @@ def process_solr_response(response, query):
         logger.error("Solr API failure: %s \nResponse - %s", query, response.content, exc_info=True, extra={'response': response,})
         return None
 
+    data = None
+    count = None
     response = response.json()
     if 'response' in response:
-        if 'docs' in response.get('response'):
-            return response.get('response').get('docs')
+        response = response.get('response')
+        if 'numFound' in response:
+            count = response.get('numFound')
 
-    return response
+        if 'docs' in response:
+            data = response.get('docs')
+
+    return (data, count)
 
 def get_query_solr(query, query_name='', metric='solr_all'):
     try:
@@ -111,7 +117,6 @@ def get_facet_query_solr(query, query_name='', metric='solr_all'):
         if 'facet_queries' in response.get('facet_counts'):
             return response.get('facet_counts').get('facet_queries')
 
-
 def update_item_index():
     url1 = SOLR_HOST + "item/dataimport?command=delta-import"
     url2 = SOLR_HOST + "admin/cores?action=RELOAD&core=item"
@@ -146,3 +151,30 @@ def update_merchant_index():
     except:
         profiler.stop(500)
         return None
+
+def search_merchants(team_id, search_options, start, limit):
+    query = SOLR_HOST + 'merchant/select?q=[[QUERY]]&wt=json&start=[[START]]&rows=[[LIMIT]]'
+    query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
+
+    search_text = search_options.get('query')
+    if search_text:
+        search = search_text.split(' ')
+        search = ['search_text:*' + urllib.urlencode(text) + '*' for text in search]
+        search_text = ' AND '.join([str(text) for text in search])
+    else:
+        search_text = "*"
+
+    query = query.replace("[[QUERY]]", search_text)
+
+    filters = search_options.get('filters')
+    if filters:
+        filters += " AND team_id:" + str(team_id)
+    else:
+        filters = "team_id:" + str(team_id)
+
+    query += "&fq="+filters
+
+    print (query)
+
+    data, count = get_query_solr(query)
+    return {'data': data, 'count': count}
