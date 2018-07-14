@@ -24,33 +24,9 @@ def get_content_serializer(content_type, **kwargs):
             if existing_merchant:
                 merchant_id = existing_merchant[0].id
             else:
-                city_id = merchant.get('city', 0)
-                if city_id:
-                    city = City.objects.filter(id=city_id)
-                    if not city:
-                        return (None, "Could not find city for id {}".format(city_id))
-
-                    city = city[0]
-                else:
-                    city = None
-
-                merchant['city'] = city
-
-                state_id = merchant.get('state', 0)
-                if state_id:
-                    state = State.objects.filter(id=state_id)
-                    if not state:
-                        return (None, "Could not find state for id {}".format(state_id))
-
-                    state = state[0]
-                else:
-                    state = None
-
-                merchant['state'] = state
-                merchant['team'] = team
                 ser = crm_serializers.MerchantSerializer(data=merchant)
                 if ser.is_valid():
-                    merchant_id = ser.save(team=team, city=city, state=state).id
+                    merchant_id = ser.save(team=team).id
                 else:
                     return (None, ser.errors)
 
