@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { DateRangePicker } from 'react-dates';
 
 import { getItems } from '../../../reducer/dashboard';
-import ItemList from './ItemList'
+import ItemListCard from './ItemListCard'
 
 class Items extends Component {
     
@@ -27,7 +27,7 @@ class Items extends Component {
     render() {
 
         return (
-			<div>
+			<div className="content-holder">
                 <header className="header">
 				    <h1 className="title">Items</h1>
                     <section className="header-team">
@@ -69,7 +69,7 @@ class Items extends Component {
                         </section>
                     </section>                    
                 </section>
-                <ItemList itemsData={this.state.itemsData} />
+                <ItemListCard itemsData={this.state.itemsData} />
 			</div>            
         );
 	}
