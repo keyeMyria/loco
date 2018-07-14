@@ -9,6 +9,7 @@ from rest_framework.parsers import MultiPartParser
 from rest_framework.exceptions import ValidationError
 
 from loco import utils
+from loco.services import solr
 
 from . import serializers, models
 from . import permissions as task_permissions
@@ -235,3 +236,26 @@ class TaskHistoryList(APIView):
         history = history.order_by('-created')[start:start+limit]
         data = serializers.TaskHistorySerializer(history, many=True).data
         return Response(data)
+
+
+class TaskSearch(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+
+        PARAM_QUERY = 'query'
+        PARAM_FILTERS = 'filters'
+        search_options = {}
+        query = request.query_params.get(PARAM_QUERY)
+        if query:
+            search_options['query'] = query
+
+        filters = request.query_params.get(PARAM_FILTERS, '')
+        if filters:
+            search_options['filters'] = filters
+
+        start, limit = utils.get_query_start_limit(request)
+        tasks = solr.search_tasks(team.id, search_options, start, limit)
+        return Response(tasks)

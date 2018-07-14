@@ -158,9 +158,7 @@ def search_merchants(team_id, search_options, start, limit):
 
     search_text = search_options.get('query')
     if search_text:
-        search = search_text.split(' ')
-        search = ['search_text:*' + urllib.urlencode(text) + '*' for text in search]
-        search_text = ' AND '.join([str(text) for text in search])
+        search_text = "*" + str(search_text) + "*"
     else:
         search_text = "*"
 
@@ -173,8 +171,49 @@ def search_merchants(team_id, search_options, start, limit):
         filters = "team_id:" + str(team_id)
 
     query += "&fq="+filters
+    data, count = get_query_solr(query)
+    return {'data': data, 'count': count}
 
-    print (query)
+def search_items(team_id, search_options, start, limit):
+    query = SOLR_HOST + 'item/select?q=[[QUERY]]&wt=json&start=[[START]]&rows=[[LIMIT]]'
+    query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
 
+    search_text = search_options.get('query')
+    if search_text:
+        search_text = "*" + str(search_text) + "*"
+    else:
+        search_text = "*"
+
+    query = query.replace("[[QUERY]]", search_text)
+
+    filters = search_options.get('filters')
+    if filters:
+        filters += " AND team_id:" + str(team_id)
+    else:
+        filters = "team_id:" + str(team_id)
+
+    query += "&fq="+filters
+    data, count = get_query_solr(query)
+    return {'data': data, 'count': count}
+
+def search_tasks(team_id, search_options, start, limit):
+    query = SOLR_HOST + 'task/select?q=[[QUERY]]&wt=json&start=[[START]]&rows=[[LIMIT]]'
+    query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
+
+    search_text = search_options.get('query')
+    if search_text:
+        search_text = "*" + str(search_text) + "*"
+    else:
+        search_text = "*"
+
+    query = query.replace("[[QUERY]]", search_text)
+
+    filters = search_options.get('filters')
+    if filters:
+        filters += " AND team_id:" + str(team_id)
+    else:
+        filters = "team_id:" + str(team_id)
+
+    query += "&fq="+filters
     data, count = get_query_solr(query)
     return {'data': data, 'count': count}

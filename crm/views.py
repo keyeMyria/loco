@@ -46,7 +46,6 @@ class MerchantList(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class MerchantDetail(APIView):
     permission_classes = (permissions.IsAuthenticated, crm_permissions.IsMerchantTeamMember)
 
@@ -66,7 +65,6 @@ class MerchantDetail(APIView):
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 class MerchantUpload(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)
@@ -96,7 +94,7 @@ class MerchantSearch(APIView):
         search_options = {}
         query = request.query_params.get(PARAM_QUERY)
         if query:
-            search_options['query']
+            search_options['query'] = query
 
         filters = request.query_params.get(PARAM_FILTERS, '')
         if filters:
@@ -106,7 +104,6 @@ class MerchantSearch(APIView):
         merchants = solr.search_merchants(team.id, search_options, start, limit)
         return Response(merchants)
         
-
 class ItemList(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)
 
@@ -138,7 +135,6 @@ class ItemList(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class ItemDetail(APIView):
     permission_classes = (permissions.IsAuthenticated, crm_permissions.IsItemTeamMember)
 
@@ -159,7 +155,6 @@ class ItemDetail(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class ItemUpload(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)
     parser_classes = (MultiPartParser, )
@@ -175,6 +170,28 @@ class ItemUpload(APIView):
             return Response(serializer.data)
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class ItemSearch(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+
+        PARAM_QUERY = 'query'
+        PARAM_FILTERS = 'filters'
+        search_options = {}
+        query = request.query_params.get(PARAM_QUERY)
+        if query:
+            search_options['query'] = query
+
+        filters = request.query_params.get(PARAM_FILTERS, '')
+        if filters:
+            search_options['filters'] = filters
+
+        start, limit = utils.get_query_start_limit(request)
+        items = solr.search_items(team.id, search_options, start, limit)
+        return Response(items)
 
 class StateList(APIView):
     permission_classes = (permissions.AllowAny,)
