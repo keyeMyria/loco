@@ -16,10 +16,10 @@ class Items extends Component {
 			<div className="content-holder">
                 <header className="header">
 				    <h1 className="title">Items</h1>
-                    <section className="header-team">
-                        <p className="header-team-name">Austro</p>
+                    <a className="header-team" href="/web/teams">
+                        <p className="header-team-name">{this.props.team_name}</p>
                         <i className="material-icons header-team-icon">arrow_drop_down</i>
-                    </section>
+                    </a>
                     <section class="profile-menu">
                         <img src="/static/images/person_white.png" />
                     </section>
@@ -34,7 +34,7 @@ class Items extends Component {
 }
 
 export default Items = connect(
-    (state) => ({inProgress: state.dashboard.inProgress}), 
+    (state) => ({team_name: state.dashboard.team_name}), 
     {}
 )(Items)
 
