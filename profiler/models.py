@@ -47,7 +47,7 @@ class ProfilingRecord(models.Model):
 
     def _record_timing(self, api_name):
         if settings.DEBUG:
-            logger.info('Record Timing - %s:%s', api_name, self.duration)
+            print('Record Timing - %s:%s', api_name, self.duration)
 
         metric = 'apiserver.timing.%s' % api_name
         statsd.timing(metric, self.duration)
@@ -56,7 +56,7 @@ class ProfilingRecord(models.Model):
 
     def _record_success_count(self, api_name):
         if settings.DEBUG:
-            logger.info('Record Success - %s:%s', api_name)
+            print('Record Success - %s:%s', api_name)
 
         metric = 'apiserver.success.%s' % api_name
         statsd.histogram(metric, 1)
@@ -66,7 +66,7 @@ class ProfilingRecord(models.Model):
 
     def _record_api_error(self, api_name, error_name):
         if settings.DEBUG:
-            logger.info('Record Error - %s:%s', api_name, error_name)
+            print('Record Error - %s:%s', api_name, error_name)
 
         metric = 'apiserver.errors.%s.%s' % (error_name, api_name)
         statsd.histogram(metric, 1)

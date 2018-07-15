@@ -1,48 +1,100 @@
 import {parseSolrResponse} from './utils.js'
 
+export const GET_ITEMS_INIT = 'dashboard/get_items_init';
 export const GET_ITEMS_START = 'dashboard/get_items_start';
+export const GET_ITEMS_PREV = 'dashboard/get_items_prev';
+export const GET_ITEMS_NEXT = 'dashboard/get_items_next';
 export const GET_ITEMS_FAILURE = 'dashboard/get_items_failure';
 export const GET_ITEMS_SUCCESS = 'dashboard/get_items_success';
-export const INIT_TEAM_ID = 'dashboard/init_team_id'
 
 const INITIAL_STATE = {
     team_id: "",
-    inProgress: false,
-    currentPage: 1,
-    entryCount: 0,
-    nextPage: 0,
-    prevPage:
+    inProgress: true,
+    start: -1,
+    end: 0,
+    limit: 10,
+    totalCount: 0,
+    currentCount: 0,
+    hasMoreItems: true,
+    data: [],
+    getTime: '',
+    error: ''
 };
 
-export default function dashboard(state = INITIAL_STATE, action={}) {
+export default function items(state = INITIAL_STATE, action={}) {
     switch(action.type) {
+        case GET_ITEMS_INIT:
+            return { ...state, ...INITIAL_STATE};
         case GET_ITEMS_START:
-            return { ...state, inProgress: true, error: "", itemsData: []};
+            return { ...state, inProgress: true, error: ""};
         case GET_ITEMS_SUCCESS:
-            var itemsData = JSON.parse(action.result);
-            itemsData = parseSolrResponse(itemsData);
-            return { ...state, inProgress: false, error: "", itemsData: itemsData};
+            var result = JSON.parse(action.result);
+            var start = state.start + state.limit;
+            if (state.start == -1) {
+                start = 0;
+            }
+
+            if (!result.data) {
+                result.data = []
+            }
+
+            var newData = state.data.concat(result.data);
+            var hasMoreItems = true
+            if (result.data.length < state.limit) {
+                hasMoreItems = false;
+            }
+
+            return { ...state, inProgress: false, error: "",
+                    data: newData,
+                    totalCount: result.count,
+                    currentCount: newData.length,
+                    start: start,
+                    end: start + result.data.length,
+                    hasMoreItems: hasMoreItems
+                };
+        case GET_ITEMS_NEXT:
+            var start = state.start + state.limit;
+            var end = start + state.limit;
+            if (end > state.currentCount) {
+                end = state.currentCount;
+            }
+
+            return {...state, start:start, end:end}
+        case GET_ITEMS_PREV:
+            var end = state.start; 
+            var start = state.start - state.limit;
+            return {...state, start:start, end:end}
         case GET_ITEMS_FAILURE:
             return { ...state, inProgress: false, error: "Get Items Failed.", itemsData: []};
-        case INIT_TEAM_ID:
-            state.team_id = action.team_id;
-            return {...state, team_id: action.team_id}
         default:
             return state;
     }
 }
 
-export function getItems(team_id) {
-	return {
-		types: [GET_ITEMS_START, GET_ITEMS_SUCCESS, GET_ITEMS_FAILURE],
-		promise: (client) => client.local.get('http://anuvad.io:8983/solr/item/select?q=*:*&rows=30&fq=team_id:' + team_id)
-	}
-}
+export function getItemsInit(team_id, limit) {
+    var url = '/teams/'+team_id+'/items/search?start=0&limit='+limit;
 
-export function initTeamId(team_id) {
     return {
-        type: INIT_TEAM_ID,
-        team_id: team_id
+        types: [GET_ITEMS_INIT, GET_ITEMS_SUCCESS, GET_ITEMS_FAILURE],
+        promise: (client) => client.local.get(url)
     }
 }
 
+export function getItemsNext(team_id, start, limit, currentCount) {
+    start = start + limit;
+    if (start < currentCount) {
+        return {type: GET_ITEMS_NEXT}
+    }
+
+    var url = '/teams/'+team_id+'/items/search?start=' + start + '&limit='+(limit);
+    return {
+        types: [GET_ITEMS_START, GET_ITEMS_SUCCESS, GET_ITEMS_FAILURE],
+        promise: (client) => client.local.get(url)
+    }
+}
+
+export function getItemsPrev() {
+    return {
+        type: GET_ITEMS_PREV
+    }
+}
