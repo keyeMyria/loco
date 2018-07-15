@@ -6,18 +6,17 @@ export default class Paginator extends Component {
         super(props)
     }
 
-    onNextClick = () => {
+    onNextClick = (event) => {
+        event.stopPropagation();
         if (this.props.start+this.props.limit >= this.props.totalCount) {
             return;
         }
 
-        this.props.getNext('61', 
-            this.props.start, 
-            this.props.limit,
-            this.props.currentCount);
+        this.props.getNext();
     };
 
-    onPrevClick = () => {
+    onPrevClick = (event) => {
+        event.stopPropagation();
         if (this.props.start == 0){
             return;
         }

@@ -11,7 +11,7 @@ class ItemListCard extends Component {
     }
 
     componentDidMount() {
-        this.props.getItemsInit('61', this.props.items.limit);
+        this.props.getItemsInit();
     }
 
     render() {
@@ -23,11 +23,9 @@ class ItemListCard extends Component {
                     start={items.start}
                     end={items.end}
                     limit={items.limit}
-                    totalCount={items.totalCount} 
-                    currentCount={items.currentCount} 
+                    totalCount={items.totalCount}
                     getNext={this.props.getItemsNext}
-                    getPrev={this.props.getItemsPrev}
-                    hasMoreItems={this.props.hasMoreItems} />
+                    getPrev={this.props.getItemsPrev}/>
             </section>
         );
 
