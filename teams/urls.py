@@ -32,15 +32,12 @@ urlpatterns = [
 	url(r'^(?P<team_id>[0-9]+)/tasks/$', tasks_views.TaskList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/tasks/files/$', tasks_views.task_media_upload),
 	url(r'^(?P<team_id>[0-9]+)/tasks/search/$', tasks_views.TaskSearch.as_view()),
-	url(r'^(?P<team_id>[0-9]+)/tasks/csv/$', tasks_views.TaskCSV.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/merchants/$', crm_views.MerchantList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/merchants/upload/$', crm_views.MerchantUpload.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/merchants/search/$', crm_views.MerchantSearch.as_view()),
-	url(r'^(?P<team_id>[0-9]+)/merchants/csv/$', crm_views.MerchantCSV.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/items/$', crm_views.ItemList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/items/upload/$', crm_views.ItemUpload.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/items/search/$', crm_views.ItemSearch.as_view()),
-	url(r'^(?P<team_id>[0-9]+)/items/csv/$', crm_views.ItemCSV.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

@@ -20,12 +20,13 @@ const INITIAL_STATE = {
     getTime: '',
     error: '',
     query: '',
+    csvURL: ''
 };
 
 export default function items(state = INITIAL_STATE, action={}) {
     switch(action.type) {
         case GET_ITEMS_INIT:
-            return { ...state, start: -1, data:[], inProgress: true};
+            return { ...state, start: -1, data:[], inProgress: true, csvURL: ''};
         case GET_ITEMS_START:
             return { ...state, inProgress: true, error: ""};
         case GET_ITEMS_SUCCESS:
@@ -51,7 +52,8 @@ export default function items(state = INITIAL_STATE, action={}) {
                     currentCount: newData.length,
                     start: start,
                     end: start + result.data.length,
-                    hasMoreItems: hasMoreItems
+                    hasMoreItems: hasMoreItems,
+                    csvURL: result.csv
                 };
         case GET_ITEMS_NEXT_CACHED:
             var start = state.start + state.limit;

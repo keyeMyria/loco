@@ -43,13 +43,26 @@ export default class Paginator extends Component {
             nextClass = nextClass + " disable";
         }
 
+        var downloadCSV;
+        if (this.props.csvURL) {
+            downloadCSV = (
+                <section className="list-pager-action">
+                    <a target="_blank" className="pager-action" href={this.props.csvURL}>
+                        <i className="material-icons pager-action-icon">vertical_align_bottom</i> 
+                        <p className="pager-action-name">Download CSV</p>
+                    </a>
+                </section>
+            );
+        }
+
         return (
             <section className="list-pager">
-            	<section className="list-pager-content">
-            		<p className="pager-counter">{pageCounter}</p>
-            		<i className={prevClass} onClick={this.onPrevClick}>keyboard_arrow_left</i>
-            		<i className={nextClass} onClick={this.onNextClick}>keyboard_arrow_right</i>
-            	</section>
+                {downloadCSV}
+                <section className="list-pager-content">
+                    <p className="pager-counter">{pageCounter}</p>
+                    <i className={prevClass} onClick={this.onPrevClick}>keyboard_arrow_left</i>
+                    <i className={nextClass} onClick={this.onNextClick}>keyboard_arrow_right</i>
+                </section>
             </section>         
         );
     }

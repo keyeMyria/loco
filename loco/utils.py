@@ -58,3 +58,15 @@ def get_query_start_limit(request):
     start = request.query_params.get(PARAM_START, 0)
     limit = request.query_params.get(PARAM_LIMIT, 10)
     return (int(start), int(limit))
+
+def get_csv_url(entity, team_id, start, total_count, query='', filters=''):
+    url = "/web/teams/{0}/{1}/csv?start={2}&limit={3}".format(
+        team_id, entity, start, total_count)
+
+    if query:
+        url += "&query=" + query
+
+    if filters:
+        url += "&filters=" + filters
+
+    return url

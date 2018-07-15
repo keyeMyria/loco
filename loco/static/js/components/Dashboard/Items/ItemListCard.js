@@ -24,6 +24,7 @@ class ItemListCard extends Component {
                     end={items.end}
                     limit={items.limit}
                     totalCount={items.totalCount}
+                    csvURL={items.csvURL}
                     getNext={this.props.getItemsNext}
                     getPrev={this.props.getItemsPrev}/>
             </section>
