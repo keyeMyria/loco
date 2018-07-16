@@ -4,22 +4,70 @@ import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
+import { createItem } from '../../../reducer/dashboard';
+
 class ItemDetail extends Component {
     
     constructor(props) {
         super(props);
         this.state = {
-            "itemData": []
+            "itemData": [],
+            "serial":"",
+            "name": "",
+            "price": 0,
+            create: true
         } 
     }
 
     componentWillMount() {
-        console.log(this.props.match.params.id);
-        console.log(this.props);
+        if(this.props.match.params.id) {
+            // this.props.getItemDetails(this.props.match.params.id);    
+            this.setState({
+                create: false
+            });        
+        }
     }
 
     componentWillReceiveProps(nextProps) {
         
+    }
+
+    onSerialChange = (ev, val) => {
+        ev.preventDefault();
+        this.setState({
+            "serial": val
+        });
+    }
+
+    onNameChange = (ev, val) => {
+        ev.preventDefault();
+        this.setState({
+            "name": val
+        });
+    }
+
+    onPriceChange = (ev, val) => {
+        ev.preventDefault();
+        this.setState({
+            "price": val
+        });
+    }
+
+    handleSubmit = (ev) => {
+        if(this.state.create) {
+            let price = parseFloat(price);
+            if(!price) {
+                price = 0;
+            }
+
+            let data = {
+                name: this.state.name,
+                price: price,
+                serial_number : this.state.serial
+            };
+
+            this.props.createItem(this.props.team_id, data);
+        }
     }
 
     render() {
@@ -40,20 +88,24 @@ class ItemDetail extends Component {
                     <p>Serial No.:</p>
                     <TextField
                         hintText=""
-                        onChange={this.onChange}
-                    />
+                        onChange={this.onSerialChange}
+                        value={this.state.serial} />
                     <p>Name</p>
                     <TextField
                         hintText=""
-                        onChange={this.onChange}
-                    />
+                        onChange={this.onNameChange}
+                        value={this.state.name} />
                     <p>Price</p>
                     <TextField
                         hintText=""
-                        onChange={this.onChange}
-                    />
+                        onChange={this.onPriceChange}
+                        value={this.state.price} />
 
-                    <RaisedButton label="Submit" primary={true} style={style} />
+                    <RaisedButton 
+                        label="Submit" 
+                        primary={true} 
+                        style={style} 
+                        onClick={this.handleSubmit} />
                 </div>
             </div>            
         );
@@ -61,8 +113,9 @@ class ItemDetail extends Component {
 }
 
 export default ItemDetail = connect(
-    (state) => ({ }), 
-    {}
+    (state) => ({ team_id: state.dashboard.team_id, inProgress: state.dashboard.createItemItemProgress,
+        error: state.dashboard.createItemError }), 
+    {createItem: createItem}
 )(ItemDetail)
 
 

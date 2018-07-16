@@ -19,13 +19,13 @@ export default class ItemList extends Component {
                             return (
                                 <tr key={index}>
                                     <td>
-                                        <Link to={"/items/" + item.id }>{item.serial_number}</Link>
+                                        <Link to={"/items/" + item.id + "/change" }>{item.serial_number}</Link>
                                     </td>
                                     <td>
-                                        <Link to={"/items/" + item.id }>{item.name}</Link>
+                                        <Link to={"/items/" + item.id + "/change" }>{item.name}</Link>
                                     </td>
                                     <td>
-                                        <Link to={"/items/" + item.id }>{item.price}</Link>
+                                        <Link to={"/items/" + item.id + "/change" }>{item.price}</Link>
                                     </td>
                                 </tr>
                             )

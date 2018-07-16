@@ -115,6 +115,20 @@
     cursor: pointer;
 }
 
+.create-link {
+    margin: 32px 10%;
+    margin-bottom: 24px;
+    text-align: right;
+}
+
+.create-link a {
+    color: #fff;
+    text-transform: uppercase;
+    background-color: #338aed;
+    padding: 12px 24px;
+    border-radius: 4px;
+}
+
 /*--------------Data List ----------------*/
 
 .table-holder {

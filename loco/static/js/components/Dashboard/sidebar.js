@@ -43,7 +43,8 @@ export default class Sidebar extends Component {
                         <Route exact path="/orders" component={Orders}/>
                         <Route exact path="/merchants" component={Merchants}/>                        
                         <Route exact path="/items" component={Items}/>
-                        <Route path="/items/:id" component={ItemDetail}/>
+                        <Route exact path="/items/create" component={ItemDetail}/>
+                        <Route exact path="/items/:id/change" component={ItemDetail}/>
                     </div>
                 </div>
             </HashRouter>        

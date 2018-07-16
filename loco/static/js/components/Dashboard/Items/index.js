@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Link } from "react-router-dom";
 import { DateRangePicker } from 'react-dates';
 
 import { getItems } from '../../../reducer/dashboard';
@@ -69,6 +70,9 @@ class Items extends Component {
                         </section>
                     </section>                    
                 </section>
+                <p className="create-link">
+                    <Link to="/items/create">Create Item</Link>
+                </p>
                 <ItemList itemsData={this.state.itemsData} />
 			</div>            
         );
