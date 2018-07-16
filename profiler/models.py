@@ -85,6 +85,8 @@ class ProfilingRecord(models.Model):
             self._record_api_error(api_name, 'timeout')
         elif self.response_status_code >= 500:
             self._record_api_error(api_name, '5xx')
+        elif self.response_status_code >= 400:
+            self._record_api_error(api_name, '4xx')
 
     def start(self, metric='all'):
         self.start_ts = timezone.now()

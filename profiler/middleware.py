@@ -32,7 +32,8 @@ class ProfilingMiddleware(MiddlewareMixin):
             api_name = current_view.view_name
             api_name = api_name.split('.')[-1]
             profiler = request.profiler
-            profiler.stop(api_name=api_name)
+            profiler.stop(response_status_code=response.status_code, api_name=api_name)
             return response
         except Exception as e:
+
             return response
