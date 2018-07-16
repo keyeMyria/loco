@@ -124,9 +124,7 @@ class ItemList(APIView):
 
     def post(self, request, team_id, format=None):
         team = get_object_or_404(Team, id=team_id)
-        print("hello")
         self.check_object_permissions(self.request, team)
-        print("hello000")
 
         serializer = serializers.ItemSerializer(data=request.data)
         if serializer.is_valid():
