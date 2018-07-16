@@ -6,6 +6,9 @@ export const GET_ITEMS_PREV_CACHED = 'dashboard/get_items_prev_cached';
 export const GET_ITEMS_NEXT_CACHED = 'dashboard/get_items_next_cached';
 export const GET_ITEMS_FAILURE = 'dashboard/get_items_failure';
 export const GET_ITEMS_SUCCESS = 'dashboard/get_items_success';
+export const CREATE_ITEM_START = 'dashboard/create_item_start';
+export const CREATE_ITEM_FAILURE = 'dashboard/create_item_failure';
+export const CREATE_ITEM_SUCCESS = 'dashboard/create_item_success';
 export const UPDATE_QUERY = 'dashboard/update_query';
 
 const INITIAL_STATE = {
@@ -71,6 +74,14 @@ export default function items(state = INITIAL_STATE, action={}) {
             return { ...state, inProgress: false, error: "Get Items Failed.", itemsData: []};
         case UPDATE_QUERY:
             return { ...state, query: action.query};
+        case CREATE_ITEM_START:
+            return { ...state, createItemItemProgress: true, createItemError: ""};
+        case CREATE_ITEM_SUCCESS:
+            var itemsData = JSON.parse(action.result);
+            itemsData = parseSolrResponse(itemsData);
+            return { ...state, createItemItemProgress: false, createItemError: ""};
+        case CREATE_ITEM_FAILURE:
+            return { ...state, createItemItemProgress: false, createItemError: "Create Item Failed."};
         default:
             return state;
     }
@@ -152,5 +163,19 @@ export function searchItems(query) {
     return function (dispatch, getState) {
         dispatch(updateQueryInternal(query));
         debouncedGetItemsInit(dispatch, getState);
+    }
+}
+
+export function createItem(team_id, data) {
+    return {
+        types: [CREATE_ITEM_START, CREATE_ITEM_SUCCESS, CREATE_ITEM_FAILURE],
+        promise: (client) => client.local.post('/teams/' + team_id + '/items/', 
+        {
+            data: {
+                name: data.name,
+                price: data.price,
+                serial_number: data.serial_number
+            }
+        })
     }
 }

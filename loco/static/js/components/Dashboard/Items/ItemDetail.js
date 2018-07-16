@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
-import { createItem } from '../../../reducer/dashboard';
+import { createItem } from '../../../reducer/items';
 
 class ItemDetail extends Component {
     
