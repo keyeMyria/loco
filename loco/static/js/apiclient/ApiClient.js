@@ -1,4 +1,5 @@
 import superagent from 'superagent';
+import cookie from 'react-cookie'
 
 const hosts = {'local': ''};
 const methods = ['get', 'post', 'put', 'patch', 'del'];
@@ -28,7 +29,8 @@ export default class ApiClient {
           }
 
           if (data) {
-            request.send(data);
+            var csrftoken = cookie.load("csrftoken");
+            request.send(data).set('X-CSRFToken', csrftoken);
           }else if(json){
             request.send(json).set('Content-Type', 'application/json');
           }else if(form){
