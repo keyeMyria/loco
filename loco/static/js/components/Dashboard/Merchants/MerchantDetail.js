@@ -6,7 +6,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 
 import { createItem } from '../../../reducer/items';
 
-class ItemDetail extends Component {
+class MerchantDetail extends Component {
     
     constructor(props) {
         super(props);
@@ -21,7 +21,7 @@ class ItemDetail extends Component {
 
     componentWillMount() {
         if(this.props.match.params.id) {
-            // this.props.getItemDetails(this.props.match.params.id);    
+            // this.props.getMerchantDetails(this.props.match.params.id);    
             this.setState({
                 create: false
             });        
@@ -118,11 +118,11 @@ class ItemDetail extends Component {
     }
 }
 
-export default ItemDetail = connect(
+export default MerchantDetail = connect(
     (state) => ({ team_id: state.dashboard.team_id, inProgress: state.dashboard.createItemItemProgress,
         error: state.dashboard.createItemError }), 
     {createItem: createItem}
-)(ItemDetail)
+)(MerchantDetail)
 
 
 
