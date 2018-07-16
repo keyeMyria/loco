@@ -1,3 +1,17 @@
+body {
+    overflow: none;
+}
+
+.dashboard {
+    width: 100%;
+    height: 100%;
+}
+
+.dashboard .dashboard-holder {
+    width: 100%;
+    height: 100%;
+} 
+
 /*----------------Sidebar-------------------*/
 
 .sidebar-holder {
@@ -65,17 +79,27 @@
 /*-----------------Content------------------*/
 .content {
     width: 80%;
+    height: 100%;
     display: inline-block;
     vertical-align: top;
-    background: rgba(252, 233, 234, 0.25);
+    background: #e6e6e6;
+}
+
+.content .content-holder {
+    width: 100%;
+    height: 100%;
+    position: relative;
 }
 
 .content .header {
+    width: 100%;
     background-color: #CB202D;
     color: #fff;
     padding: 16px;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
-    position: relative;
+    position: absolute;
+    top: 0;
+    z-index: 10;
 }
 
 .header .title {
@@ -129,47 +153,120 @@
     border-radius: 4px;
 }
 
+/*--------------- Content Scroller----------*/
+.content .content-scroller {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding-top: 56px;
+}
+
 /*--------------Data List ----------------*/
 
-.table-holder {
+.list-card {
     width: 80%;
-    text-align: left;
+    max-width: 800px;
     margin: 16px auto;
-    padding: 16px;
-    background-color: #fff;
-    border-radius: 4px;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.14);
 }
 
-.table-holder table {
+.list-card .list-card-loader-holder {
     width: 100%;
-    padding: 16px;
+    height: 200px;
+    background: #f2f2f2;
+    text-align: center;
+    padding-top: 100px;
+}
+
+.list-card .list-card-content {
+    width: 100%;
+}
+
+.list-card-content .list-table-holder {
+    width: 100%;
+    text-align: left;
+}
+
+.list-table-holder table {
+    width: 100%;
     border-collapse: collapse;
 }
 
-.table-holder table th {
-    color: #9c27b0
+.list-table-holder table th {
+    font-weight: 500;
+    background: #f2f2f2;
 }
 
-.table-holder table tr {
-    border-bottom: 1px solid black;
+.list-table-holder table tr {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 }
 
-.table-holder table th {
-    color: #9c27b0;
-    height: 40px;
+.list-table-holder table tr:hover {
+    background: #f2f2f2;
 }
 
-.table-holder table td {
-    height: 40px;
+.list-table-holder table td {
     font-size: 14px;
 }
 
-.table-holder td,
-.table-holder th {
-    border-bottom: 1px solid #d8dae1;
-    vertical-align: middle;
+.list-table-holder td,
+.list-table-holder th {
+    padding: 12px;
 }
+
+.list-card-content .list-pager {
+    width: 100%;
+    text-align: right;
+    padding: 12px;
+    background: #f2f2f2;
+    position: relative;
+}
+
+.list-pager .list-pager-action {
+    position: absolute;
+    top: 12px;
+    left: 14px;
+}
+
+.list-pager-action .pager-action {
+    font-size: 14px;
+    color: #CB202D;
+}
+
+.pager-action .pager-action-icon {
+    font-size: 20px;
+    margin-right: 4px;
+}
+
+.pager-action .pager-action-name {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 2px;
+}
+
+.list-pager .list-pager-content{
+    font-size: 14px;
+}
+
+.list-pager-content .pager-counter {
+    display: inline-block;
+    vertical-align: top;
+    padding-top: 4px;
+}
+
+.list-pager-content .pager-action {
+    cursor: pointer;
+}
+
+.list-pager-content .pager-action.disable {
+    color: rgba(0, 0, 0, 0.3);
+    cursor: default;
+}
+
 
 /*--------------------Item Detail Holder----------------*/
 

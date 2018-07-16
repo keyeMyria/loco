@@ -21,7 +21,7 @@ export default class Sidebar extends Component {
 
         return (
             <HashRouter>
-                <div>
+                <div className="dashboard-holder">
                     <section className="sidebar-holder">
                         <section className="site-label">
                             <img className="site-logo" src="/static/images/logo.png"/>

@@ -5,7 +5,7 @@ export default class ItemList extends Component {
 
     render() {
         return (
-            <div className="table-holder">
+            <section className="list-table-holder">
                 <table>
                     <thead>
                         <tr>
@@ -33,7 +33,7 @@ export default class ItemList extends Component {
                         }
                     </tbody>
                 </table>
-            </div>            
+            </section>            
         );
     }
 }

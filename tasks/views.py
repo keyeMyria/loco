@@ -11,7 +11,7 @@ from rest_framework.exceptions import ValidationError
 from loco import utils
 from loco.services import solr
 
-from . import serializers, models
+from . import serializers, models, tasks
 from . import permissions as task_permissions
 
 from accounts.models import User
@@ -104,6 +104,7 @@ class TaskList(APIView):
             models.TaskSnapshot.objects.create(task=task,
                 content=json.dumps(deep_serializer.data))
             send_task_gcm_async.delay(history.id)
+            tasks.update_task_index_async.delay()
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

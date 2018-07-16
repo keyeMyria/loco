@@ -20,6 +20,8 @@ from django.conf.urls.static import static
 
 from accounts import views, web_views as accounts_web_views
 from teams import web_views as teams_web_views
+from crm import web_views as crm_web_views
+from tasks import web_views as tasks_web_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -45,6 +47,9 @@ urlpatterns += [
     url(r'^web/login/?$', accounts_web_views.login),
     url(r'^web/teams/?$', teams_web_views.teams),
     url(r'^web/teams/(?P<team_id>[^/]+)/?$', teams_web_views.dashboard),
+    url(r'^web/teams/(?P<team_id>[0-9]+)/items/csv/$', crm_web_views.items_csv),
+    url(r'^web/teams/(?P<team_id>[0-9]+)/merchants/csv/$', crm_web_views.merchants_csv),
+    url(r'^web/teams/(?P<team_id>[0-9]+)/tasks/csv/$', tasks_web_views.tasks_csv),
 ]
 
 
