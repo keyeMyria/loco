@@ -102,6 +102,12 @@ class MerchantSearch(APIView):
 
         start, limit = utils.get_query_start_limit(request)
         merchants = solr.search_merchants(team.id, search_options, start, limit)
+        if merchants.get('data'):
+            merchants['csv'] = utils.get_csv_url('merchants', team.id, 0,
+                merchants.get('count'), query, filters)
+        else:
+            merchants['csv'] = ''
+            
         return Response(merchants)
         
 class ItemList(APIView):

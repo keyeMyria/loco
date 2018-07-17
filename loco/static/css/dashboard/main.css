@@ -139,11 +139,43 @@ body {
     cursor: pointer;
 }
 
-.create-link {
+.header .create-link {
     margin: 32px 10%;
     margin-bottom: 24px;
     text-align: right;
 }
+
+.header .header-actions {
+    float: right;
+    margin-right: 48px;
+}
+
+.header-actions .header-action {
+    display: inline-block;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.header-action .header-action-icon {
+    display: inline-block;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 20px;
+    margin-right: 4px;
+}
+
+.header-action .header-action-name {
+    display: inline-block;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    vertical-align: top;
+    margin-top: 4px;
+}
+
+.header-action:hover .header-action-name,
+.header-action:hover .header-action-icon {
+    color: white;
+}
+
 
 .create-link a {
     color: #fff;
