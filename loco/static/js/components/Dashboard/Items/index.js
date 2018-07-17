@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
-import { DateRangePicker } from 'react-dates';
 
 import ItemListCard from './ItemListCard'
 import ItemListFilters from './ItemListFilters'

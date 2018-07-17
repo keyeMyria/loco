@@ -9,7 +9,7 @@ export const GET_ITEMS_SUCCESS = 'dashboard/get_items_success';
 export const CREATE_ITEM_START = 'dashboard/create_item_start';
 export const CREATE_ITEM_FAILURE = 'dashboard/create_item_failure';
 export const CREATE_ITEM_SUCCESS = 'dashboard/create_item_success';
-export const UPDATE_QUERY = 'dashboard/update_query';
+export const UPDATE_QUERY = 'dashboard/update_items_query';
 
 const INITIAL_STATE = {
     inProgress: true,
