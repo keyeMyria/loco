@@ -9,6 +9,12 @@ export const GET_ITEMS_SUCCESS = 'dashboard/get_items_success';
 export const CREATE_ITEM_START = 'dashboard/create_item_start';
 export const CREATE_ITEM_FAILURE = 'dashboard/create_item_failure';
 export const CREATE_ITEM_SUCCESS = 'dashboard/create_item_success';
+export const GET_ITEM_DETAILS_START = 'dashboard/get_item_details_start';
+export const GET_ITEM_DETAILS_FAILURE = 'dashboard/get_item_details_failure';
+export const GET_ITEM_DETAILS_SUCCESS = 'dashboard/get_item_details_success';
+export const EDIT_ITEM_START = 'dashboard/edit_item_start';
+export const EDIT_ITEM_FAILURE = 'dashboard/edit_item_failure';
+export const EDIT_ITEM_SUCCESS = 'dashboard/edit_item_success';
 export const UPDATE_QUERY = 'dashboard/update_items_query';
 
 const INITIAL_STATE = {
@@ -75,13 +81,24 @@ export default function items(state = INITIAL_STATE, action={}) {
         case UPDATE_QUERY:
             return { ...state, query: action.query};
         case CREATE_ITEM_START:
-            return { ...state, createItemItemProgress: true, createItemError: ""};
+            return { ...state, createItemProgress: true, createItemError: ""};
         case CREATE_ITEM_SUCCESS:
-            var itemsData = JSON.parse(action.result);
-            itemsData = parseSolrResponse(itemsData);
-            return { ...state, createItemItemProgress: false, createItemError: ""};
+            return { ...state, createItemProgress: false, createItemError: ""};
         case CREATE_ITEM_FAILURE:
-            return { ...state, createItemItemProgress: false, createItemError: "Create Item Failed."};
+            return { ...state, createItemProgress: false, createItemError: "Create Item Failed."};
+        case GET_ITEM_DETAILS_START:
+            return { ...state, getItemDetailsProgress: true, getItemDetailsError: ""};
+        case GET_ITEM_DETAILS_SUCCESS:
+            var itemDetailsData = JSON.parse(action.result);
+            return { ...state, getItemDetailsProgress: false, getItemDetailsError: "", itemDetailsData: itemDetailsData};
+        case GET_ITEM_DETAILS_FAILURE:
+            return { ...state, getItemDetailsProgress: false, getItemDetailsError: "Get Item Details Failed."};
+        case EDIT_ITEM_START:
+            return { ...state, editItemProgress: true, editItemError: ""};
+        case EDIT_ITEM_SUCCESS:
+            return { ...state, editItemProgress: false, editItemError: ""};
+        case EDIT_ITEM_FAILURE:
+            return { ...state, editItemProgress: false, editItemError: "Edit Item Failed."};
         default:
             return state;
     }
@@ -176,6 +193,22 @@ export function createItem(team_id, data) {
                 price: data.price,
                 serial_number: data.serial_number
             }
+        })
+    }
+}
+
+export function getItemDetails(item_id) {
+    return {
+        types: [GET_ITEM_DETAILS_START, GET_ITEM_DETAILS_SUCCESS, GET_ITEM_DETAILS_FAILURE],
+        promise: (client) => client.local.get('/crm/items/' + item_id)
+    }
+}
+
+export function editItemDetails(data) {
+    return {
+        types: [EDIT_ITEM_START, EDIT_ITEM_SUCCESS, EDIT_ITEM_FAILURE],
+        promise: (client) => client.local.put(`/crm/items/${data.id}/`, {
+            data:data
         })
     }
 }
