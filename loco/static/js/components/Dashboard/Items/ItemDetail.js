@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
-import { createItem } from '../../../reducer/items';
+import { createItem, getItemDetails, editItemDetails } from '../../../reducer/items';
 
 class ItemDetail extends Component {
     
@@ -14,14 +14,14 @@ class ItemDetail extends Component {
             "itemData": [],
             "serial":"",
             "name": "",
-            "price": 0,
+            "price": "",
             create: true
         } 
     }
 
     componentWillMount() {
         if(this.props.match.params.id) {
-            // this.props.getItemDetails(this.props.match.params.id);    
+            this.props.getItemDetails(this.props.match.params.id);    
             this.setState({
                 create: false
             });        
@@ -29,7 +29,13 @@ class ItemDetail extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        
+        if(nextProps.itemDetailsData && !this.props.itemDetailsData) {
+            this.setState({
+                name: nextProps.itemDetailsData.name,
+                price: nextProps.itemDetailsData.price,
+                serial: nextProps.itemDetailsData.serial_number,
+            });
+        }
     }
 
     onSerialChange = (ev, val) => {
@@ -54,19 +60,22 @@ class ItemDetail extends Component {
     }
 
     handleSubmit = (ev) => {
+        let price = parseFloat(price);
+        if(!price) {
+            price = 0;
+        }
+
+        let data = {
+            name: this.state.name,
+            price: price,
+            serial_number : this.state.serial
+        };
+
         if(this.state.create) {
-            let price = parseFloat(price);
-            if(!price) {
-                price = 0;
-            }
-
-            let data = {
-                name: this.state.name,
-                price: price,
-                serial_number : this.state.serial
-            };
-
             this.props.createItem(this.props.team_id, data);
+        } else {
+            data["id"] = this.props.match.params.id;
+            this.props.editItemDetails(data);
         }
     }
 
@@ -119,9 +128,9 @@ class ItemDetail extends Component {
 }
 
 export default ItemDetail = connect(
-    (state) => ({ team_id: state.dashboard.team_id, inProgress: state.dashboard.createItemItemProgress,
-        error: state.dashboard.createItemError }), 
-    {createItem: createItem}
+    (state) => ({ team_id: state.items.team_id, inProgress: state.items.createItemProgress,
+        error: state.items.createItemError, itemDetailsData: state.items.itemDetailsData }), 
+    {createItem: createItem, getItemDetails: getItemDetails, editItemDetails: editItemDetails}
 )(ItemDetail)
 
 
