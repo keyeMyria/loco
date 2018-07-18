@@ -15,7 +15,7 @@ else:
 def process_solr_response(response, query):
     if response.status_code >=400:
         logger.error("Solr API failure: %s \nResponse - %s", query, response.content, exc_info=True, extra={'response': response,})
-        return None
+        return (None, None)
 
     data = None
     count = None
@@ -265,7 +265,7 @@ def csv_items(team_id, search_options, start, limit):
     return get_csv_solr(query)
 
 def search_tasks(team_id, search_options, start, limit):
-    query = SOLR_HOST + 'task/select?q=[[QUERY]]&wt=json&sort=created&start=[[START]]&rows=[[LIMIT]]'
+    query = SOLR_HOST + 'task/select?q=[[QUERY]]&wt=json&sort=created desc&start=[[START]]&rows=[[LIMIT]]'
     query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
 
     search_text = search_options.get('query')
@@ -287,7 +287,7 @@ def search_tasks(team_id, search_options, start, limit):
     return {'data': data, 'count': count}
 
 def csv_tasks(team_id, search_options):
-    query = SOLR_HOST + 'task/select?q=[[QUERY]]&wt=csv&start=[[START]]&sort=created&rows=[[LIMIT]]'
+    query = SOLR_HOST + 'task/select?q=[[QUERY]]&wt=csv&start=[[START]]&sort=created desc&rows=[[LIMIT]]'
     query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
     search_text = search_options.get('query')
     if search_text:

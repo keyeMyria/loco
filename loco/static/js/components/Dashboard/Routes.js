@@ -5,7 +5,7 @@ import Merchants from "./Merchants/index";
 import MerchantDetail from "./Merchants/MerchantDetail";
 import Items from "./Items/index";
 import ItemDetail from "./Items/ItemDetail";
-import Orders from "./Orders/index";
+import Tasks from "./Tasks/index";
 
 export default class Routes extends Component {
 
@@ -13,7 +13,7 @@ export default class Routes extends Component {
 
         return (
             <div className="content">
-                <Route exact path="/orders" component={Orders}/>
+                <Route exact path="/tasks" component={Tasks}/>
                 
                 <Route exact path="/merchants" component={Merchants}/>
                 <Route exact path="/merchants/create" component={MerchantDetail}/>
