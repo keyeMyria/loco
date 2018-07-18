@@ -9,9 +9,10 @@ export default class TaskList extends Component {
                 <table>
                     <thead>
                         <tr>
-                            <th>Serial No.</th>
-                            <th>Name</th>
-                            <th>Price</th>
+                            <th>ID</th>
+                            <th>Merchant</th>
+                            <th>Created By</th>
+                            <th>Amount</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -19,13 +20,16 @@ export default class TaskList extends Component {
                             return (
                                 <tr key={index}>
                                     <td>
-                                        <Link to={"/tasks/" + task.id + "/change" }>{task.serial_number}</Link>
+                                        <Link to={"/tasks/" + task.id + "/change" }>{task.id}</Link>
                                     </td>
                                     <td>
-                                        <Link to={"/tasks/" + task.id + "/change" }>{task.name}</Link>
+                                        <Link to={"/tasks/" + task.id + "/change" }>{task.merchant_name}</Link>
                                     </td>
                                     <td>
-                                        <Link to={"/tasks/" + task.id + "/change" }>{task.price}</Link>
+                                        <Link to={"/tasks/" + task.id + "/change" }>{task.created_by_name}</Link>
+                                    </td>
+                                    <td>
+                                        <Link to={"/tasks/" + task.id + "/change" }>{task.amount}</Link>
                                     </td>
                                 </tr>
                             )

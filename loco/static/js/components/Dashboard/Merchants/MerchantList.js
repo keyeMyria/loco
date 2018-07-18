@@ -9,9 +9,9 @@ export default class MerchantList extends Component {
                 <table>
                     <thead>
                         <tr>
-                            <th>Serial No.</th>
                             <th>Name</th>
-                            <th>Price</th>
+                            <th>State</th>
+                            <th>City</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -19,13 +19,13 @@ export default class MerchantList extends Component {
                             return (
                                 <tr key={index}>
                                     <td>
-                                        <Link to={"/merchants/" + merchant.id + "/change" }>{merchant.serial_number}</Link>
-                                    </td>
-                                    <td>
                                         <Link to={"/merchants/" + merchant.id + "/change" }>{merchant.name}</Link>
                                     </td>
                                     <td>
-                                        <Link to={"/merchants/" + merchant.id + "/change" }>{merchant.price}</Link>
+                                        <Link to={"/merchants/" + merchant.id + "/change" }>{merchant.state}</Link>
+                                    </td>
+                                    <td>
+                                        <Link to={"/merchants/" + merchant.id + "/change" }>{merchant.city}</Link>
                                     </td>
                                 </tr>
                             )
