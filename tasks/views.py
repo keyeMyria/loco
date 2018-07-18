@@ -225,7 +225,6 @@ def task_media_upload(request, team_id):
     else:
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-
 class TaskHistoryList(APIView):
     permission_classes = (permissions.IsAuthenticated, task_permissions.IsTaskTeamMember)
 
@@ -237,7 +236,6 @@ class TaskHistoryList(APIView):
         history = history.order_by('-created')[start:start+limit]
         data = serializers.TaskHistorySerializer(history, many=True).data
         return Response(data)
-
 
 class TaskSearch(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)

@@ -130,6 +130,11 @@ class SalesTaskContent(BaseModel):
         for item in self.items.all():
             SalesTaskItems.objects.create(item=item, sales_task_content=self)
 
+    def update_amount(self):
+        items = self.get_items()
+        self.amount = sum([i.quantity*i.item.price for i in items])
+        self.save()
+
     def get_items(self):
         return SalesTaskItems.objects.filter(sales_task_content=self)
 
