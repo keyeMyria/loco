@@ -6,9 +6,9 @@ export const CREATE_MERCHANT_SUCCESS = 'dashboard/create_merchant_success';
 export const UPLOAD_MERCHANT_START = 'dashboard/upload_merchant_start';
 export const UPLOAD_MERCHANT_FAILURE = 'dashboard/upload_merchant_failure';
 export const UPLOAD_MERCHANT_SUCCESS = 'dashboard/upload_merchant_success';
-export const GET_UPLOADS_START = 'dashboard/get_uploads_start';
-export const GET_UPLOADS_FAILURE = 'dashboard/get_uploads_failure';
-export const GET_UPLOADS_SUCCESS = 'dashboard/get_uploads_success';
+export const MERCHANT_UPLOADS_START = 'dashboard/merchant_uploads_start';
+export const MERCHANT_UPLOADS_FAILURE = 'dashboard/merchant_uploads_failure';
+export const MERCHANT_UPLOADS_SUCCESS = 'dashboard/merchant_uploads_success';
 export const GET_MERCHANTS_INIT = 'dashboard/get_merchants_init';
 export const GET_MERCHANTS_START = 'dashboard/get_merchants_start';
 export const GET_MERCHANTS_PREV_CACHED = 'dashboard/get_merchants_prev_cached';
@@ -51,12 +51,12 @@ export default function merchants(state = INITIAL_STATE, action={}) {
             return { ...state, uploadProgress: false, uploadError: "", uploads, uploads};
         case UPLOAD_MERCHANT_FAILURE:
             return { ...state, uploadProgress: false, uploadError: "Upload Failed."};
-        case GET_UPLOADS_START:
+        case MERCHANT_UPLOADS_START:
             return { ...state, getUploadsProgress: true, getUploadsError: "", uploads: []};
-        case GET_UPLOADS_SUCCESS:
+        case MERCHANT_UPLOADS_SUCCESS:
             var uploads = JSON.parse(action.result);
             return { ...state, getUploadsProgress: false, getUploadsError: "", uploads: uploads};
-        case GET_UPLOADS_FAILURE:
+        case MERCHANT_UPLOADS_FAILURE:
             return { ...state, getUploadsProgress: false, getUploadsError: "Unable to get past uploads", uploads: []};
         case GET_MERCHANTS_INIT:
             return { ...state, start: -1, data:[], inProgress: true, csvURL: ''};
@@ -206,7 +206,7 @@ export function createMerchant(team_id, data) {
 
 function getMerchantUploadsInternal(team_id) {
     return {
-        types: [GET_UPLOADS_START, GET_UPLOADS_SUCCESS, GET_UPLOADS_FAILURE],
+        types: [MERCHANT_UPLOADS_START, MERCHANT_UPLOADS_SUCCESS, MERCHANT_UPLOADS_FAILURE],
         promise: (client) => client.local.get('/teams/' + team_id + '/merchants/upload/')
     }
 }

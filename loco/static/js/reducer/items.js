@@ -9,6 +9,12 @@ export const GET_ITEMS_SUCCESS = 'dashboard/get_items_success';
 export const CREATE_ITEM_START = 'dashboard/create_item_start';
 export const CREATE_ITEM_FAILURE = 'dashboard/create_item_failure';
 export const CREATE_ITEM_SUCCESS = 'dashboard/create_item_success';
+export const UPLOAD_ITEM_START = 'dashboard/upload_item_start';
+export const UPLOAD_ITEM_FAILURE = 'dashboard/upload_item_failure';
+export const UPLOAD_ITEM_SUCCESS = 'dashboard/upload_item_success';
+export const ITEM_UPLOADS_START = 'dashboard/item_uploads_start';
+export const ITEM_UPLOADS_FAILURE = 'dashboard/item_uploads_failure';
+export const ITEM_UPLOADS_SUCCESS = 'dashboard/item_uploads_success';
 export const GET_ITEM_DETAILS_START = 'dashboard/get_item_details_start';
 export const GET_ITEM_DETAILS_FAILURE = 'dashboard/get_item_details_failure';
 export const GET_ITEM_DETAILS_SUCCESS = 'dashboard/get_item_details_success';
@@ -29,7 +35,8 @@ const INITIAL_STATE = {
     getTime: '',
     error: '',
     query: '',
-    csvURL: ''
+    csvURL: '',
+    uploads: []
 };
 
 export default function items(state = INITIAL_STATE, action={}) {
@@ -86,6 +93,22 @@ export default function items(state = INITIAL_STATE, action={}) {
             return { ...state, createItemProgress: false, createItemError: ""};
         case CREATE_ITEM_FAILURE:
             return { ...state, createItemProgress: false, createItemError: "Create Item Failed."};
+        case UPLOAD_ITEM_START:
+            return { ...state, uploadProgress: true, uploadError: ""};
+        case UPLOAD_ITEM_SUCCESS:
+            var data = JSON.parse(action.result);
+            var uploads = state.uploads.slice();
+            uploads.unshift(data);
+            return { ...state, uploadProgress: false, uploadError: "", uploads, uploads};
+        case UPLOAD_ITEM_FAILURE:
+            return { ...state, uploadProgress: false, uploadError: "Upload Failed."};
+        case ITEM_UPLOADS_START:
+            return { ...state, getUploadsProgress: true, getUploadsError: "", uploads: []};
+        case ITEM_UPLOADS_SUCCESS:
+            var uploads = JSON.parse(action.result);
+            return { ...state, getUploadsProgress: false, getUploadsError: "", uploads: uploads};
+        case ITEM_UPLOADS_FAILURE:
+            return { ...state, getUploadsProgress: false, getUploadsError: "Unable to get past uploads", uploads: []};
         case GET_ITEM_DETAILS_START:
             return { ...state, getItemDetailsProgress: true, getItemDetailsError: ""};
         case GET_ITEM_DETAILS_SUCCESS:
@@ -210,5 +233,37 @@ export function editItemDetails(data) {
         promise: (client) => client.local.put(`/crm/items/${data.id}/`, {
             data:data
         })
+    }
+}
+
+function getItemUploadsInternal(team_id) {
+    return {
+        types: [ITEM_UPLOADS_START, ITEM_UPLOADS_SUCCESS, ITEM_UPLOADS_FAILURE],
+        promise: (client) => client.local.get('/teams/' + team_id + '/items/upload/')
+    }
+}
+
+export function getItemUploads(start, limit) {
+    return function (dispatch, getState) {
+        var state = getState();
+        var team_id = state.dashboard.team_id;
+        dispatch(getItemUploadsInternal(team_id));
+    }
+}
+
+function uploadItemInternal(team_id, data) {
+    return {
+        types: [UPLOAD_ITEM_START, UPLOAD_ITEM_SUCCESS, UPLOAD_ITEM_FAILURE],
+        promise: (client) => client.local.post('/teams/' + team_id + '/items/upload/', 
+            {form: {data: data}}
+        )
+    }
+}
+
+export function uploadItem(data) {
+    return function (dispatch, getState) {
+        var state = getState();
+        var team_id = state.dashboard.team_id;
+        dispatch(uploadItemInternal(team_id, data));
     }
 }

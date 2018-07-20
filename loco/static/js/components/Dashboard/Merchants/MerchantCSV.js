@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
 
-import { uploadMerchant } from '../../../reducer/merchants';
+import { uploadMerchant, getMerchantUploads } from '../../../reducer/merchants';
 import JobListCard from '../JobListCard';
 
 class MerchantCSV extends Component {
@@ -84,7 +84,10 @@ class MerchantCSV extends Component {
 	        			</form>
 	        		</section>
 
-                    <JobListCard />
+                    <JobListCard 
+                    data={this.props.uploads}
+                    inProgress={this.props.getUploadsProgress}
+                    getUploads={this.props.getMerchantUploads} />
         		</section>
         	</section>     
         );
@@ -95,9 +98,11 @@ export default MerchantCSV = connect(
     (state) => ({ team_id: state.dashboard.team_id,
 	    team_name: state.dashboard.team_name, 
 	    inProgress: state.merchants.uploadProgress,
-        error: state.merchants.uploadError 
+        error: state.merchants.uploadError,
+        uploads: state.merchants.uploads,
+        getUploadsProgress: state.merchants.getUploadsProgress,
     }), 
-    {uploadMerchant: uploadMerchant}
+    {uploadMerchant: uploadMerchant, getMerchantUploads: getMerchantUploads}
 )(MerchantCSV)
 
 

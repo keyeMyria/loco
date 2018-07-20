@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import JobList from './JobList'
 import {getMerchantUploads} from '../../reducer/merchants.js'
 
-class JobListCard extends Component {
+export default class JobListCard extends Component {
 
     constructor(props) {
         super(props)
@@ -13,8 +13,7 @@ class JobListCard extends Component {
         this.props.getUploads();
     }
 
-    render() {    
-        console.log(this.props);    
+    render() {   
         var content = (
             <section className="list-card-content">
                 <JobList data={this.props.data} />
@@ -37,12 +36,3 @@ class JobListCard extends Component {
     }
 
 }
-
-export default connect(
-    ((state) => ({ 
-        inProgress: state.merchants.getUploadsProgress,
-        data: state.merchants.uploads
-    })) ,
-    {getUploads: getMerchantUploads}
-)(JobListCard);
-
