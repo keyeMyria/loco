@@ -3,6 +3,9 @@ import {debounce} from './utils.js'
 export const CREATE_MERCHANT_START = 'dashboard/create_merchant_start';
 export const CREATE_MERCHANT_FAILURE = 'dashboard/create_merchant_failure';
 export const CREATE_MERCHANT_SUCCESS = 'dashboard/create_merchant_success';
+export const UPLOAD_MERCHANT_START = 'dashboard/upload_merchant_start';
+export const UPLOAD_MERCHANT_FAILURE = 'dashboard/upload_merchant_failure';
+export const UPLOAD_MERCHANT_SUCCESS = 'dashboard/upload_merchant_success';
 export const GET_MERCHANTS_INIT = 'dashboard/get_merchants_init';
 export const GET_MERCHANTS_START = 'dashboard/get_merchants_start';
 export const GET_MERCHANTS_PREV_CACHED = 'dashboard/get_merchants_prev_cached';
@@ -32,10 +35,17 @@ export default function merchants(state = INITIAL_STATE, action={}) {
             return { ...state, createMerchantProgress: true, createMerchantError: ""};
         case CREATE_MERCHANT_SUCCESS:
             var merchantsData = JSON.parse(action.result);
-            merchantsData = parseSolrResponse(merchantsData);
             return { ...state, createMerchantProgress: false, createMerchantError: ""};
         case CREATE_MERCHANT_FAILURE:
             return { ...state, createMerchantProgress: false, createMerchantError: "Create Merchant Failed."};
+        case UPLOAD_MERCHANT_START:
+            return { ...state, uploadProgress: true, uploadError: ""};
+        case UPLOAD_MERCHANT_SUCCESS:
+            console.log(action);
+            var merchantsData = JSON.parse(action.result);
+            return { ...state, uploadProgress: false, uploadError: ""};
+        case UPLOAD_MERCHANT_FAILURE:
+            return { ...state, uploadProgress: false, uploadError: "Upload Failed."};
         case GET_MERCHANTS_INIT:
             return { ...state, start: -1, data:[], inProgress: true, csvURL: ''};
         case GET_MERCHANTS_START:
@@ -179,5 +189,22 @@ export function createMerchant(team_id, data) {
                 serial_number: data.serial_number
             }
         })
+    }
+}
+
+function uploadMerchantInternal(team_id, data) {
+    return {
+        types: [UPLOAD_MERCHANT_START, UPLOAD_MERCHANT_SUCCESS, UPLOAD_MERCHANT_FAILURE],
+        promise: (client) => client.local.post('/teams/' + team_id + '/merchants/upload/', 
+            {form: {data: data}}
+        )
+    }
+}
+
+export function uploadMerchant(data) {
+    return function (dispatch, getState) {
+        var state = getState();
+        var team_id = state.dashboard.team_id;
+        dispatch(uploadMerchantInternal(team_id, data));
     }
 }
