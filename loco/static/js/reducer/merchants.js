@@ -6,6 +6,9 @@ export const CREATE_MERCHANT_SUCCESS = 'dashboard/create_merchant_success';
 export const UPLOAD_MERCHANT_START = 'dashboard/upload_merchant_start';
 export const UPLOAD_MERCHANT_FAILURE = 'dashboard/upload_merchant_failure';
 export const UPLOAD_MERCHANT_SUCCESS = 'dashboard/upload_merchant_success';
+export const GET_UPLOADS_START = 'dashboard/get_uploads_start';
+export const GET_UPLOADS_FAILURE = 'dashboard/get_uploads_failure';
+export const GET_UPLOADS_SUCCESS = 'dashboard/get_uploads_success';
 export const GET_MERCHANTS_INIT = 'dashboard/get_merchants_init';
 export const GET_MERCHANTS_START = 'dashboard/get_merchants_start';
 export const GET_MERCHANTS_PREV_CACHED = 'dashboard/get_merchants_prev_cached';
@@ -26,7 +29,8 @@ const INITIAL_STATE = {
     getTime: '',
     error: '',
     query: '',
-    csvURL: ''
+    csvURL: '',
+    uploads: []
 };
 
 export default function merchants(state = INITIAL_STATE, action={}) {
@@ -41,11 +45,19 @@ export default function merchants(state = INITIAL_STATE, action={}) {
         case UPLOAD_MERCHANT_START:
             return { ...state, uploadProgress: true, uploadError: ""};
         case UPLOAD_MERCHANT_SUCCESS:
-            console.log(action);
-            var merchantsData = JSON.parse(action.result);
-            return { ...state, uploadProgress: false, uploadError: ""};
+            var data = JSON.parse(action.result);
+            var uploads = state.uploads.slice();
+            uploads.unshift(data);
+            return { ...state, uploadProgress: false, uploadError: "", uploads, uploads};
         case UPLOAD_MERCHANT_FAILURE:
             return { ...state, uploadProgress: false, uploadError: "Upload Failed."};
+        case GET_UPLOADS_START:
+            return { ...state, getUploadsProgress: true, getUploadsError: "", uploads: []};
+        case GET_UPLOADS_SUCCESS:
+            var uploads = JSON.parse(action.result);
+            return { ...state, getUploadsProgress: false, getUploadsError: "", uploads: uploads};
+        case GET_UPLOADS_FAILURE:
+            return { ...state, getUploadsProgress: false, getUploadsError: "Unable to get past uploads", uploads: []};
         case GET_MERCHANTS_INIT:
             return { ...state, start: -1, data:[], inProgress: true, csvURL: ''};
         case GET_MERCHANTS_START:
@@ -189,6 +201,21 @@ export function createMerchant(team_id, data) {
                 serial_number: data.serial_number
             }
         })
+    }
+}
+
+function getMerchantUploadsInternal(team_id) {
+    return {
+        types: [GET_UPLOADS_START, GET_UPLOADS_SUCCESS, GET_UPLOADS_FAILURE],
+        promise: (client) => client.local.get('/teams/' + team_id + '/merchants/upload/')
+    }
+}
+
+export function getMerchantUploads(start, limit) {
+    return function (dispatch, getState) {
+        var state = getState();
+        var team_id = state.dashboard.team_id;
+        dispatch(getMerchantUploadsInternal(team_id));
     }
 }
 

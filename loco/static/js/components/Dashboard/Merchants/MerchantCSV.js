@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
 
 import { uploadMerchant } from '../../../reducer/merchants';
+import JobListCard from '../JobListCard';
 
 class MerchantCSV extends Component {
     
@@ -82,6 +83,8 @@ class MerchantCSV extends Component {
 		        			</button>
 	        			</form>
 	        		</section>
+
+                    <JobListCard />
         		</section>
         	</section>     
         );

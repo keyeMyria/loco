@@ -16,7 +16,6 @@ class MerchantListCard extends Component {
 
     render() {
         let merchants = this.props.merchants;
-        console.log(merchants)
         var content = (
             <section className="list-card-content">
                 <MerchantList merchantsData={merchants.data.slice(merchants.start, merchants.end)} />

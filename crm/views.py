@@ -70,6 +70,13 @@ class MerchantUpload(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)
     parser_classes = (MultiPartParser, )
 
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+        jobs = models.MerchantUpload.objects.filter(team=team).order_by('-created')
+        serializer = serializers.MerchantUploadSerializer(jobs, many=True)
+        return Response(serializer.data)
+
     def post(self, request, team_id, format=None):
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
@@ -164,6 +171,13 @@ class ItemDetail(APIView):
 class ItemUpload(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)
     parser_classes = (MultiPartParser, )
+
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+        jobs = models.ItemUpload.objects.filter(team=team).order_by('-created')
+        serializer = serializers.ItemUploadSerializer(jobs, many=True)
+        return Response(serializer.data)
 
     def post(self, request, team_id, format=None):
         team = get_object_or_404(Team, id=team_id)
