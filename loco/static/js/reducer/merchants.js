@@ -42,7 +42,7 @@ const INITIAL_STATE = {
     error: '',
     query: '',
     csvURL: '',
-    uploads: []
+    uploads: [],
     states: [],
     cities: []
 };

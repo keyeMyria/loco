@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
+import { Redirect } from "react-router-dom";
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+
 
 import { createItem, getItemDetails, editItemDetails } from '../../../reducer/items';
 
@@ -87,40 +88,57 @@ class ItemDetail extends Component {
             marginTop: "20px"
         };
 
+        let props = this.props;
+
         return (
             <div>
                 <header className="header">
                     <h1 className="title">Item Detail</h1>
                 </header>
-                <div className="item-detail-holder">
-                    <TextField
-                        hintText=""
-                        onChange={this.onSerialChange}
-                        value={this.state.serial}
-                        floatingLabelText="Serial No."
-                        style={{ display:"block"}}
-                        id="serial" />
-                    <TextField
-                        hintText=""
-                        onChange={this.onNameChange}
-                        value={this.state.name}
-                        floatingLabelText="Name"
-                        style={{ display:"block"}}
-                        name="name" />
-                    <TextField
-                        hintText=""
-                        onChange={this.onPriceChange}
-                        value={this.state.price}
-                        floatingLabelText="Price"
-                        style={{ display:"block"}}
-                        name="price" />
+                { (props.inProgress || props.getItemProgress || props.editItemProgress)
+                    ? (
+                        <div className="list-card item-detail-holder">
+                            <section className="list-card-loader-holder">
+                                <section className="loader list-card-loader"></section>
+                            </section>
+                        </div>
+                    )
+                    : (
+                        <div className="list-card item-detail-holder">
+                            <TextField
+                                hintText=""
+                                onChange={this.onSerialChange}
+                                value={this.state.serial}
+                                floatingLabelText="Serial No."
+                                style={{ display:"block"}}
+                                id="serial" />
+                            <TextField
+                                hintText=""
+                                onChange={this.onNameChange}
+                                value={this.state.name}
+                                floatingLabelText="Name"
+                                style={{ display:"block"}}
+                                name="name" />
+                            <TextField
+                                hintText=""
+                                onChange={this.onPriceChange}
+                                value={this.state.price}
+                                floatingLabelText="Price"
+                                style={{ display:"block"}}
+                                name="price" />
 
-                    <RaisedButton 
-                        label="Submit" 
-                        primary={true} 
-                        style={style} 
-                        onClick={this.handleSubmit} />
-                </div>
+                            <RaisedButton 
+                                label="Submit" 
+                                primary={true} 
+                                style={style} 
+                                backgroundColor = "#CB202D"
+                                onClick={this.handleSubmit} />
+                        </div>
+                    )
+                }
+                { (props.createItemSucess || props.editItemSuccess) &&
+                    <Redirect to="/items"/>
+                }
             </div>            
         );
     }
@@ -128,7 +146,9 @@ class ItemDetail extends Component {
 
 export default ItemDetail = connect(
     (state) => ({ team_id: state.dashboard.team_id, inProgress: state.items.createItemProgress,
-        error: state.items.createItemError, itemDetailsData: state.items.itemDetailsData }), 
+        error: state.items.createItemError, itemDetailsData: state.items.itemDetailsData, 
+        getItemProgress: state.items.getItemDetailsProgress, createItemSucess: state.items.createItemSucess,
+        editItemSuccess: state.items.editItemSuccess, editItemProgress: state.items.editItemProgress }), 
     {createItem: createItem, getItemDetails: getItemDetails, editItemDetails: editItemDetails}
 )(ItemDetail)
 

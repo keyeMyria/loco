@@ -225,6 +225,7 @@ body {
 .list-table-holder table {
     width: 100%;
     border-collapse: collapse;
+    text-align: left;
 }
 
 .list-table-holder table th {
@@ -303,7 +304,10 @@ body {
 /*--------------------Item Detail Holder----------------*/
 
 .item-detail-holder {
-    margin: 80px;
+    margin: 80px auto;
+    padding: 16px;
+    width: 40%;
+    min-width: 360px;
 }
 
 /*------------- Upload CSV -------------------*/
