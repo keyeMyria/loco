@@ -310,6 +310,28 @@ body {
     min-width: 360px;
 }
 
+/*-----------------Task Detail Holder------------------*/
+
+.task-detail {
+    padding: 16px;
+}
+
+.task-detail .detail-title {
+    font-weight: bold;
+    line-height: 1.25;
+    font-size: 16px;
+    color: #3e5561;
+}
+
+.task-detail .detail-value {
+    line-height: 1.25;
+    color: #3e5561;
+}
+
+.task-detail .price {
+    color: #00bfa5;
+}
+
 /*------------- Upload CSV -------------------*/
 
 .csv-upload-holder .upload-csv {

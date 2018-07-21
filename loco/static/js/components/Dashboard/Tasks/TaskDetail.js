@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from "react-router-dom";
-import TextField from 'material-ui/TextField';
-import RaisedButton from 'material-ui/RaisedButton';
 
 import { getTaskDetails, changeLocation } from '../../../reducer/tasks';
 
@@ -67,24 +65,18 @@ class TaskDetail extends Component {
                     : (
                         <section>
                             <section className="list-card item-detail-holder">
-                                <TextField
-                                    disabled={true}
-                                    value={this.state.merchant_name}
-                                    floatingLabelText="Merchant Name"
-                                    style={{ display:"block"}}
-                                    id="merchant_name" />
-                                <TextField
-                                    disabled={true}
-                                    value={this.state.created_by}
-                                    floatingLabelText="Created By"
-                                    style={{ display:"block"}}
-                                    name="created_by" />
-                                <TextField
-                                    disabled={true}
-                                    value={this.state.amount}
-                                    floatingLabelText="Amount"
-                                    style={{ display:"block"}}
-                                    name="amount" />
+                                <article className="task-detail">
+                                    <p className="detail-title">Merchant Name:</p>
+                                    <p className="detail-value">{this.state.merchant_name}</p>
+                                </article>
+                                <article className="task-detail">
+                                    <p className="detail-title">Created By:</p>
+                                    <p className="detail-value">{this.state.created_by}</p>
+                                </article>
+                                <article className="task-detail">
+                                    <p className="detail-title">Amout:</p>
+                                    <p className="detail-value price">&#x20b9; {this.state.amount}</p>
+                                </article>
                             </section>
                             <section className="list-card item-list-card">
                                 { this.state.items &&
@@ -94,8 +86,8 @@ class TaskDetail extends Component {
                                                 <tr>
                                                     <th>Serial No.</th>
                                                     <th>Name</th>
-                                                    <th>Price</th>
                                                     <th>Quantity</th>
+                                                    <th>Price</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -104,8 +96,8 @@ class TaskDetail extends Component {
                                                         <tr key={index}>
                                                             <td>{item.item.serial_number}</td>
                                                             <td>{item.item.name}</td>
-                                                            <td>{item.item.price}</td>
                                                             <td>{item.quantity}</td>
+                                                            <td>{item.item.price}</td>
                                                         </tr>
                                                     )
                                                     })
