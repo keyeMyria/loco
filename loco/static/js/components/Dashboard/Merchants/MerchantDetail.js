@@ -3,25 +3,28 @@ import { connect } from 'react-redux';
 
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
-import { createItem } from '../../../reducer/items';
+import { createMerchant, getMerchantDetails, editMerchantDetails, getStates, getCities } from '../../../reducer/merchants';
 
 class MerchantDetail extends Component {
     
     constructor(props) {
         super(props);
         this.state = {
-            "itemData": [],
-            "serial":"",
-            "name": "",
-            "price": 0,
+            address:"",
+            city: "",
+            name: "",
+            state: "",
             create: true
         } 
     }
 
     componentWillMount() {
+        this.props.getCities();
         if(this.props.match.params.id) {
-            // this.props.getMerchantDetails(this.props.match.params.id);    
+            this.props.getMerchantDetails(this.props.match.params.id); 
             this.setState({
                 create: false
             });        
@@ -29,27 +32,34 @@ class MerchantDetail extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        
+        if(nextProps.merchantDetailsData && !this.props.merchantDetailsData) {
+            this.setState({
+                name: nextProps.merchantDetailsData.name,
+                address: nextProps.merchantDetailsData.address,
+                city: nextProps.merchantDetailsData.city,
+                state: nextProps.merchantDetailsData.state,
+            });
+        }
     }
 
-    onSerialChange = (ev, val) => {
+    onAddressChange = (ev, val) => {
         ev.preventDefault();
         this.setState({
-            "serial": val
+            address: val
         });
     }
 
     onNameChange = (ev, val) => {
         ev.preventDefault();
         this.setState({
-            "name": val
+            name: val
         });
     }
 
-    onPriceChange = (ev, val) => {
+    onCityChange = (ev, val) => {
         ev.preventDefault();
         this.setState({
-            "price": val
+            city: val
         });
     }
 
@@ -62,11 +72,11 @@ class MerchantDetail extends Component {
 
             let data = {
                 name: this.state.name,
-                price: price,
-                serial_number : this.state.serial
+                // price: price,
+                // serial_number : this.state.serial
             };
 
-            this.props.createItem(this.props.team_id, data);
+            this.props.createMerchant(this.props.team_id, data);
         }
     }
 
@@ -79,19 +89,14 @@ class MerchantDetail extends Component {
             marginTop: "20px"
         };
 
+        console.log(this.props.states);
+
         return (
             <div>
                 <header className="header">
-                    <h1 className="title">Item Detail</h1>
+                    <h1 className="title">Merchant Detail</h1>
                 </header>
                 <div className="item-detail-holder">
-                    <TextField
-                        hintText=""
-                        onChange={this.onSerialChange}
-                        value={this.state.serial}
-                        floatingLabelText="Serial No."
-                        style={{ display:"block"}}
-                        id="serial" />
                     <TextField
                         hintText=""
                         onChange={this.onNameChange}
@@ -101,11 +106,26 @@ class MerchantDetail extends Component {
                         name="name" />
                     <TextField
                         hintText=""
-                        onChange={this.onPriceChange}
-                        value={this.state.price}
-                        floatingLabelText="Price"
+                        onChange={this.onAddressChange}
+                        value={this.state.address}
+                        floatingLabelText="Address"
                         style={{ display:"block"}}
-                        name="price" />
+                        id="address" />
+                    <SelectField
+                        floatingLabelText="City"
+                        value={this.state.city}
+                        onChange={this.onStateChange} >
+                        { this.props.cities.map((item, index) => {   
+                            return(
+                                <MenuItem 
+                                    value={item.id} 
+                                    primaryText={item.name}
+                                    key={item.id} />
+                            ) 
+                        }) 
+                        }
+                    </SelectField>
+                    <br />
 
                     <RaisedButton 
                         label="Submit" 
@@ -119,9 +139,11 @@ class MerchantDetail extends Component {
 }
 
 export default MerchantDetail = connect(
-    (state) => ({ team_id: state.dashboard.team_id, inProgress: state.dashboard.createItemItemProgress,
-        error: state.dashboard.createItemError }), 
-    {createItem: createItem}
+    (state) => ({ team_id: state.dashboard.team_id, inProgress: state.merchants.createMerchantProgress,
+        error: state.merchants.createMerchantError, merchantDetailsData: state.merchants.merchantDetailsData,
+        states: state.merchants.states, cities: state.merchants.cities }), 
+    {createMerchant: createMerchant, getMerchantDetails: getMerchantDetails, editMerchantDetails: editMerchantDetails,
+        getStates: getStates, getCities: getCities}
 )(MerchantDetail)
 
 

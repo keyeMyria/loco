@@ -9,6 +9,18 @@ export const GET_MERCHANTS_PREV_CACHED = 'dashboard/get_merchants_prev_cached';
 export const GET_MERCHANTS_NEXT_CACHED = 'dashboard/get_merchants_next_cached';
 export const GET_MERCHANTS_FAILURE = 'dashboard/get_merchants_failure';
 export const GET_MERCHANTS_SUCCESS = 'dashboard/get_merchants_success';
+export const GET_MERCHANT_DETAILS_START = 'dashboard/get_merchant_details_start';
+export const GET_MERCHANT_DETAILS_FAILURE = 'dashboard/get_merchant_details_failure';
+export const GET_MERCHANT_DETAILS_SUCCESS = 'dashboard/get_merchant_details_success';
+export const EDIT_MERCHANT_START = 'dashboard/edit_merchant_start';
+export const EDIT_MERCHANT_FAILURE = 'dashboard/edit_merchant_failure';
+export const EDIT_MERCHANT_SUCCESS = 'dashboard/edit_merchant_success';
+export const GET_STATES_START = 'dashboard/get_states_start';
+export const GET_STATES_FAILURE = 'dashboard/get_states_failure';
+export const GET_STATES_SUCCESS = 'dashboard/get_states_success';
+export const GET_CITIES_START = 'dashboard/get_cities_start';
+export const GET_CITIES_FAILURE = 'dashboard/get_cities_failure';
+export const GET_CITIES_SUCCESS = 'dashboard/get_cities_success';
 export const UPDATE_QUERY = 'dashboard/update_merchants_query';
 
 const INITIAL_STATE = {
@@ -23,7 +35,9 @@ const INITIAL_STATE = {
     getTime: '',
     error: '',
     query: '',
-    csvURL: ''
+    csvURL: '',
+    states: [],
+    cities: []
 };
 
 export default function merchants(state = INITIAL_STATE, action={}) {
@@ -82,6 +96,31 @@ export default function merchants(state = INITIAL_STATE, action={}) {
             return { ...state, inProgress: false, error: "Unable to get merchants.", data: []};
         case UPDATE_QUERY:
             return { ...state, query: action.query};
+        case GET_MERCHANT_DETAILS_START:
+            return { ...state, getMerchantDetailsProgress: true, getMerchantDetailsError: ""};
+        case GET_MERCHANT_DETAILS_SUCCESS:
+            var merchantDetailsData = JSON.parse(action.result);
+            return { ...state, getMerchantDetailsProgress: false, getMerchantDetailsError: "", merchantDetailsData: merchantDetailsData};
+        case GET_MERCHANT_DETAILS_FAILURE:
+            return { ...state, getMerchantDetailsProgress: false, getMerchantDetailsError: "Get Merchant Details Failed."};
+        case EDIT_MERCHANT_START:
+            return { ...state, editMerchantProgress: true, editMerchantError: ""};
+        case EDIT_MERCHANT_SUCCESS:
+            return { ...state, editMerchantProgress: false, editMerchantError: ""};
+        case EDIT_MERCHANT_FAILURE:
+            return { ...state, editMerchantProgress: false, editMerchantError: "Edit Merchant Failed."};
+        case GET_STATES_START:
+            return { ...state, getStatesProgress: true, getStatesrror: ""};
+        case GET_STATES_SUCCESS:
+            return { ...state, getStatesProgress: false, getStatesError: "", states: JSON.parse(action.result)};
+        case GET_STATES_FAILURE:
+            return { ...state, getStatesProgress: false, getStatesError: "Get States Failed."};
+        case GET_CITIES_START:
+            return { ...state, getCitiesProgress: true, getCitiesrror: ""};
+        case GET_CITIES_SUCCESS:
+            return { ...state, getCitiesProgress: false, getCitiesError: "", cities: JSON.parse(action.result)};
+        case GET_CITIES_FAILURE:
+            return { ...state, getCitiesProgress: false, getCitiesError: "Get Cities Failed."};
         default:
             return state;
     }
@@ -173,11 +212,37 @@ export function createMerchant(team_id, data) {
         types: [CREATE_MERCHANT_START, CREATE_MERCHANT_SUCCESS, CREATE_MERCHANT_FAILURE],
         promise: (client) => client.local.post('/teams/' + team_id + '/merchants/', 
         {
-            data: {
-                name: data.name,
-                price: data.price,
-                serial_number: data.serial_number
-            }
+            data: data
         })
+    }
+}
+
+export function getMerchantDetails(merchant_id) {
+    return {
+        types: [GET_MERCHANT_DETAILS_START, GET_MERCHANT_DETAILS_SUCCESS, GET_MERCHANT_DETAILS_FAILURE],
+        promise: (client) => client.local.get('/crm/merchants/' + merchant_id)
+    }
+}
+
+export function editMerchantDetails(data) {
+    return {
+        types: [EDIT_MERCHANT_START, EDIT_MERCHANT_SUCCESS, EDIT_MERCHANT_FAILURE],
+        promise: (client) => client.local.put(`/crm/merchants/${data.id}/`, {
+            data:data
+        })
+    }
+}
+
+export function getStates(merchant_id) {
+    return {
+        types: [GET_STATES_START, GET_STATES_SUCCESS, GET_STATES_FAILURE],
+        promise: (client) => client.local.get('/crm/states/')
+    }
+}
+
+export function getCities(merchant_id) {
+    return {
+        types: [GET_CITIES_START, GET_CITIES_SUCCESS, GET_CITIES_FAILURE],
+        promise: (client) => client.local.get('/crm/cities/?start=0&limit=10000')
     }
 }

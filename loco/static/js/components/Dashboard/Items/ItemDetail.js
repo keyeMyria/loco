@@ -11,7 +11,6 @@ class ItemDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            "itemData": [],
             "serial":"",
             "name": "",
             "price": "",
@@ -128,7 +127,7 @@ class ItemDetail extends Component {
 }
 
 export default ItemDetail = connect(
-    (state) => ({ team_id: state.items.team_id, inProgress: state.items.createItemProgress,
+    (state) => ({ team_id: state.dashboard.team_id, inProgress: state.items.createItemProgress,
         error: state.items.createItemError, itemDetailsData: state.items.itemDetailsData }), 
     {createItem: createItem, getItemDetails: getItemDetails, editItemDetails: editItemDetails}
 )(ItemDetail)
