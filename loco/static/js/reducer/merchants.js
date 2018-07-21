@@ -53,9 +53,9 @@ export default function merchants(state = INITIAL_STATE, action={}) {
             return { ...state, createMerchantProgress: true, createMerchantError: ""};
         case CREATE_MERCHANT_SUCCESS:
             var merchantsData = JSON.parse(action.result);
-            return { ...state, createMerchantProgress: false, createMerchantError: ""};
+            return { ...state, createMerchantProgress: false, createMerchantError: "", createMerchantSucess: true};
         case CREATE_MERCHANT_FAILURE:
-            return { ...state, createMerchantProgress: false, createMerchantError: "Create Merchant Failed."};
+            return { ...state, createMerchantProgress: false, createMerchantError: "Create Merchant Failed.", createMerchantSucess: false};
         case UPLOAD_MERCHANT_START:
             return { ...state, uploadProgress: true, uploadError: ""};
         case UPLOAD_MERCHANT_SUCCESS:
@@ -128,9 +128,9 @@ export default function merchants(state = INITIAL_STATE, action={}) {
         case EDIT_MERCHANT_START:
             return { ...state, editMerchantProgress: true, editMerchantError: ""};
         case EDIT_MERCHANT_SUCCESS:
-            return { ...state, editMerchantProgress: false, editMerchantError: ""};
+            return { ...state, editMerchantProgress: false, editMerchantError: "", editMerchantSuccess: true};
         case EDIT_MERCHANT_FAILURE:
-            return { ...state, editMerchantProgress: false, editMerchantError: "Edit Merchant Failed."};
+            return { ...state, editMerchantProgress: false, editMerchantError: "Edit Merchant Failed.", editMerchantSuccess: false};
         case GET_STATES_START:
             return { ...state, getStatesProgress: true, getStatesrror: ""};
         case GET_STATES_SUCCESS:

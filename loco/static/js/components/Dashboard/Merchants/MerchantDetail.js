@@ -89,50 +89,64 @@ class MerchantDetail extends Component {
             marginTop: "20px"
         };
 
-        console.log(this.props.states);
+        let props = this.props;
 
         return (
             <div>
                 <header className="header">
                     <h1 className="title">Merchant Detail</h1>
                 </header>
-                <div className="item-detail-holder">
-                    <TextField
-                        hintText=""
-                        onChange={this.onNameChange}
-                        value={this.state.name}
-                        floatingLabelText="Name"
-                        style={{ display:"block"}}
-                        name="name" />
-                    <TextField
-                        hintText=""
-                        onChange={this.onAddressChange}
-                        value={this.state.address}
-                        floatingLabelText="Address"
-                        style={{ display:"block"}}
-                        id="address" />
-                    <SelectField
-                        floatingLabelText="City"
-                        value={this.state.city}
-                        onChange={this.onStateChange} >
-                        { this.props.cities.map((item, index) => {   
-                            return(
-                                <MenuItem 
-                                    value={item.id} 
-                                    primaryText={item.name}
-                                    key={item.id} />
-                            ) 
-                        }) 
-                        }
-                    </SelectField>
-                    <br />
+                { (props.inProgress || props.getMerchantProgress || props.editMerchantProgress)
+                    ? (
+                        <div className="list-card item-detail-holder">
+                            <section className="list-card-loader-holder">
+                                <section className="loader list-card-loader"></section>
+                            </section>
+                        </div>
+                    )
+                    : (
+                        <div className="list-card item-detail-holder">
+                            <TextField
+                                hintText=""
+                                onChange={this.onNameChange}
+                                value={this.state.name}
+                                floatingLabelText="Name"
+                                style={{ display:"block"}}
+                                name="name" />
+                            <TextField
+                                hintText=""
+                                onChange={this.onAddressChange}
+                                value={this.state.address}
+                                floatingLabelText="Address"
+                                style={{ display:"block"}}
+                                id="address" />
+                            <SelectField
+                                floatingLabelText="City"
+                                value={this.state.city}
+                                onChange={this.onStateChange} >
+                                { this.props.cities.map((item, index) => {   
+                                    return(
+                                        <MenuItem 
+                                            value={item.id} 
+                                            primaryText={item.name}
+                                            key={item.id} />
+                                    ) 
+                                }) 
+                                }
+                            </SelectField>
+                            <br />
 
-                    <RaisedButton 
-                        label="Submit" 
-                        primary={true} 
-                        style={style} 
-                        onClick={this.handleSubmit} />
-                </div>
+                            <RaisedButton 
+                                label="Submit" 
+                                primary={true} 
+                                style={style} 
+                                onClick={this.handleSubmit} />
+                        </div>
+                    )
+                }
+                { (props.createMerchantSucess || props.editMerchantSuccess) &&
+                    <Redirect to="/merchants"/>
+                }
             </div>            
         );
     }
@@ -141,7 +155,9 @@ class MerchantDetail extends Component {
 export default MerchantDetail = connect(
     (state) => ({ team_id: state.dashboard.team_id, inProgress: state.merchants.createMerchantProgress,
         error: state.merchants.createMerchantError, merchantDetailsData: state.merchants.merchantDetailsData,
-        states: state.merchants.states, cities: state.merchants.cities }), 
+        states: state.merchants.states, cities: state.merchants.cities,
+        getMerchantProgress: state.merchants.getMerchantDetailsProgress, createMerchantSucess: state.merchants.createMerchantSucess,
+        editMerchantSuccess: state.merchants.editMerchantSuccess, editMerchantProgress: state.merchants.editMerchantProgress }), 
     {createMerchant: createMerchant, getMerchantDetails: getMerchantDetails, editMerchantDetails: editMerchantDetails,
         getStates: getStates, getCities: getCities}
 )(MerchantDetail)
