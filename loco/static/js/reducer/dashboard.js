@@ -21,4 +21,3 @@ export function initTeamId(team_id, team_name) {
         team_name: team_name,
     }
 }
-

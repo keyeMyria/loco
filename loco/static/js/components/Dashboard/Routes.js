@@ -8,6 +8,7 @@ import Items from "./Items/index";
 import ItemDetail from "./Items/ItemDetail";
 import ItemCSV from "./Items/ItemCSV";
 import Tasks from "./Tasks/index";
+import TaskDetail from "./Tasks/TaskDetail"
 
 export default class Routes extends Component {
 
@@ -16,6 +17,7 @@ export default class Routes extends Component {
         return (
             <div className="content">
                 <Route exact path="/tasks" component={Tasks}/>
+                <Route exact path="/tasks/:id/change" component={TaskDetail}/>
                 
                 <Route exact path="/merchants" component={Merchants}/>
                 <Route exact path="/merchants/create" component={MerchantDetail}/>

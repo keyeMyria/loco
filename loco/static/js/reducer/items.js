@@ -90,7 +90,7 @@ export default function items(state = INITIAL_STATE, action={}) {
         case CREATE_ITEM_START:
             return { ...state, createItemProgress: true, createItemError: ""};
         case CREATE_ITEM_SUCCESS:
-            return { ...state, createItemProgress: false, createItemError: ""};
+            return { ...state, createItemProgress: false, createItemError: "", createItemSucess: true};
         case CREATE_ITEM_FAILURE:
             return { ...state, createItemProgress: false, createItemError: "Create Item Failed."};
         case UPLOAD_ITEM_START:
@@ -119,7 +119,7 @@ export default function items(state = INITIAL_STATE, action={}) {
         case EDIT_ITEM_START:
             return { ...state, editItemProgress: true, editItemError: ""};
         case EDIT_ITEM_SUCCESS:
-            return { ...state, editItemProgress: false, editItemError: ""};
+            return { ...state, editItemProgress: false, editItemError: "", editItemSuccess: true};
         case EDIT_ITEM_FAILURE:
             return { ...state, editItemProgress: false, editItemError: "Edit Item Failed."};
         default:

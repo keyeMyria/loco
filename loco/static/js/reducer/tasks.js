@@ -9,6 +9,10 @@ export const GET_TASKS_PREV_CACHED = 'dashboard/get_tasks_prev_cached';
 export const GET_TASKS_NEXT_CACHED = 'dashboard/get_tasks_next_cached';
 export const GET_TASKS_FAILURE = 'dashboard/get_tasks_failure';
 export const GET_TASKS_SUCCESS = 'dashboard/get_tasks_success';
+export const GET_TASK_DETAILS_START = 'dashboard/get_task_details_start';
+export const GET_TASK_DETAILS_FAILURE = 'dashboard/get_task_details_failure';
+export const GET_TASK_DETAILS_SUCCESS = 'dashboard/get_task_details_success';
+export const CLEAR_STATE = 'dashboard/clear_state'
 export const UPDATE_QUERY = 'dashboard/update_tasks_query';
 
 const INITIAL_STATE = {
@@ -80,8 +84,30 @@ export default function tasks(state = INITIAL_STATE, action={}) {
             return {...state, start:start, end:end}
         case GET_TASKS_FAILURE:
             return { ...state, inProgress: false, error: "Unable to get tasks.", data: []};
+        case GET_TASK_DETAILS_START:
+            return { ...state, getTaskDetailsProgress: true, getTaskDetailsError: ""};
+        case GET_TASK_DETAILS_SUCCESS:
+            let taskDetailsData = JSON.parse(action.result);
+            taskDetailsData = taskDetailsData.data;
+            if(taskDetailsData && taskDetailsData.length > 0) {
+                taskDetailsData = taskDetailsData[0];
+            }
+
+            taskDetailsData["content"] = JSON.parse(taskDetailsData.content)
+            let task = taskDetailsData.content;
+            if(task && task.content && task.content.items && Array.isArray(task.content.items)) {
+                taskDetailsData["items_data"] = task.content.items;
+            } else {
+                taskDetailsData["items_data"] = [];
+            }
+
+            return { ...state, getTaskDetailsProgress: false, getTaskDetailsError: "", taskDetailsData: taskDetailsData};
+        case GET_TASK_DETAILS_FAILURE:
+            return { ...state, getTaskDetailsProgress: false, getTaskDetailsError: "Get Task Details Failed."};
         case UPDATE_QUERY:
             return { ...state, query: action.query};
+        case CLEAR_STATE:
+            return INITIAL_STATE;
         default:
             return state;
     }
@@ -179,5 +205,20 @@ export function createTask(team_id, data) {
                 serial_number: data.serial_number
             }
         })
+    }
+}
+
+export function getTaskDetails(team_id, task_id) {
+    var url = '/teams/'+team_id+'/tasks/search/?start=0&limit=1&filters=id:'+task_id;
+
+    return {
+        types: [GET_TASK_DETAILS_START, GET_TASK_DETAILS_SUCCESS, GET_TASK_DETAILS_FAILURE],
+        promise: (client) => client.local.get(url)
+    }
+}
+
+export function changeLocation() {
+    return {
+        type: CLEAR_STATE
     }
 }
