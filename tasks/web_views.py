@@ -1,10 +1,13 @@
 import json
 from decimal import Decimal
 from datetime import datetime, timedelta
+from io import BytesIO
+from xhtml2pdf import pisa
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 from django.shortcuts import render, redirect
+from django.template.loader import get_template
 
 from loco.services import solr
 from loco import utils
@@ -37,14 +40,19 @@ def tasks_csv(request, team_id):
     response['Content-Disposition'] = 'attachment;filename=tasks.csv'
     return response
 
+def render_to_pdf(template_src, context_dict={}):
+    template = get_template(template_src)
+    html  = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+
 @login_required
 def tasks_pdf(request, task_id):
     task = models.TaskSnapshot.objects.get(task__id=task_id)
     order_details = json.loads(task.content)
-    print (order_details)
-    # response = HttpResponse(tasks)
-    # response['content_type'] = 'application/csv'
-    # response['Content-Disposition'] = 'attachment;filename=tasks.csv'
     created = datetime.strptime(
         order_details['created'],
         "%Y-%m-%dT%H:%M:%S.%fZ"
@@ -57,7 +65,11 @@ def tasks_pdf(request, task_id):
         item['total'] = item['item']['price']*item['quantity']
 
     context = {
-        'task': order_details   
+        'task': order_details,
+        'pagesize':'A4',   
     }
 
-    return render(request, "task_pdf.html", context)
+    pdf = render_to_pdf('task_pdf.html', context)
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment;filename=order_{}.pdf'.format(task_id)
+    return response

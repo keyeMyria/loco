@@ -14,3 +14,4 @@ google-api-python-client==1.6.5
 kafka-python==1.4.3
 datadog==0.16.0
 django-cors-headers==2.3.0
+xhtml2pdf==0.2.2
