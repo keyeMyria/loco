@@ -70,6 +70,13 @@ class MerchantUpload(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)
     parser_classes = (MultiPartParser, )
 
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+        jobs = models.MerchantUpload.objects.filter(team=team).order_by('-created')
+        serializer = serializers.MerchantUploadSerializer(jobs, many=True)
+        return Response(serializer.data)
+
     def post(self, request, team_id, format=None):
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
@@ -102,6 +109,12 @@ class MerchantSearch(APIView):
 
         start, limit = utils.get_query_start_limit(request)
         merchants = solr.search_merchants(team.id, search_options, start, limit)
+        if merchants.get('data'):
+            merchants['csv'] = utils.get_csv_url('merchants', team.id, 0,
+                merchants.get('count'), query, filters)
+        else:
+            merchants['csv'] = ''
+            
         return Response(merchants)
         
 class ItemList(APIView):
@@ -158,6 +171,13 @@ class ItemDetail(APIView):
 class ItemUpload(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)
     parser_classes = (MultiPartParser, )
+
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+        jobs = models.ItemUpload.objects.filter(team=team).order_by('-created')
+        serializer = serializers.ItemUploadSerializer(jobs, many=True)
+        return Response(serializer.data)
 
     def post(self, request, team_id, format=None):
         team = get_object_or_404(Team, id=team_id)

@@ -13,7 +13,7 @@ export default class Sidebar extends Component {
                 </section>
                 <ul className="nav-holder">
                     <li className="nav-link">
-                        <NavLink to="/orders">Orders</NavLink>
+                        <NavLink to="/tasks">Orders</NavLink>
                     </li>
                     <li className="nav-link">
                         <NavLink to="/merchants">Merchants</NavLink>

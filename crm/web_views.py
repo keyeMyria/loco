@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, Http404
 
 from loco.services import solr
+from loco import utils
 from teams.models import Team
 
 @login_required
@@ -21,7 +22,8 @@ def items_csv(request, team_id):
     if filters:
         search_options['filters'] = filters
 
-    items = solr.csv_items(team.id, search_options)
+    start, limit = utils.get_query_start_limit_dj(request)
+    items = solr.csv_items(team.id, search_options, start, limit)
     response = HttpResponse(items)
     response['content_type'] = 'application/csv'
     response['Content-Disposition'] = 'attachment;filename=items.csv'
@@ -44,7 +46,8 @@ def merchants_csv(request, team_id):
     if filters:
         search_options['filters'] = filters
 
-    merchants = solr.csv_merchants(team.id, search_options)
+    start, limit = utils.get_query_start_limit_dj(request)
+    merchants = solr.csv_merchants(team.id, search_options, start, limit)
     response = HttpResponse(merchants)
     response['content_type'] = 'application/csv'
     response['Content-Disposition'] = 'attachment;filename=merchants.csv'

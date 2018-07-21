@@ -28,9 +28,11 @@ export default class ApiClient {
             request.query(params);
           }
 
+          var csrftoken = cookie.load("csrftoken");
+          request.set('X-CSRFToken', csrftoken);
+
           if (data) {
-            var csrftoken = cookie.load("csrftoken");
-            request.send(data).set('X-CSRFToken', csrftoken);
+            request.send(data);
           }else if(json){
             request.send(json).set('Content-Type', 'application/json');
           }else if(form){

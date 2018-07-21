@@ -139,11 +139,43 @@ body {
     cursor: pointer;
 }
 
-.create-link {
+.header .create-link {
     margin: 32px 10%;
     margin-bottom: 24px;
     text-align: right;
 }
+
+.header .header-actions {
+    float: right;
+    margin-right: 48px;
+}
+
+.header-actions .header-action {
+    display: inline-block;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+.header-action .header-action-icon {
+    display: inline-block;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 20px;
+    margin-right: 4px;
+}
+
+.header-action .header-action-name {
+    display: inline-block;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 14px;
+    vertical-align: top;
+    margin-top: 4px;
+}
+
+.header-action:hover .header-action-name,
+.header-action:hover .header-action-icon {
+    color: white;
+}
+
 
 .create-link a {
     color: #fff;
@@ -272,4 +304,60 @@ body {
 
 .item-detail-holder {
     margin: 80px;
+}
+
+/*------------- Upload CSV -------------------*/
+
+.csv-upload-holder .upload-csv {
+    width: 80%;
+    max-width: 800px;
+    margin: 16px auto;
+    background-color: white;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 2px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.14);
+    padding: 16px;
+}
+
+.upload-csv .upload-csv-form {
+    width: 60%;
+    background: #f2f2f2;
+    position: relative;
+}
+
+.upload-csv-form .upload-csv-input {
+    width: 60%;
+    border: none;
+    padding: 16px;
+    display: inline-block;
+    border-radius: 2px;
+}
+
+.upload-csv-form .upload-csv-action {
+    width: 120px;
+    height: 40px;
+    position: absolute;
+    top: 8px;
+    right: 16px;
+    display: inline-block;
+    margin-left: 16px;
+    background: #CB202D;
+    border: 1px solid #CB202D;
+    color: white;
+    cursor: pointer;
+    border-radius: 2px;
+}
+
+.upload-csv .upload-csv-helpers {
+    margin-bottom: 16px;
+}
+
+.upload-csv-helpers .upload-csv-helper {
+    font-size: 14px;
+    line-height: 20px;
+}
+
+.upload-csv .upload-csv-error {
+    margin-bottom: 16px;
+    color: #CB202D;
 }

@@ -1,7 +1,11 @@
 import React, { Component } from 'react';
-import { Link } from "react-router-dom";
 
-export default class MerchantList extends Component {
+export default class JobList extends Component {
+
+    formatDate = (date) => {
+        var d = new Date(date);
+        return d.toLocaleString();
+    };
 
     render() {
         return (
@@ -9,23 +13,27 @@ export default class MerchantList extends Component {
                 <table>
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>State</th>
-                            <th>City</th>
+                            <th>ID</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Message</th>
                         </tr>
                     </thead>
                     <tbody>
-                        { this.props.merchantsData.map((merchant, index) => {
+                        { this.props.data.map((job, index) => {
                             return (
                                 <tr key={index}>
                                     <td>
-                                        <Link to={"/merchants/" + merchant.id + "/change" }>{merchant.name}</Link>
+                                        {job.id}
                                     </td>
                                     <td>
-                                        <Link to={"/merchants/" + merchant.id + "/change" }>{merchant.state}</Link>
+                                        {this.formatDate(job.created)}
                                     </td>
                                     <td>
-                                        <Link to={"/merchants/" + merchant.id + "/change" }>{merchant.city}</Link>
+                                        {job.status}
+                                    </td>
+                                    <td>
+                                        {job.message}
                                     </td>
                                 </tr>
                             )

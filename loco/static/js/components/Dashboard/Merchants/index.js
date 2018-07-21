@@ -21,13 +21,22 @@ class Merchants extends Component {
                         <p className="header-team-name">{this.props.team_name}</p>
                         <i className="material-icons header-team-icon">arrow_drop_down</i>
                     </a>
+                    <section className="header-actions">
+                        <Link to="/merchants/create" className="header-action">
+                            <i className="material-icons header-action-icon">create</i>
+                            <p className="header-action-name">NEW</p>
+                        </Link>
+                        <Link to="/merchants/csv" className="header-action">
+                            <i className="material-icons header-action-icon">vertical_align_top</i>
+                            <p className="header-action-name">UPLOAD</p>
+                        </Link>
+                    </section>
                     <section className="profile-menu">
                         <img src="/static/images/person_white.png" />
                     </section>
                 </header>
                 <section className="content-scroller">
                     <MerchantListFilters />
-                    <Link to="/merchants/create" className="create-link">CREATE MERCHANT</Link>
                     <MerchantListCard />
                 </section>
             </div>            

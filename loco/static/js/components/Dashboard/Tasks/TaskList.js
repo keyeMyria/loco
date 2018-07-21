@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from "react-router-dom";
 
-export default class MerchantList extends Component {
+export default class TaskList extends Component {
 
     render() {
         return (
@@ -9,23 +9,27 @@ export default class MerchantList extends Component {
                 <table>
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>State</th>
-                            <th>City</th>
+                            <th>ID</th>
+                            <th>Merchant</th>
+                            <th>Created By</th>
+                            <th>Amount</th>
                         </tr>
                     </thead>
                     <tbody>
-                        { this.props.merchantsData.map((merchant, index) => {
+                        { this.props.data.map((task, index) => {
                             return (
                                 <tr key={index}>
                                     <td>
-                                        <Link to={"/merchants/" + merchant.id + "/change" }>{merchant.name}</Link>
+                                        <Link to={"/tasks/" + task.id + "/change" }>{task.id}</Link>
                                     </td>
                                     <td>
-                                        <Link to={"/merchants/" + merchant.id + "/change" }>{merchant.state}</Link>
+                                        <Link to={"/tasks/" + task.id + "/change" }>{task.merchant_name}</Link>
                                     </td>
                                     <td>
-                                        <Link to={"/merchants/" + merchant.id + "/change" }>{merchant.city}</Link>
+                                        <Link to={"/tasks/" + task.id + "/change" }>{task.created_by_name}</Link>
+                                    </td>
+                                    <td>
+                                        <Link to={"/tasks/" + task.id + "/change" }>{task.amount}</Link>
                                     </td>
                                 </tr>
                             )

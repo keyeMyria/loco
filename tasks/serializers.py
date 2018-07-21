@@ -65,6 +65,7 @@ class SalesTaskContentSerializer(serializers.ModelSerializer):
                 item['sales_task_content'] = content_object
                 SalesTaskItems.objects.create(**item)
 
+        content_object.update_amount()
         return content_object
 
 class ContentObjectRelatedField(serializers.RelatedField):
