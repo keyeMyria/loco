@@ -257,6 +257,12 @@ class TaskSearch(APIView):
 
         start, limit = utils.get_query_start_limit(request)
         tasks = solr.search_tasks(team.id, search_options, start, limit)
+        if tasks.get('data'):
+            tasks['csv'] = utils.get_csv_url('tasks', team.id, 0,
+                tasks.get('count'), query, filters)
+        else:
+            tasks['csv'] = ''
+            
         return Response(tasks)
 
 class TaskCSV(APIView):
