@@ -106,7 +106,7 @@ else:
             'NAME': 'loko',
             'USER': 'root',
             'PASSWORD': 'toor',
-            'HOST': 'anuvad.io',
+            'HOST': 'localhost',
             'PORT': '',
             'OPTIONS': {'charset': 'utf8mb4'},
         }

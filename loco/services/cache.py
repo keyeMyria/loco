@@ -10,7 +10,10 @@ from teams.models import Team
 
 logger = logging.getLogger('custom')
 
-CACHE_LOCATION = 'anuvad.io'
+CACHE_LOCATION = 'localhost'
+if settings.DEBUG:
+    CACHE_LOCATION = 'anuvad.io'
+    
 CACHE_PORT = 6174
 CACHE_DB = 0
 

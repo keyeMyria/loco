@@ -3,7 +3,11 @@ from uuid import uuid4
 from django.conf import settings
 from django.utils import timezone
 
-URL = 'http://anuvad.io:5280/api/send_stanza'
+URL = 'http://localhost:5280/api/send_stanza'
+if settings.DEBUG:
+	URL = 'http://anuvad.io:5280/api/send_stanza'
+
+
 HEADERS = {'X-Admin': 'true'}
 AUTH = ('admin@localhost', 'temppass')
 

@@ -1,4 +1,10 @@
 import requests
+from django.conf import settings
+
+
+BASE_URL = "http://localhost:8090/"
+if settings.DEBUG:
+	BASE_URL = "http://anuvad.io:8090/"
 
 def subscribe_location(source, destination):
 	if not source:
@@ -7,7 +13,7 @@ def subscribe_location(source, destination):
 	source = str(source.id)
 	destination = [str(user.id) for user in destination]
 
-	url = "http://anuvad.io:8090/api/subscribe/"
+	url = BASE_URL + "api/subscribe/"
 	data = {
 		'source': source,
 		'destination': destination
@@ -24,7 +30,7 @@ def unsubscribe_location(source, destination):
 	source = str(source.id)
 	destination = [str(user.id) for user in destination]
 
-	url = "http://anuvad.io:8090/api/unsubscribe/"
+	url = BASE_URL + "api/unsubscribe/"
 	data = {
 		'source': source,
 		'destination': destination
