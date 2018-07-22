@@ -99,50 +99,52 @@ class MerchantDetail extends Component {
                 <section className="content-scroller">
                 { (props.inProgress || props.getMerchantProgress || props.editMerchantProgress)
                     ? (
-                        <div className="list-card item-detail-holder">
-                            <section className="list-card-loader-holder">
-                                <section className="loader list-card-loader"></section>
+                        <section className="detail-card">
+                            <section className="detail-card-loader-holder">
+                                <section className="loader detail-card-loader"></section>
                             </section>
-                        </div>
+                        </section>
                     )
                     : (
-                        <div className="list-card item-detail-holder">
-                            <TextField
-                                hintText=""
-                                onChange={this.onNameChange}
-                                value={this.state.name}
-                                floatingLabelText="Name"
-                                style={{ display:"block"}}
-                                name="name" />
-                            <TextField
-                                hintText=""
-                                onChange={this.onAddressChange}
-                                value={this.state.address}
-                                floatingLabelText="Address"
-                                style={{ display:"block"}}
-                                id="address" />
-                            <SelectField
-                                floatingLabelText="City"
-                                value={this.state.city}
-                                onChange={this.onStateChange} >
-                                { this.props.cities.map((item, index) => {   
-                                    return(
-                                        <MenuItem 
-                                            value={item.id} 
-                                            primaryText={item.name}
-                                            key={item.id} />
-                                    ) 
-                                }) 
-                                }
-                            </SelectField>
-                            <br />
+                        <section className="detail-card">
+                            <div className="detail-card-content">
+                                <TextField
+                                    hintText=""
+                                    onChange={this.onNameChange}
+                                    value={this.state.name}
+                                    floatingLabelText="Name"
+                                    style={{ display:"block"}}
+                                    name="name" />
+                                <TextField
+                                    hintText=""
+                                    onChange={this.onAddressChange}
+                                    value={this.state.address}
+                                    floatingLabelText="Address"
+                                    style={{ display:"block"}}
+                                    id="address" />
+                                <SelectField
+                                    floatingLabelText="City"
+                                    value={this.state.city}
+                                    onChange={this.onStateChange} >
+                                    { this.props.cities.map((item, index) => {   
+                                        return(
+                                            <MenuItem 
+                                                value={item.id} 
+                                                primaryText={item.name}
+                                                key={item.id} />
+                                        ) 
+                                    }) 
+                                    }
+                                </SelectField>
+                                <br />
 
-                            <RaisedButton 
-                                label="Submit" 
-                                primary={true} 
-                                style={style} 
-                                onClick={this.handleSubmit} />
-                        </div>
+                                <RaisedButton 
+                                    label="Submit" 
+                                    primary={true} 
+                                    style={style} 
+                                    onClick={this.handleSubmit} />
+                            </div>
+                        </section>
                     )
                 }
                 { (props.createMerchantSucess || props.editMerchantSuccess) &&

@@ -12,9 +12,15 @@ class TaskDetail extends Component {
             created_by: "",
             merchant_name: "",
             amount: "",
-            items: []
+            items: [],
+            created: ""
         } 
     }
+
+    formatDate = (date) => {
+        var d = new Date(date);
+        return d.toLocaleString();
+    };
 
     componentWillMount() {
         if(this.props.match.params.id) {
@@ -29,7 +35,8 @@ class TaskDetail extends Component {
                 merchant_name: task.merchant_name,
                 amount: task.amount,
                 created_by: task.created_by_name,
-                items: task.items_data
+                items: task.items_data,
+                created: this.formatDate(task.created),
             });
         }
     }
@@ -48,6 +55,7 @@ class TaskDetail extends Component {
         };
 
         let props = this.props;
+        let pdfLink = '/tasks/' + props.match.params.id + '/pdf';
 
         return (
             <div className="content-holder">
@@ -57,15 +65,15 @@ class TaskDetail extends Component {
                 <section className="content-scroller">
                 { (props.getTaskProgress)
                     ? (
-                        <div className="list-card item-detail-holder">
-                            <section className="list-card-loader-holder">
-                                <section className="loader list-card-loader"></section>
+                        <div className="detail-card">
+                            <section className="detail-card-loader-holder">
+                                <section className="loader detail-card-loader"></section>
                             </section>
                         </div>
                     )
                     : (
                         <section>
-                            <section className="list-card item-detail-holder">
+                            <section className="detail-card">
                                 <article className="task-detail">
                                     <p className="detail-title">Merchant Name:</p>
                                     <p className="detail-value">{this.state.merchant_name}</p>
@@ -80,12 +88,15 @@ class TaskDetail extends Component {
                                 </article>
                                 <article className="task-detail">
                                     <p className="detail-title">Created On:</p>
-                                    <p className="detail-value price">&#x20b9; {this.state.amount}</p>
+                                    <p className="detail-value">{this.state.created}</p>
+                                </article>
+                                <article className="task-detail">
+                                    <a className="detail-link" target="_blank" href={pdfLink}>PDF</a>
                                 </article>
                             </section>
-                            <section className="list-card item-list-card">
+                            <section className="list-card">
                                 { this.state.items &&
-                                    <section className="list-table-holder">
+                                    <section className="list-table-holder read-only">
                                         <table>
                                             <thead>
                                                 <tr>

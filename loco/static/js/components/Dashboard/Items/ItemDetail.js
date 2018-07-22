@@ -99,43 +99,45 @@ class ItemDetail extends Component {
                 <section className="content-scroller">
                 { (props.inProgress || props.getItemProgress || props.editItemProgress)
                     ? (
-                        <div className="list-card item-detail-holder">
-                            <section className="list-card-loader-holder">
-                                <section className="loader list-card-loader"></section>
+                        <section className="detail-card">
+                            <section className="detail-card-loader-holder">
+                                <section className="loader detail-card-loader"></section>
                             </section>
-                        </div>
+                        </section>
                     )
                     : (
-                        <div className="list-card item-detail-holder">
-                            <TextField
-                                hintText=""
-                                onChange={this.onSerialChange}
-                                value={this.state.serial}
-                                floatingLabelText="Serial No."
-                                style={{ display:"block"}}
-                                id="serial" />
-                            <TextField
-                                hintText=""
-                                onChange={this.onNameChange}
-                                value={this.state.name}
-                                floatingLabelText="Name"
-                                style={{ display:"block"}}
-                                name="name" />
-                            <TextField
-                                hintText=""
-                                onChange={this.onPriceChange}
-                                value={this.state.price}
-                                floatingLabelText="Price"
-                                style={{ display:"block"}}
-                                name="price" />
+                        <section className="detail-card">
+                            <div className="detail-card-content">
+                                <TextField
+                                    hintText=""
+                                    onChange={this.onSerialChange}
+                                    value={this.state.serial}
+                                    floatingLabelText="Serial No."
+                                    style={{ display:"block"}}
+                                    id="serial" />
+                                <TextField
+                                    hintText=""
+                                    onChange={this.onNameChange}
+                                    value={this.state.name}
+                                    floatingLabelText="Name"
+                                    style={{ display:"block"}}
+                                    name="name" />
+                                <TextField
+                                    hintText=""
+                                    onChange={this.onPriceChange}
+                                    value={this.state.price}
+                                    floatingLabelText="Price"
+                                    style={{ display:"block"}}
+                                    name="price" />
 
-                            <RaisedButton 
-                                label="Submit" 
-                                primary={true} 
-                                style={style} 
-                                backgroundColor = "#CB202D"
-                                onClick={this.handleSubmit} />
-                        </div>
+                                <RaisedButton 
+                                    label="Submit" 
+                                    primary={true} 
+                                    style={style} 
+                                    backgroundColor = "#CB202D"
+                                    onClick={this.handleSubmit} />
+                            </div>
+                        </section>
                     )
                 }
                 { (props.createItemSucess || props.editItemSuccess) &&
