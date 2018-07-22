@@ -161,7 +161,7 @@ function getMerchantsInitInternal(team_id, limit, query) {
     }
 }
 
-export function getMerchantsInit () {
+export function getMerchantsInit() {
     return function (dispatch, getState) {
         var state = getState();
         var limit = state.merchants.limit;

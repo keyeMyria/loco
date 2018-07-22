@@ -4,8 +4,15 @@ import { DateRangePicker } from 'react-dates';
 import Popover, {PopoverAnimationVertical} from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
-import {searchTasks} from '../../../reducer/tasks.js'
+import {searchTasks, filterTasks} from '../../../reducer/tasks.js'
 import Filter from './Filter';
+
+const filterMap = {
+    "City": "city",
+    "State": "state",
+    "Merchant": "merchant_name",
+    "Agent": "created_by_name"
+}
 
 class TasktListFilters extends Component {
 
@@ -14,7 +21,7 @@ class TasktListFilters extends Component {
         this.state = {
             openPopover: false,
             filters: []
-        }; 
+        };
     }
 
     handleClick = (event) => {
@@ -23,24 +30,25 @@ class TasktListFilters extends Component {
             openPopover: true,
             anchorEl: event.currentTarget,
         });
-    };
+    }
 
     handleRequestClose = () => {
         this.setState({
             openPopover: false,
         });
-    };
+    }
 
     handleQueryChange = (event) => {
         var query = event.target.value;
         this.props.searchTasks(query);
-    };
+    }
 
     handleFilterClick = (event, type) => {
         event.preventDefault();
         let filters = this.state.filters
         let filter = {
             type: type,
+            name: filterMap[type],
             value: "",
             data: []
         }
@@ -50,7 +58,7 @@ class TasktListFilters extends Component {
         this.setState({
             filters: filters
         });
-    };
+    }
 
     removefilter = (index) => {
         let filters = this.state.filters;
@@ -60,9 +68,18 @@ class TasktListFilters extends Component {
         });
     }
 
+    onQueryChange = (searchText, index) => {
+        let filters = this.state.filters;
+        filters[index].value = searchText
+        this.setState({
+            filters: filters
+        });
+
+        this.props.filterTasks(filters);
+    };
+
     render() {
         let tasks = this.props.tasks;
-
 
         return (
             <section className="filter-bar">
@@ -122,7 +139,9 @@ class TasktListFilters extends Component {
                                 label={filter.type} 
                                 data={filter.data}
                                 key={index}
-                                remove={this.removefilter} />
+                                index={index}
+                                remove={this.removefilter}
+                                onQueryChange={this.onQueryChange} />
                         )
                     }) 
                 }                 
@@ -134,7 +153,7 @@ class TasktListFilters extends Component {
 
 export default connect(
     ((state) => ({ tasks: state.tasks })) ,
-    {searchTasks: searchTasks,}
+    {searchTasks: searchTasks, filterTasks: filterTasks}
 )(TasktListFilters);
 
 

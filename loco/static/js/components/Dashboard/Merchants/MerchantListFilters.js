@@ -38,19 +38,6 @@ class MerchantListFilters extends Component {
                             onChange={this.handleQueryChange} />
                     </section>
                 </section>
-                <section className="section-date-filter">
-                    <section className="date-filter-holder">
-                        <DateRangePicker
-                          startDate={this.state.startDate}
-                          startDateId="your_unique_start_date_id"
-                          endDate={this.state.endDate}
-                          endDateId="your_unique_end_date_id"
-                          onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })}
-                          focusedInput={this.state.focusedInput}
-                          onFocusChange={focusedInput => this.setState({ focusedInput })}
-                        />
-                    </section>
-                </section>                    
             </section>
         );
     }

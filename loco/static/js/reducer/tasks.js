@@ -14,6 +14,7 @@ export const GET_TASK_DETAILS_FAILURE = 'dashboard/get_task_details_failure';
 export const GET_TASK_DETAILS_SUCCESS = 'dashboard/get_task_details_success';
 export const CLEAR_STATE = 'dashboard/clear_state'
 export const UPDATE_QUERY = 'dashboard/update_tasks_query';
+export const UPDATE_FILTER = 'dashboard/update_tasks_filters';
 
 const INITIAL_STATE = {
     inProgress: true,
@@ -27,6 +28,7 @@ const INITIAL_STATE = {
     getTime: '',
     error: '',
     query: '',
+    filters: [],
     csvURL: ''
 };
 
@@ -106,6 +108,8 @@ export default function tasks(state = INITIAL_STATE, action={}) {
             return { ...state, getTaskDetailsProgress: false, getTaskDetailsError: "Get Task Details Failed."};
         case UPDATE_QUERY:
             return { ...state, query: action.query};
+        case UPDATE_FILTER:
+            return { ...state, filters: action.filters}
         case CLEAR_STATE:
             return INITIAL_STATE;
         default:
@@ -114,10 +118,16 @@ export default function tasks(state = INITIAL_STATE, action={}) {
 }
 
 
-function getTasksInitInternal(team_id, limit, query) {
+function getTasksInitInternal(team_id, limit, query, filters) {
     var url = '/teams/'+team_id+'/tasks/search/?start=0&limit='+limit;
     if (query) {
         url = url + "&query=" + query;
+    }
+
+    if(filters && Array.isArray(filters) && filters.length > 0) {
+        for(var i = 0; i< filters.length; i++) {
+            url = url + `&filters=${filters[i].name}:${filters[i].value}`
+        }
     }
 
     return {
@@ -131,8 +141,9 @@ export function getTasksInit () {
         var state = getState();
         var limit = state.tasks.limit;
         var query = state.tasks.query;
+        var filters = state.tasks.filters;
         var team_id = state.dashboard.team_id;
-        return dispatch(getTasksInitInternal(team_id, limit, query));
+        return dispatch(getTasksInitInternal(team_id, limit, query, filters));
     }
 }
 
@@ -140,10 +151,16 @@ function getTasksNextCachedInternal() {
     return {type: GET_TASKS_NEXT_CACHED};
 }
 
-function getTasksNextInternal(team_id, start, limit, query) {
+function getTasksNextInternal(team_id, start, limit, query, filters) {
     var url = '/teams/'+team_id+'/tasks/search/?start=' + start + '&limit='+(limit);
     if (query) {
         url = url + "&query=" + query;
+    }
+
+    if(filters && Array.isArray(filters) && filters.length > 0) {
+        for(var i = 0; i< filters.length; i++) {
+            url = url + `&filters=${filters[i].name}:${filters[i].value}`
+        }
     }
 
     return {
@@ -152,19 +169,20 @@ function getTasksNextInternal(team_id, start, limit, query) {
     }
 }
 
-export function getTasksNext () {
+export function getTasksNext() {
     return function (dispatch, getState) {
         var state = getState();
         var team_id = state.dashboard.team_id;
         var start = state.tasks.start;
         var limit = state.tasks.limit;
         var query = state.tasks.query;
+        var filters = state.tasks.filters;
         var currentCount = state.tasks.currentCount;
         start = start + limit;
         if (start < currentCount) {
             dispatch(getTasksNextCachedInternal());
         } else {
-            dispatch(getTasksNextInternal(team_id, start, limit, query));
+            dispatch(getTasksNextInternal(team_id, start, limit, query, filters));
         }
     }
 }
@@ -182,6 +200,13 @@ export function updateQueryInternal(query) {
     }
 }
 
+export function updateFiltersInternal(filters) {
+    return {
+        type: UPDATE_FILTER,
+        filters: filters
+    }
+}
+
 var debouncedGetTasksInit = debounce(function(dispatch, getState) {
     getTasksInit()(dispatch, getState);
 }, 500)
@@ -193,6 +218,12 @@ export function searchTasks(query) {
     }
 }
 
+export function filterTasks(filters) {
+    return function (dispatch, getState) {
+        dispatch(updateFiltersInternal(filters));
+        debouncedGetTasksInit(dispatch, getState);
+    }
+}
 
 export function createTask(team_id, data) {
     return {
