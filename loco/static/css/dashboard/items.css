@@ -17,7 +17,7 @@
 	display: inline-block;
 }
 
-.section-chip-filter .filter-chip {
+.filter-chip {
 	background: transparent;
 	border: 1px solid rgba(0, 0, 0, 0.26);
 	border-radius: 16px;
@@ -26,15 +26,24 @@
 	cursor: pointer;
 	display: inline-block;
 	margin-right: 8px;
+	margin-top: 8px;
 }
 
-.section-chip-filter .filter-chip:hover {
+.filter-chip:hover {
 	border-color: rgba(0, 0, 0, 0.54);
 }
 
 .filter-chip .filter-chip-icon {
-	font-size: 14px;
-	color: 	rgba(0, 0, 0, 0.26);
+	color: #000;
+    font-size: 20px;
+    position: absolute;
+    right: 8px;
+}
+
+.filter-chip-main .filter-chip-icon {
+    color: 	rgba(0, 0, 0, 0.26);
+    position: relative;
+    right: 0;
 }
 
 .filter-chip .filter-chip-text {
@@ -47,23 +56,24 @@
 
 .filter-chip:hover .filter-chip-text,
 .filter-chip:hover .filter-chip-icon {
-	color: 	rgba(0, 0, 0, 0.54);
+	color: 	#000;
 }
 
-.section-chip-filter .filter-chip.active {
-	background: #CB202D;
+.filter-chip.active {
+	background: #fff;
 	border-color: #CB202D;
 	cursor: default;
+	position: relative;
 }
 
 .filter-chip.active .filter-chip-icon:hover {
 	cursor: pointer;
-	color: white;
+	color: #000;
 }
 
 .filter-chip.active .filter-chip-icon,
 .filter-chip.active .filter-chip-text {
-	color: rgba(255, 255, 255, 0.8);
+	color: #000;
 }
 
 /*------------- Query Filter-----------*/

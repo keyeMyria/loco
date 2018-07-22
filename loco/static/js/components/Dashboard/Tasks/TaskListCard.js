@@ -16,7 +16,6 @@ class TaskListCard extends Component {
 
     render() {
         let tasks = this.props.tasks;
-        console.log(tasks)
         var content = (
             <section className="list-card-content">
                 <TaskList data={tasks.data.slice(tasks.start, tasks.end)} />
