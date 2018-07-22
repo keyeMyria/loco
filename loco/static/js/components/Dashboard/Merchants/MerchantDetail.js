@@ -94,7 +94,9 @@ class MerchantDetail extends Component {
         return (
             <div className="content-holder">
                 <header className="header">
-                    <h1 className="title">{"Merchant " + this.props.match.params.id}</h1>
+                    <h1 className="title">
+                    {(this.state.create) ? "New Merchant" : "Merchant " + props.match.params.id}
+                    </h1>
                 </header>
                 <section className="content-scroller">
                 { (props.inProgress || props.getMerchantProgress || props.editMerchantProgress)

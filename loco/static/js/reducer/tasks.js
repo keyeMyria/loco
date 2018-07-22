@@ -244,7 +244,7 @@ export function createTask(team_id, data) {
 }
 
 export function getTaskDetails(team_id, task_id) {
-    var url = '/teams/'+team_id+'/tasks/search/?start=0&limit=1&filters=id:'+task_id;
+    var url = '/teams/'+team_id+'/tasks/search/?start=0&limit=1&filters=task_id:'+task_id;
 
     return {
         types: [GET_TASK_DETAILS_START, GET_TASK_DETAILS_SUCCESS, GET_TASK_DETAILS_FAILURE],

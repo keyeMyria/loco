@@ -59,7 +59,7 @@ class ItemDetail extends Component {
     }
 
     handleSubmit = (ev) => {
-        let price = parseFloat(price);
+        let price = parseFloat(this.state.price);
         if(!price) {
             price = 0;
         }

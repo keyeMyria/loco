@@ -80,7 +80,7 @@ class TasktListFilters extends Component {
 
     render() {
         let tasks = this.props.tasks;
-
+        
         return (
             <section className="filter-bar">
                 <section className="section-chip-filter">

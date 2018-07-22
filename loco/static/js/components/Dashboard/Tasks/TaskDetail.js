@@ -13,7 +13,8 @@ class TaskDetail extends Component {
             merchant_name: "",
             amount: "",
             items: [],
-            created: ""
+            created: "",
+            task_id: ""
         } 
     }
 
@@ -36,6 +37,7 @@ class TaskDetail extends Component {
                 amount: task.amount,
                 created_by: task.created_by_name,
                 items: task.items_data,
+                task_id: task.task_id,
                 created: this.formatDate(task.created),
             });
         }
@@ -55,7 +57,7 @@ class TaskDetail extends Component {
         };
 
         let props = this.props;
-        let pdfLink = '/tasks/' + props.match.params.id + '/pdf';
+        let pdfLink = '/tasks/' + this.state.task_id + '/pdf';
 
         return (
             <div className="content-holder">
