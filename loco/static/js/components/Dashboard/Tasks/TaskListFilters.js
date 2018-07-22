@@ -1,13 +1,41 @@
-import { DateRangePicker } from 'react-dates';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import {searchTasks} from '../../../reducer/tasks.js'
+import { DateRangePicker } from 'react-dates';
+import Popover, {PopoverAnimationVertical} from 'material-ui/Popover';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+import {searchTasks, filterTasks} from '../../../reducer/tasks.js'
+import Filter from '../Filter';
+
+const filterMap = {
+    "City": "city",
+    "State": "state",
+    "Merchant": "merchant_name",
+    "Agent": "created_by_name"
+}
 
 class TasktListFilters extends Component {
 
     constructor(props) {
         super(props)
-        this.state = {} 
+        this.state = {
+            openPopover: false,
+            filters: []
+        };
+    }
+
+    handleClick = (event) => {
+        event.preventDefault();
+        this.setState({
+            openPopover: true,
+            anchorEl: event.currentTarget,
+        });
+    }
+
+    handleRequestClose = () => {
+        this.setState({
+            openPopover: false,
+        });
     }
 
     handleQueryChange = (event) => {
@@ -15,20 +43,74 @@ class TasktListFilters extends Component {
         this.props.searchTasks(query);
     }
 
+    handleFilterClick = (event, type) => {
+        event.preventDefault();
+        let filters = this.state.filters
+        let filter = {
+            type: type,
+            name: filterMap[type],
+            value: "",
+            data: []
+        }
+
+        filters.push(filter);
+
+        this.setState({
+            filters: filters
+        });
+    }
+
+    removefilter = (index) => {
+        let filters = this.state.filters;
+        filters.splice(index, 1);
+        this.setState({
+            filters: filters
+        });
+    }
+
+    onQueryChange = (searchText, index) => {
+        let filters = this.state.filters;
+        filters[index].value = searchText
+        this.setState({
+            filters: filters
+        });
+
+        this.props.filterTasks(filters);
+    };
+
     render() {
         let tasks = this.props.tasks;
 
         return (
             <section className="filter-bar">
                 <section className="section-chip-filter">
-                    <section className="filter-chip">
+                    <section className="filter-chip filter-chip-main" onClick={this.handleClick}>
                         <p className="filter-chip-text">Filter</p>
                         <i className="material-icons filter-chip-icon">filter_list</i>
                     </section>
-                    <section className="filter-chip active">
-                        <p className="filter-chip-text">Filter</p>
-                        <i className="material-icons filter-chip-icon">close</i>
-                    </section>                        
+                    <Popover
+                        open={this.state.openPopover}
+                        anchorEl={this.state.anchorEl}
+                        anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                        targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                        onRequestClose={this.handleRequestClose}
+                        animation={PopoverAnimationVertical} >
+                        
+                        <Menu>
+                            <MenuItem 
+                                primaryText="City" 
+                                onClick={(ev) => {this.handleFilterClick(ev, "City")}} />
+                            <MenuItem 
+                                primaryText="State" 
+                                onClick={(ev) => {this.handleFilterClick(ev, "State")}} />
+                            <MenuItem 
+                                primaryText="Merchant" 
+                                onClick={(ev) => {this.handleFilterClick(ev, "Merchant")}} />
+                            <MenuItem 
+                                primaryText="Agent" 
+                                onClick={(ev) => {this.handleFilterClick(ev, "Agent")}} />
+                        </Menu>
+                    </Popover>
                 </section>
                 <section className="section-query-filter">
                     <section className="query-filter-holder">
@@ -50,7 +132,19 @@ class TasktListFilters extends Component {
                           onFocusChange={focusedInput => this.setState({ focusedInput })}
                         />
                     </section>
-                </section>                    
+                </section>
+                {   this.state.filters.map((filter, index) => {
+                        return(
+                            <Filter 
+                                label={filter.type} 
+                                data={filter.data}
+                                key={index}
+                                index={index}
+                                remove={this.removefilter}
+                                onQueryChange={this.onQueryChange} />
+                        )
+                    }) 
+                }                 
             </section>
         );
     }
@@ -59,7 +153,7 @@ class TasktListFilters extends Component {
 
 export default connect(
     ((state) => ({ tasks: state.tasks })) ,
-    {searchTasks: searchTasks,}
+    {searchTasks: searchTasks, filterTasks: filterTasks}
 )(TasktListFilters);
 
 

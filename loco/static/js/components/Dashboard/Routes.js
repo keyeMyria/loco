@@ -16,6 +16,7 @@ export default class Routes extends Component {
 
         return (
             <div className="content">
+                <Route exact path="/" component={Tasks}/>
                 <Route exact path="/tasks" component={Tasks}/>
                 <Route exact path="/tasks/:id/change" component={TaskDetail}/>
                 

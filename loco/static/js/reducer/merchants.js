@@ -28,6 +28,7 @@ export const GET_CITIES_START = 'dashboard/get_cities_start';
 export const GET_CITIES_FAILURE = 'dashboard/get_cities_failure';
 export const GET_CITIES_SUCCESS = 'dashboard/get_cities_success';
 export const UPDATE_QUERY = 'dashboard/update_merchants_query';
+export const UPDATE_FILTER = 'dashboard/update_merchants_filters';
 
 const INITIAL_STATE = {
     inProgress: true,
@@ -41,6 +42,7 @@ const INITIAL_STATE = {
     getTime: '',
     error: '',
     query: '',
+    filters: [],
     csvURL: '',
     uploads: [],
     states: [],
@@ -118,6 +120,8 @@ export default function merchants(state = INITIAL_STATE, action={}) {
             return { ...state, inProgress: false, error: "Unable to get merchants.", data: []};
         case UPDATE_QUERY:
             return { ...state, query: action.query};
+        case UPDATE_FILTER:
+            return { ...state, filters: action.filters}
         case GET_MERCHANT_DETAILS_START:
             return { ...state, getMerchantDetailsProgress: true, getMerchantDetailsError: ""};
         case GET_MERCHANT_DETAILS_SUCCESS:
@@ -149,10 +153,18 @@ export default function merchants(state = INITIAL_STATE, action={}) {
 }
 
 
-function getMerchantsInitInternal(team_id, limit, query) {
+function getMerchantsInitInternal(team_id, limit, query, filters) {
     var url = '/teams/'+team_id+'/merchants/search/?start=0&limit='+limit;
     if (query) {
         url = url + "&query=" + query;
+    }
+
+    if(filters && Array.isArray(filters) && filters.length > 0) {
+        for(var i = 0; i< filters.length; i++) {
+            if(filters[i].name && filters[i].value) {
+                url = url + `&filters=${filters[i].name}:${filters[i].value}`
+            }
+        }
     }
 
     return {
@@ -161,13 +173,14 @@ function getMerchantsInitInternal(team_id, limit, query) {
     }
 }
 
-export function getMerchantsInit () {
+export function getMerchantsInit() {
     return function (dispatch, getState) {
         var state = getState();
         var limit = state.merchants.limit;
         var query = state.merchants.query;
+        var filters = state.merchants.filters;
         var team_id = state.dashboard.team_id;
-        return dispatch(getMerchantsInitInternal(team_id, limit, query));
+        return dispatch(getMerchantsInitInternal(team_id, limit, query, filters));
     }
 }
 
@@ -175,10 +188,18 @@ function getMerchantsNextCachedInternal() {
     return {type: GET_MERCHANTS_NEXT_CACHED};
 }
 
-function getMerchantsNextInternal(team_id, start, limit, query) {
+function getMerchantsNextInternal(team_id, start, limit, query, filters) {
     var url = '/teams/'+team_id+'/merchants/search/?start=' + start + '&limit='+(limit);
     if (query) {
         url = url + "&query=" + query;
+    }
+
+    if(filters && Array.isArray(filters) && filters.length > 0) {
+        for(var i = 0; i< filters.length; i++) {
+            if(filters[i].name && filters[i].value) {
+                url = url + `&filters=${filters[i].name}:${filters[i].value}`
+            }
+        }
     }
 
     return {
@@ -187,19 +208,20 @@ function getMerchantsNextInternal(team_id, start, limit, query) {
     }
 }
 
-export function getMerchantsNext () {
+export function getMerchantsNext() {
     return function (dispatch, getState) {
         var state = getState();
         var team_id = state.dashboard.team_id;
         var start = state.merchants.start;
         var limit = state.merchants.limit;
         var query = state.merchants.query;
+        var filters = state.merchants.filters;
         var currentCount = state.merchants.currentCount;
         start = start + limit;
         if (start < currentCount) {
             dispatch(getMerchantsNextCachedInternal());
         } else {
-            dispatch(getMerchantsNextInternal(team_id, start, limit, query));
+            dispatch(getMerchantsNextInternal(team_id, start, limit, query, filters));
         }
     }
 }
@@ -217,6 +239,13 @@ export function updateQueryInternal(query) {
     }
 }
 
+export function updateFilterInternal(filters) {
+    return {
+        type: UPDATE_FILTER,
+        filters: filters
+    }
+}
+
 var debouncedGetMerchantsInit = debounce(function(dispatch, getState) {
     getMerchantsInit()(dispatch, getState);
 }, 500)
@@ -228,6 +257,12 @@ export function searchMerchants(query) {
     }
 }
 
+export function filterMerchants(filters) {
+    return function (dispatch, getState) {
+        dispatch(updateFilterInternal(filters));
+        debouncedGetMerchantsInit(dispatch, getState);
+    }
+}
 
 export function createMerchant(team_id, data) {
     return {
