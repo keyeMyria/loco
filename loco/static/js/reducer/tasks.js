@@ -15,6 +15,7 @@ export const GET_TASK_DETAILS_SUCCESS = 'dashboard/get_task_details_success';
 export const CLEAR_STATE = 'dashboard/clear_state'
 export const UPDATE_QUERY = 'dashboard/update_tasks_query';
 export const UPDATE_FILTER = 'dashboard/update_tasks_filters';
+export const UPDATE_FILTER_DATE = 'dashboard/update_tasks_filter_date';
 
 const INITIAL_STATE = {
     inProgress: true,
@@ -29,6 +30,8 @@ const INITIAL_STATE = {
     error: '',
     query: '',
     filters: [],
+    startDate: "",
+    endDate: "",
     csvURL: ''
 };
 
@@ -110,6 +113,8 @@ export default function tasks(state = INITIAL_STATE, action={}) {
             return { ...state, query: action.query};
         case UPDATE_FILTER:
             return { ...state, filters: action.filters}
+        case UPDATE_FILTER_DATE:
+            return { ...state, startDate: action.startDate, endDate: action.endDate}
         case CLEAR_STATE:
             return INITIAL_STATE;
         default:
@@ -118,7 +123,7 @@ export default function tasks(state = INITIAL_STATE, action={}) {
 }
 
 
-function getTasksInitInternal(team_id, limit, query, filters) {
+function getTasksInitInternal(team_id, limit, query, filters, startDate, endDate) {
     var url = '/teams/'+team_id+'/tasks/search/?start=0&limit='+limit;
     if (query) {
         url = url + "&query=" + query;
@@ -130,6 +135,10 @@ function getTasksInitInternal(team_id, limit, query, filters) {
                 url = url + `&filters=${filters[i].name}:${filters[i].value}`
             }
         }
+    }
+
+    if(startDate && endDate) {
+        url = url + `&filters=created:[${startDate} TO ${endDate}]`
     }
 
     return {
@@ -144,8 +153,10 @@ export function getTasksInit () {
         var limit = state.tasks.limit;
         var query = state.tasks.query;
         var filters = state.tasks.filters;
+        var startDate = state.tasks.startDate;
+        var endDate = state.tasks.endDate;
         var team_id = state.dashboard.team_id;
-        return dispatch(getTasksInitInternal(team_id, limit, query, filters));
+        return dispatch(getTasksInitInternal(team_id, limit, query, filters, startDate, endDate));
     }
 }
 
@@ -153,7 +164,7 @@ function getTasksNextCachedInternal() {
     return {type: GET_TASKS_NEXT_CACHED};
 }
 
-function getTasksNextInternal(team_id, start, limit, query, filters) {
+function getTasksNextInternal(team_id, start, limit, query, filters, startDate, endDate) {
     var url = '/teams/'+team_id+'/tasks/search/?start=' + start + '&limit='+(limit);
     if (query) {
         url = url + "&query=" + query;
@@ -165,6 +176,10 @@ function getTasksNextInternal(team_id, start, limit, query, filters) {
                 url = url + `&filters=${filters[i].name}:${filters[i].value}`
             }
         }
+    }
+
+    if(startDate && endDate) {
+        url = url + `&filters=created:[${startDate} TO ${endDate}]`
     }
 
     return {
@@ -181,12 +196,14 @@ export function getTasksNext() {
         var limit = state.tasks.limit;
         var query = state.tasks.query;
         var filters = state.tasks.filters;
+        var startDate = state.tasks.startDate;
+        var endDate = state.tasks.endDate;
         var currentCount = state.tasks.currentCount;
         start = start + limit;
         if (start < currentCount) {
             dispatch(getTasksNextCachedInternal());
         } else {
-            dispatch(getTasksNextInternal(team_id, start, limit, query, filters));
+            dispatch(getTasksNextInternal(team_id, start, limit, query, filters, startDate, endDate));
         }
     }
 }
@@ -211,6 +228,14 @@ export function updateFiltersInternal(filters) {
     }
 }
 
+export function updateFiltersDateInternal(startDate, endDate) {
+    return {
+        type: UPDATE_FILTER_DATE,
+        startDate: startDate,
+        endDate: endDate
+    }
+}
+
 var debouncedGetTasksInit = debounce(function(dispatch, getState) {
     getTasksInit()(dispatch, getState);
 }, 500)
@@ -225,6 +250,13 @@ export function searchTasks(query) {
 export function filterTasks(filters) {
     return function (dispatch, getState) {
         dispatch(updateFiltersInternal(filters));
+        debouncedGetTasksInit(dispatch, getState);
+    }
+}
+
+export function filterTasksDate(startDate, endDate) {
+    return function (dispatch, getState) {
+        dispatch(updateFiltersDateInternal(startDate, endDate));
         debouncedGetTasksInit(dispatch, getState);
     }
 }
