@@ -130,6 +130,8 @@ class TasktListFilters extends Component {
                           onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })}
                           focusedInput={this.state.focusedInput}
                           onFocusChange={focusedInput => this.setState({ focusedInput })}
+                        isOutsideRange={() => false}
+                        numberOfMonths={1}
                         />
                     </section>
                 </section>
