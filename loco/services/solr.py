@@ -180,7 +180,7 @@ def update_task_index():
         return None
 
 def search_merchants(team_id, search_options, start, limit):
-    query = SOLR_HOST + 'merchant/select?q=[[QUERY]]&wt=json&start=[[START]]&rows=[[LIMIT]]'
+    query = SOLR_HOST + 'merchant/select?q=[[QUERY]]&wt=json&start=[[START]]&rows=[[LIMIT]]&sort=name asc'
     query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
 
     search_text = search_options.get('query')
@@ -202,7 +202,7 @@ def search_merchants(team_id, search_options, start, limit):
     return {'data': data, 'count': count}
 
 def csv_merchants(team_id, search_options, start, limit):
-    query = SOLR_HOST + 'merchant/select?q=[[QUERY]]&wt=csv&start=[[START]]&rows=[[LIMIT]]'
+    query = SOLR_HOST + 'merchant/select?q=[[QUERY]]&wt=csv&start=[[START]]&rows=[[LIMIT]]&sort=name asc'
     query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
     search_text = search_options.get('query')
     if search_text:
@@ -222,7 +222,7 @@ def csv_merchants(team_id, search_options, start, limit):
     return get_csv_solr(query)
 
 def search_items(team_id, search_options, start, limit):
-    query = SOLR_HOST + 'item/select?q=[[QUERY]]&wt=json&start=[[START]]&rows=[[LIMIT]]'
+    query = SOLR_HOST + 'item/select?q=[[QUERY]]&wt=json&start=[[START]]&rows=[[LIMIT]]&sort=name asc'
     query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
 
     search_text = search_options.get('query')
@@ -240,11 +240,12 @@ def search_items(team_id, search_options, start, limit):
         filters = "team_id:" + str(team_id)
 
     query += "&fq="+filters
+    print (query)
     data, count = get_query_solr(query)
     return {'data': data, 'count': count}
 
 def csv_items(team_id, search_options, start, limit):
-    query = SOLR_HOST + 'item/select?q=[[QUERY]]&wt=csv&start=[[START]]&rows=[[LIMIT]]'
+    query = SOLR_HOST + 'item/select?q=[[QUERY]]&wt=csv&start=[[START]]&rows=[[LIMIT]]&sort=name asc'
     query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
     search_text = search_options.get('query')
     search_text = search_options.get('query')

@@ -20,16 +20,16 @@ export default class TaskList extends Component {
                             return (
                                 <tr key={index}>
                                     <td>
-                                        <Link to={"/tasks/" + task.id + "/change" }>{task.id}</Link>
+                                        <Link to={"/tasks/" + task.task_id + "/change" }>{task.task_id}</Link>
                                     </td>
                                     <td>
-                                        <Link to={"/tasks/" + task.id + "/change" }>{task.merchant_name}</Link>
+                                        <Link to={"/tasks/" + task.task_id + "/change" }>{task.merchant_name}</Link>
                                     </td>
                                     <td>
-                                        <Link to={"/tasks/" + task.id + "/change" }>{task.created_by_name}</Link>
+                                        <Link to={"/tasks/" + task.task_id + "/change" }>{task.created_by_name}</Link>
                                     </td>
                                     <td>
-                                        <Link to={"/tasks/" + task.id + "/change" }>{task.amount}</Link>
+                                        <Link to={"/tasks/" + task.task_id + "/change" }>{task.amount}</Link>
                                     </td>
                                 </tr>
                             )

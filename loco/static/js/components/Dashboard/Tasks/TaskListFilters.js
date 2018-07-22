@@ -94,7 +94,7 @@ class TasktListFilters extends Component {
 
     render() {
         let tasks = this.props.tasks;
-
+        
         return (
             <section className="filter-bar">
                 <section className="section-chip-filter">
@@ -144,6 +144,8 @@ class TasktListFilters extends Component {
                           onDatesChange={({ startDate, endDate }) => this.onDatesChange(startDate, endDate)}
                           focusedInput={this.state.focusedInput}
                           onFocusChange={focusedInput => this.setState({ focusedInput })}
+                        isOutsideRange={() => false}
+                        numberOfMonths={1}
                         />
                     </section>
                 </section>

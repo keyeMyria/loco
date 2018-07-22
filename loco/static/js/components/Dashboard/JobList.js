@@ -9,7 +9,7 @@ export default class JobList extends Component {
 
     render() {
         return (
-            <section className="list-table-holder">
+            <section className="list-table-holder read-only">
                 <table>
                     <thead>
                         <tr>
