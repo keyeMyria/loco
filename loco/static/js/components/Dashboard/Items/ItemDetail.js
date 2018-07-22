@@ -14,7 +14,7 @@ class ItemDetail extends Component {
             "serial":"",
             "name": "",
             "price": "",
-            create: true
+            "create": true
         } 
     }
 
@@ -90,10 +90,13 @@ class ItemDetail extends Component {
         let props = this.props;
 
         return (
-            <div>
+            <div className="content-holder">
                 <header className="header">
-                    <h1 className="title">Item Detail</h1>
+                    <h1 className="title">
+                        {(this.state.create) ? "New Item" : "Item " + this.props.match.params.id}
+                    </h1>
                 </header>
+                <section className="content-scroller">
                 { (props.inProgress || props.getItemProgress || props.editItemProgress)
                     ? (
                         <div className="list-card item-detail-holder">
@@ -138,6 +141,7 @@ class ItemDetail extends Component {
                 { (props.createItemSucess || props.editItemSuccess) &&
                     <Redirect to="/items"/>
                 }
+                </section>
             </div>            
         );
     }

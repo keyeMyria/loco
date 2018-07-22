@@ -7,3 +7,4 @@ from loco.services import solr
 @shared_task
 def update_task_index_async():
 	solr.update_task_index()
+	solr.update_task_index()

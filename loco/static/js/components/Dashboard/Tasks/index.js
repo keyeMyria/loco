@@ -16,7 +16,7 @@ class Tasks extends Component {
         return (
             <div className="content-holder">
                 <header className="header">
-                    <h1 className="title">Tasks</h1>
+                    <h1 className="title">Orders</h1>
                     <a className="header-team" href="/web/teams">
                         <p className="header-team-name">{this.props.team_name}</p>
                         <i className="material-icons header-team-icon">arrow_drop_down</i>

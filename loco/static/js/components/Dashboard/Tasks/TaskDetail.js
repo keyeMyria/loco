@@ -50,10 +50,11 @@ class TaskDetail extends Component {
         let props = this.props;
 
         return (
-            <div>
+            <div className="content-holder">
                 <header className="header">
-                    <h1 className="title">Task Detail</h1>
+                    <h1 className="title">{"Order " + this.props.match.params.id}</h1>
                 </header>
+                <section className="content-scroller">
                 { (props.getTaskProgress)
                     ? (
                         <div className="list-card item-detail-holder">
@@ -74,7 +75,11 @@ class TaskDetail extends Component {
                                     <p className="detail-value">{this.state.created_by}</p>
                                 </article>
                                 <article className="task-detail">
-                                    <p className="detail-title">Amout:</p>
+                                    <p className="detail-title">Amount:</p>
+                                    <p className="detail-value price">&#x20b9; {this.state.amount}</p>
+                                </article>
+                                <article className="task-detail">
+                                    <p className="detail-title">Created On:</p>
                                     <p className="detail-value price">&#x20b9; {this.state.amount}</p>
                                 </article>
                             </section>
@@ -102,6 +107,12 @@ class TaskDetail extends Component {
                                                     )
                                                     })
                                                 }
+                                                <tr>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td>Total</td>
+                                                    <td>{this.state.amount}</td>
+                                                </tr>
                                             </tbody>
                                         </table>
                                     </section>
@@ -110,6 +121,7 @@ class TaskDetail extends Component {
                         </section>
                     )
                 }
+                </section>
             </div>            
         );
     }

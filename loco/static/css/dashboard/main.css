@@ -246,9 +246,13 @@ body {
     font-size: 14px;
 }
 
-.list-table-holder td,
 .list-table-holder th {
     padding: 12px;
+}
+
+.list-table-holder td a {
+    padding: 12px;
+    display: block;
 }
 
 .list-card-content .list-pager {
