@@ -4,7 +4,7 @@ import { DateRangePicker } from 'react-dates';
 import Popover, {PopoverAnimationVertical} from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
-import {searchTasks, filterTasks} from '../../../reducer/tasks.js'
+import {searchTasks, filterTasks, filterTasksDate} from '../../../reducer/tasks.js'
 import Filter from '../Filter';
 
 const filterMap = {
@@ -20,7 +20,7 @@ class TasktListFilters extends Component {
         super(props)
         this.state = {
             openPopover: false,
-            filters: []
+            filters: [],
         };
     }
 
@@ -76,7 +76,21 @@ class TasktListFilters extends Component {
         });
 
         this.props.filterTasks(filters);
-    };
+    }
+
+    onDatesChange = (startDate, endDate) => {
+        let startDateString = "", endDateString = "";
+        if(startDate) {
+            startDateString =  startDate.toISOString();
+        }
+        if(endDate) {
+            endDateString =  endDate.toISOString();
+        }
+        this.setState({ startDate, endDate, startDateString, endDateString });
+        if(startDateString && endDateString) {
+            this.props.filterTasksDate(startDateString, endDateString);
+        }
+    }
 
     render() {
         let tasks = this.props.tasks;
@@ -124,10 +138,10 @@ class TasktListFilters extends Component {
                     <section className="date-filter-holder">
                         <DateRangePicker
                           startDate={this.state.startDate}
-                          startDateId="your_unique_start_date_id"
+                          startDateId="start_date_id"
                           endDate={this.state.endDate}
-                          endDateId="your_unique_end_date_id"
-                          onDatesChange={({ startDate, endDate }) => this.setState({ startDate, endDate })}
+                          endDateId="end_date_id"
+                          onDatesChange={({ startDate, endDate }) => this.onDatesChange(startDate, endDate)}
                           focusedInput={this.state.focusedInput}
                           onFocusChange={focusedInput => this.setState({ focusedInput })}
                         />
@@ -144,7 +158,7 @@ class TasktListFilters extends Component {
                                 onQueryChange={this.onQueryChange} />
                         )
                     }) 
-                }                 
+                }       
             </section>
         );
     }
@@ -153,7 +167,7 @@ class TasktListFilters extends Component {
 
 export default connect(
     ((state) => ({ tasks: state.tasks })) ,
-    {searchTasks: searchTasks, filterTasks: filterTasks}
+    {searchTasks: searchTasks, filterTasks: filterTasks, filterTasksDate: filterTasksDate}
 )(TasktListFilters);
 
 
