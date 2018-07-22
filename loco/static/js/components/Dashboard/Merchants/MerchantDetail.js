@@ -92,10 +92,11 @@ class MerchantDetail extends Component {
         let props = this.props;
 
         return (
-            <div>
+            <div className="content-holder">
                 <header className="header">
-                    <h1 className="title">Merchant Detail</h1>
+                    <h1 className="title">{"Merchant " + this.props.match.params.id}</h1>
                 </header>
+                <section className="content-scroller">
                 { (props.inProgress || props.getMerchantProgress || props.editMerchantProgress)
                     ? (
                         <div className="list-card item-detail-holder">
@@ -147,6 +148,7 @@ class MerchantDetail extends Component {
                 { (props.createMerchantSucess || props.editMerchantSuccess) &&
                     <Redirect to="/merchants"/>
                 }
+                </section>
             </div>            
         );
     }

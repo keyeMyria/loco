@@ -233,13 +233,17 @@ class CityList(APIView):
     def get(self, request, format=None):
         PARAM_STATE = 'state'
         filter_state = request.query_params.get(PARAM_STATE)
+        PARAM_QUERY = 'query'
+        query = request.query_params.get(PARAM_QUERY)
 
         start, limit = utils.get_query_start_limit(request)
         cities = models.City.objects.all()
         if filter_state:
             cities = cities.filter(state__name__icontains=filter_state)
 
+        if query:
+            cities = cities.filter(name__icontains=query)
+
         cities = cities.order_by('-created')[start:start+limit]
         data = serializers.CitySerializer(cities, many=True).data
         return Response(data)
-
