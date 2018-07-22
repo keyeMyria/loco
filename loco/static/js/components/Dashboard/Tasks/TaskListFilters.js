@@ -5,7 +5,7 @@ import Popover, {PopoverAnimationVertical} from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import {searchTasks, filterTasks} from '../../../reducer/tasks.js'
-import Filter from './Filter';
+import Filter from '../Filter';
 
 const filterMap = {
     "City": "city",

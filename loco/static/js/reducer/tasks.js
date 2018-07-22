@@ -126,7 +126,9 @@ function getTasksInitInternal(team_id, limit, query, filters) {
 
     if(filters && Array.isArray(filters) && filters.length > 0) {
         for(var i = 0; i< filters.length; i++) {
-            url = url + `&filters=${filters[i].name}:${filters[i].value}`
+            if(filters[i].name && filters[i].value) {
+                url = url + `&filters=${filters[i].name}:${filters[i].value}`
+            }
         }
     }
 
@@ -159,7 +161,9 @@ function getTasksNextInternal(team_id, start, limit, query, filters) {
 
     if(filters && Array.isArray(filters) && filters.length > 0) {
         for(var i = 0; i< filters.length; i++) {
-            url = url + `&filters=${filters[i].name}:${filters[i].value}`
+            if(filters[i].name && filters[i].value) {
+                url = url + `&filters=${filters[i].name}:${filters[i].value}`
+            }
         }
     }
 
