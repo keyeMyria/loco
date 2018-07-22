@@ -122,7 +122,7 @@ class DeepSalesTaskItemsSerializer(serializers.ModelSerializer):
 
 class DeepSalesTaskContentSerializer(serializers.ModelSerializer):
     items = DeepSalesTaskItemsSerializer(source="get_items", many=True, read_only=True)
-    merchant = crm_serializers.MerchantSerializer(read_only=True)
+    merchant = crm_serializers.DeepMerchantSerializer(read_only=True)
 
     class Meta:
         model = SalesTaskContent

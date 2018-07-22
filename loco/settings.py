@@ -106,7 +106,7 @@ else:
             'NAME': 'loko',
             'USER': 'root',
             'PASSWORD': 'toor',
-            'HOST': 'loco.masterpeace.in',
+            'HOST': 'anuvad.io',
             'PORT': '',
             'OPTIONS': {'charset': 'utf8mb4'},
         }

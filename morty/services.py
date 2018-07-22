@@ -7,7 +7,7 @@ def subscribe_location(source, destination):
 	source = str(source.id)
 	destination = [str(user.id) for user in destination]
 
-	url = "http://loco.masterpeace.in:8090/api/subscribe/"
+	url = "http://anuvad.io:8090/api/subscribe/"
 	data = {
 		'source': source,
 		'destination': destination
@@ -24,7 +24,7 @@ def unsubscribe_location(source, destination):
 	source = str(source.id)
 	destination = [str(user.id) for user in destination]
 
-	url = "http://loco.masterpeace.in:8090/api/unsubscribe/"
+	url = "http://anuvad.io:8090/api/unsubscribe/"
 	data = {
 		'source': source,
 		'destination': destination
