@@ -49,7 +49,6 @@ def render_to_pdf(template_src, context_dict={}):
         return HttpResponse(result.getvalue(), content_type='application/pdf')
     return None
 
-@login_required
 def tasks_pdf(request, task_id):
     task = models.TaskSnapshot.objects.get(task__id=task_id)
     order_details = json.loads(task.content)
