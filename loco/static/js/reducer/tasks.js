@@ -284,7 +284,7 @@ export function getTaskDetails(team_id, task_id) {
     }
 }
 
-export function changeLocation() {
+export function clearState() {
     return {
         type: CLEAR_STATE
     }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Redirect } from "react-router-dom";
 
-import { getTaskDetails, changeLocation } from '../../../reducer/tasks';
+import { getTaskDetails, clearState } from '../../../reducer/tasks';
 
 class TaskDetail extends Component {
     
@@ -44,7 +44,7 @@ class TaskDetail extends Component {
     }
 
     componentWillUnmount() {
-        this.props.changeLocation();
+        this.props.clearState();
     }
 
     render() {
@@ -143,7 +143,7 @@ class TaskDetail extends Component {
 export default TaskDetail = connect(
     (state) => ({ team_id: state.dashboard.team_id, error: state.tasks.createTaskError, 
         taskDetailsData: state.tasks.taskDetailsData, getTaskProgress: state.tasks.getTaskDetailsProgress}), 
-    {getTaskDetails: getTaskDetails, changeLocation: changeLocation}
+    {getTaskDetails: getTaskDetails, clearState: clearState}
 )(TaskDetail)
 
 

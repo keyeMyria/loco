@@ -66,9 +66,11 @@ class TasktListFilters extends Component {
         this.setState({
             filters: filters
         });
+        
+        this.props.filterTasks(filters);
     }
 
-    onQueryChange = (searchText, index) => {
+    onFilterChange = (searchText, index) => {
         let filters = this.state.filters;
         filters[index].value = searchText
         this.setState({
@@ -157,7 +159,7 @@ class TasktListFilters extends Component {
                                 key={index}
                                 index={index}
                                 remove={this.removefilter}
-                                onQueryChange={this.onQueryChange} />
+                                onQueryChange={this.onFilterChange} />
                         )
                     }) 
                 }       

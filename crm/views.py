@@ -52,7 +52,7 @@ class MerchantDetail(APIView):
     def get(self, request, merchant_id, format=None):
         merchant = get_object_or_404(models.Merchant, id=merchant_id)
         self.check_object_permissions(request, merchant)
-        serializer = serializers.MerchantSerializer(merchant)
+        serializer = serializers.DeepMerchantSerializer(merchant)
         return Response(serializer.data)
 
     def put(self, request, merchant_id, format=None):
