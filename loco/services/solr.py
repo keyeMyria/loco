@@ -289,7 +289,7 @@ def search_tasks(team_id, search_options, start, limit):
 
 def csv_tasks(team_id, search_options, start, limit):
     query = SOLR_HOST + 'task/select?q=[[QUERY]]&wt=csv&start=[[START]]&sort=created desc&rows=[[LIMIT]]'
-    query += '&fl=merchant_name,created_by_name,amount,created'
+    query += '&fl=merchant_name,created_by_name,amount,created,city,state'
     query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
     search_text = search_options.get('query')
     if search_text:

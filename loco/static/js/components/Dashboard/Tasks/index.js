@@ -5,10 +5,17 @@ import { Link } from "react-router-dom";
 import TaskListCard from './TaskListCard'
 import TaskListFilters from './TaskListFilters'
 
+import {clearState} from '../../../reducer/tasks'
+
 class Tasks extends Component {
     
     constructor(props) {
         super(props);
+    }
+
+    componentWillMount() {
+        console.log("mound");
+        this.props.clearState();
     }
 
     render() {
@@ -37,7 +44,7 @@ class Tasks extends Component {
 
 export default Tasks = connect(
     (state) => ({team_name: state.dashboard.team_name}), 
-    {}
+    {clearState:clearState}
 )(Tasks)
 
 
