@@ -134,9 +134,9 @@ function getTasksInitInternal(team_id, limit, query, filters, startDate, endDate
         for(var i = 0; i< filters.length; i++) {
             if(filters[i].name && filters[i].value) {
                 if(url.includes("&filters=")) {
-                    url = url + ` AND ${filters[i].name}:${filters[i].value}`
+                    url = url + ` AND ${filters[i].name}:*${filters[i].value}*`
                 } else {
-                    url = url + `&filters=${filters[i].name}:${filters[i].value}`
+                    url = url + `&filters=${filters[i].name}:*${filters[i].value}*`
                 }
             }
         }
@@ -183,9 +183,9 @@ function getTasksNextInternal(team_id, start, limit, query, filters, startDate, 
         for(var i = 0; i< filters.length; i++) {
             if(filters[i].name && filters[i].value) {
                 if(url.includes("&filters=")) {
-                    url = url + ` AND created:[${startDate} TO ${endDate}]`
+                    url = url + ` AND ${filters[i].name}:*${filters[i].value}*`
                 } else {
-                    url = url + `&filters=created:[${startDate} TO ${endDate}]`
+                    url = url + `&filters=${filters[i].name}:*${filters[i].value}*`
                 }
             }
         }
