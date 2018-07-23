@@ -266,7 +266,7 @@ def csv_items(team_id, search_options, start, limit):
     return get_csv_solr(query)
 
 def search_tasks(team_id, search_options, start, limit):
-    query = SOLR_HOST + 'task/select?q=[[QUERY]]&wt=json&sort=created desc&start=[[START]]&rows=[[LIMIT]]'
+    query = SOLR_HOST + 'task/select?q=[[QUERY]]&wt=json&sort=created desc&start=[[START]]&rows=[[LIMIT]]&defType=edismax&qf=created_by_name+merchant_name+task_id'
     query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
 
     search_text = search_options.get('query')

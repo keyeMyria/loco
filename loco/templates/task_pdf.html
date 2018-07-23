@@ -14,8 +14,9 @@
         <section class="content-holder">
             <section class="header clearfix">
                 <section class="header-merchant">
-                    <p class="header-merchant-name">{{task.content.merchant.name}}</p>
-                    <p class="header-merchant-address">{{task.content.merchant.address}}</p>
+                    <p class="header-order-id">Order Id: {{task.id}}</p>
+                    <p class="header-merchant-name">Order For: {{task.content.merchant.name}}</p>
+                    <p class="header-merchant-address">Address: {{task.content.merchant.address}}</p>
                 </section>
                 <p class="header-date">Date: {{task.created}}</p>
             </section>
