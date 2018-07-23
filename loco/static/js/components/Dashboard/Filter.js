@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AutoComplete from 'material-ui/AutoComplete';
+import TextField from 'material-ui/TextField';
 
 class Filter extends Component {
 
@@ -11,7 +12,8 @@ class Filter extends Component {
         }; 
     }
 
-    handleChange = (searchText, index) => {
+    handleChange = (e, index) => {
+        var searchText = e.target.value;
         this.props.onQueryChange(searchText, index);
         this.setState({
             searchText: searchText
@@ -23,14 +25,11 @@ class Filter extends Component {
         let props = this.props;
         return (
             <section className="filter-chip active">
-                <AutoComplete
-                    floatingLabelText = {props.label}
-                    filter = {AutoComplete.fuzzyFilter}
-                    dataSource = {props.data}
-                    maxSearchResults = {10}
-                    onUpdateInput = {(searchText, data, params) => {this.handleChange(searchText, props.index)}}
-                    searchText = {this.state.searchText}
-                    id = {"filter" + props.key} />
+                <TextField
+                    value={this.state.searchText}
+                    floatingLabelText={props.label}
+                    style={{width: '156px'}}
+                    onChange={(e) => {this.handleChange(e, props.index)}} />
                 <i 
                     className="material-icons filter-chip-icon" 
                     onClick = {(ev) => {props.remove(props.key)}}>close</i>

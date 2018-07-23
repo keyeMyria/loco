@@ -53,7 +53,8 @@ class MerchantListFilters extends Component {
         filters.push(filter);
 
         this.setState({
-            filters: filters
+            filters: filters,
+            openPopover: false
         });
     }
 
@@ -63,6 +64,8 @@ class MerchantListFilters extends Component {
         this.setState({
             filters: filters
         });
+        
+        this.props.filterMerchants(filters);
     }
 
     onQueryChange = (searchText, index) => {

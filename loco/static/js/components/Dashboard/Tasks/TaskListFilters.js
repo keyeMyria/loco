@@ -56,7 +56,8 @@ class TasktListFilters extends Component {
         filters.push(filter);
 
         this.setState({
-            filters: filters
+            filters: filters,
+            openPopover: false,
         });
     }
 
