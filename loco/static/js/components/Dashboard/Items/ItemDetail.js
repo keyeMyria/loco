@@ -4,7 +4,7 @@ import { Redirect } from "react-router-dom";
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
-import { createItem, getItemDetails, editItemDetails } from '../../../reducer/items';
+import { createItem, getItemDetails, editItemDetails, clearState } from '../../../reducer/items';
 
 class ItemDetail extends Component {
     
@@ -19,12 +19,14 @@ class ItemDetail extends Component {
     }
 
     componentWillMount() {
+        this.props.clearState();
         if(this.props.match.params.id) {
             this.props.getItemDetails(this.props.match.params.id);    
             this.setState({
                 create: false
             });        
         }
+        
     }
 
     componentWillReceiveProps(nextProps) {
@@ -154,7 +156,7 @@ export default ItemDetail = connect(
         error: state.items.createItemError, itemDetailsData: state.items.itemDetailsData, 
         getItemProgress: state.items.getItemDetailsProgress, createItemSucess: state.items.createItemSucess,
         editItemSuccess: state.items.editItemSuccess, editItemProgress: state.items.editItemProgress }), 
-    {createItem: createItem, getItemDetails: getItemDetails, editItemDetails: editItemDetails}
+    {createItem: createItem, getItemDetails: getItemDetails, editItemDetails: editItemDetails, clearState: clearState}
 )(ItemDetail)
 
 

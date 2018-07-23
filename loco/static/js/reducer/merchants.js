@@ -29,6 +29,7 @@ export const GET_CITIES_FAILURE = 'dashboard/get_cities_failure';
 export const GET_CITIES_SUCCESS = 'dashboard/get_cities_success';
 export const UPDATE_QUERY = 'dashboard/update_merchants_query';
 export const UPDATE_FILTER = 'dashboard/update_merchants_filters';
+export const CLEAR_STATE = 'dashboard/clear_state'
 
 const INITIAL_STATE = {
     inProgress: true,
@@ -147,6 +148,8 @@ export default function merchants(state = INITIAL_STATE, action={}) {
             return { ...state, getCitiesProgress: false, getCitiesError: "", cities: JSON.parse(action.result)};
         case GET_CITIES_FAILURE:
             return { ...state, getCitiesProgress: false, getCitiesError: "Get Cities Failed."};
+        case CLEAR_STATE:
+            return INITIAL_STATE;
         default:
             return state;
     }
@@ -342,5 +345,11 @@ export function getCities(merchant_id) {
     return {
         types: [GET_CITIES_START, GET_CITIES_SUCCESS, GET_CITIES_FAILURE],
         promise: (client) => client.local.get('/crm/cities/?start=0&limit=10000')
+    }
+}
+
+export function clearState() {
+    return {
+        type: CLEAR_STATE
     }
 }

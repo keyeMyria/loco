@@ -2,15 +2,17 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
 
-import ItemListCard from './ItemListCard'
-import ItemListFilters from './ItemListFilters'
+import ItemListCard from './ItemListCard';
+import ItemListFilters from './ItemListFilters';
+
+import {clearState} from '../../../reducer/items';
 
 class Items extends Component {
     
-    constructor(props) {
-        super(props);
+    componentWillMount() {
+        this.props.clearState();
     }
-
+    
     render() {
 
         return (
@@ -46,7 +48,7 @@ class Items extends Component {
 
 export default Items = connect(
     (state) => ({team_name: state.dashboard.team_name}), 
-    {}
+    {clearState: clearState}
 )(Items)
 
 

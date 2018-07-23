@@ -24,6 +24,7 @@ class TaskDetail extends Component {
     };
 
     componentWillMount() {
+        this.props.clearState();
         if(this.props.match.params.id) {
             this.props.getTaskDetails(this.props.team_id, this.props.match.params.id);        
         }
@@ -41,10 +42,6 @@ class TaskDetail extends Component {
                 created: this.formatDate(task.created),
             });
         }
-    }
-
-    componentWillUnmount() {
-        this.props.clearState();
     }
 
     render() {

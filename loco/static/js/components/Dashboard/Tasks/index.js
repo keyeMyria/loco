@@ -2,10 +2,10 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
 
-import TaskListCard from './TaskListCard'
-import TaskListFilters from './TaskListFilters'
+import TaskListCard from './TaskListCard';
+import TaskListFilters from './TaskListFilters';
 
-import {clearState} from '../../../reducer/tasks'
+import {clearState} from '../../../reducer/tasks';
 
 class Tasks extends Component {
     
@@ -14,7 +14,6 @@ class Tasks extends Component {
     }
 
     componentWillMount() {
-        console.log("mound");
         this.props.clearState();
     }
 

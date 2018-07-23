@@ -22,6 +22,7 @@ export const EDIT_ITEM_START = 'dashboard/edit_item_start';
 export const EDIT_ITEM_FAILURE = 'dashboard/edit_item_failure';
 export const EDIT_ITEM_SUCCESS = 'dashboard/edit_item_success';
 export const UPDATE_QUERY = 'dashboard/update_items_query';
+export const CLEAR_STATE = 'dashboard/clear_state'
 
 const INITIAL_STATE = {
     inProgress: true,
@@ -122,6 +123,8 @@ export default function items(state = INITIAL_STATE, action={}) {
             return { ...state, editItemProgress: false, editItemError: "", editItemSuccess: true};
         case EDIT_ITEM_FAILURE:
             return { ...state, editItemProgress: false, editItemError: "Edit Item Failed."};
+        case CLEAR_STATE:
+            return INITIAL_STATE;    
         default:
             return state;
     }
@@ -265,5 +268,11 @@ export function uploadItem(data) {
         var state = getState();
         var team_id = state.dashboard.team_id;
         dispatch(uploadItemInternal(team_id, data));
+    }
+}
+
+export function clearState() {
+    return {
+        type: CLEAR_STATE
     }
 }
