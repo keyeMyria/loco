@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import AutoComplete from 'material-ui/AutoComplete';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
@@ -56,7 +57,7 @@ class MerchantDetail extends Component {
         });
     }
 
-    onCityChange = (ev, val) => {
+    onCityChange = (val) => {
         ev.preventDefault();
         this.setState({
             city: val
@@ -90,6 +91,10 @@ class MerchantDetail extends Component {
         };
 
         let props = this.props;
+        let data=[]
+        for (var i=0;i<props.cities;i++) {
+            data.push(props.cities[i].name);
+        }
 
         return (
             <div className="content-holder">
@@ -124,6 +129,15 @@ class MerchantDetail extends Component {
                                     floatingLabelText="Address"
                                     style={{ display:"block"}}
                                     id="address" />
+
+                                <AutoComplete
+                                    floatingLabelText = "City"
+                                    searchText = {this.state.city}
+                                    filter = {AutoComplete.fuzzyFilter}
+                                    dataSource = {data}
+                                    maxSearchResults = {10}
+                                    onUpdateInput = {(searchText, data, params) => {this.onChange(searchText)}}
+                                    id = {"cityfilter"} />
                                 <SelectField
                                     floatingLabelText="City"
                                     value={this.state.city}

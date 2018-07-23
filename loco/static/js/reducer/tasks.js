@@ -130,15 +130,24 @@ function getTasksInitInternal(team_id, limit, query, filters, startDate, endDate
     }
 
     if(filters && Array.isArray(filters) && filters.length > 0) {
+
         for(var i = 0; i< filters.length; i++) {
             if(filters[i].name && filters[i].value) {
-                url = url + `&filters=${filters[i].name}:${filters[i].value}`
+                if(url.includes("&filters=")) {
+                    url = url + ` AND ${filters[i].name}:${filters[i].value}`
+                } else {
+                    url = url + `&filters=${filters[i].name}:${filters[i].value}`
+                }
             }
         }
     }
 
     if(startDate && endDate) {
-        url = url + `&filters=created:[${startDate} TO ${endDate}]`
+        if(url.includes("&filters=")) {
+            url = url + ` AND created:[${startDate} TO ${endDate}]`
+        } else {
+            url = url + `&filters=created:[${startDate} TO ${endDate}]`
+        }
     }
 
     return {
@@ -173,13 +182,21 @@ function getTasksNextInternal(team_id, start, limit, query, filters, startDate, 
     if(filters && Array.isArray(filters) && filters.length > 0) {
         for(var i = 0; i< filters.length; i++) {
             if(filters[i].name && filters[i].value) {
-                url = url + `&filters=${filters[i].name}:${filters[i].value}`
+                if(url.includes("&filters=")) {
+                    url = url + ` AND created:[${startDate} TO ${endDate}]`
+                } else {
+                    url = url + `&filters=created:[${startDate} TO ${endDate}]`
+                }
             }
         }
     }
 
     if(startDate && endDate) {
-        url = url + `&filters=created:[${startDate} TO ${endDate}]`
+        if(url.includes("&filters=")) {
+            url = url + ` AND created:[${startDate} TO ${endDate}]`
+        } else {
+            url = url + `&filters=created:[${startDate} TO ${endDate}]`
+        }
     }
 
     return {

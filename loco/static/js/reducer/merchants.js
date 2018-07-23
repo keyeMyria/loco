@@ -162,7 +162,11 @@ function getMerchantsInitInternal(team_id, limit, query, filters) {
     if(filters && Array.isArray(filters) && filters.length > 0) {
         for(var i = 0; i< filters.length; i++) {
             if(filters[i].name && filters[i].value) {
-                url = url + `&filters=${filters[i].name}:${filters[i].value}`
+                if(url.includes("&filters=")) {
+                    url = url + ` AND ${filters[i].name}:${filters[i].value}`
+                } else {
+                    url = url + `&filters=${filters[i].name}:${filters[i].value}`
+                }
             }
         }
     }
@@ -197,7 +201,11 @@ function getMerchantsNextInternal(team_id, start, limit, query, filters) {
     if(filters && Array.isArray(filters) && filters.length > 0) {
         for(var i = 0; i< filters.length; i++) {
             if(filters[i].name && filters[i].value) {
-                url = url + `&filters=${filters[i].name}:${filters[i].value}`
+                if(url.includes("&filters=")) {
+                    url = url + ` AND ${filters[i].name}:${filters[i].value}`
+                } else {
+                    url = url + `&filters=${filters[i].name}:${filters[i].value}`
+                }
             }
         }
     }
