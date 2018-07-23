@@ -98,6 +98,11 @@ class ItemDetail extends Component {
                         {(this.state.create) ? "New Item" : "Item " + this.props.match.params.id}
                     </h1>
                 </header>
+                { (props.createItemSucess || props.editItemSuccess) &&
+                    <section className="success-msg-holder">
+                        <p className="success-msg">&#x2714; Your changes have been successfully made. It will reflect in few mins.</p>
+                    </section>
+                }
                 <section className="content-scroller">
                 { (props.inProgress || props.getItemProgress || props.editItemProgress)
                     ? (
@@ -141,9 +146,6 @@ class ItemDetail extends Component {
                             </div>
                         </section>
                     )
-                }
-                { (props.createItemSucess || props.editItemSuccess) &&
-                    <Redirect to="/items"/>
                 }
                 </section>
             </div>            

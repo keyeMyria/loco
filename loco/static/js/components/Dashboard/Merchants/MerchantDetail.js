@@ -35,12 +35,13 @@ class MerchantDetail extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(nextProps.merchantDetailsData && !this.props.merchantDetailsData) {
+        let merchant = nextProps.merchantDetailsData;
+        if(merchant && !this.props.merchantDetailsData) {
             this.setState({
-                name: nextProps.merchantDetailsData.name,
-                address: nextProps.merchantDetailsData.address,
-                city: nextProps.merchantDetailsData.city,
-                state: nextProps.merchantDetailsData.state,
+                name: merchant.name,
+                address: merchant.address,
+                city: merchant.city ? merchant.city.name : "",
+                state: merchant.state,
             });
         }
 
@@ -73,11 +74,11 @@ class MerchantDetail extends Component {
 
     handleSubmit = (ev) => {
         let city = "", state = "";
-        if(this.state.cities && this.state.city) {
-            for (var i= 0; i< this.state.cities.length; i++) {
-                if(this.state.city == this.state.cities[i].name) {
-                    city = this.state.cities[i].id;
-                    state = this.state.cities[i].state;
+        if(this.props.cities && this.state.city) {
+            for (var i= 0; i< this.props.cities.length; i++) {
+                if(this.state.city == this.props.cities[i].name) {
+                    city = this.props.cities[i].id;
+                    state = this.props.cities[i].state;
                 }
             }
         }
@@ -108,8 +109,8 @@ class MerchantDetail extends Component {
 
         let props = this.props;
         let data=[]
-        for (var i= 0; i< this.state.cities.length; i++) {
-            data.push(this.state.cities[i].name);
+        for (var i= 0; i< props.cities.length; i++) {
+            data.push(props.cities[i].name);
         }
 
         return (
@@ -120,7 +121,9 @@ class MerchantDetail extends Component {
                     </h1>
                 </header>
                 { (props.createMerchantSucess || props.editMerchantSuccess) &&
-                    <p className="success-msg">Your changes have been successfully made. It will reflect in few mins.</p>
+                    <section className="success-msg-holder">
+                        <p className="success-msg">&#x2714; Your changes have been successfully made. It will reflect in few mins.</p>
+                    </section>
                 }
                 <section className="content-scroller">
                 { (props.inProgress || props.getMerchantProgress || props.editMerchantProgress)
@@ -150,7 +153,7 @@ class MerchantDetail extends Component {
                                     id="address" />
                                 <AutoComplete
                                     floatingLabelText = "City"
-                                    searchText = {this.state.city.name}
+                                    searchText = {this.state.city}
                                     filter = {AutoComplete.fuzzyFilter}
                                     dataSource = {data}
                                     maxSearchResults = {10}
