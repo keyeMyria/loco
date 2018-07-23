@@ -29,6 +29,7 @@ export const GET_CITIES_FAILURE = 'dashboard/get_cities_failure';
 export const GET_CITIES_SUCCESS = 'dashboard/get_cities_success';
 export const UPDATE_QUERY = 'dashboard/update_merchants_query';
 export const UPDATE_FILTER = 'dashboard/update_merchants_filters';
+export const CLEAR_STATE = 'dashboard/clear_state'
 
 const INITIAL_STATE = {
     inProgress: true,
@@ -147,6 +148,8 @@ export default function merchants(state = INITIAL_STATE, action={}) {
             return { ...state, getCitiesProgress: false, getCitiesError: "", cities: JSON.parse(action.result)};
         case GET_CITIES_FAILURE:
             return { ...state, getCitiesProgress: false, getCitiesError: "Get Cities Failed."};
+        case CLEAR_STATE:
+            return INITIAL_STATE;
         default:
             return state;
     }
@@ -162,7 +165,11 @@ function getMerchantsInitInternal(team_id, limit, query, filters) {
     if(filters && Array.isArray(filters) && filters.length > 0) {
         for(var i = 0; i< filters.length; i++) {
             if(filters[i].name && filters[i].value) {
-                url = url + `&filters=${filters[i].name}:${filters[i].value}`
+                if(url.includes("&filters=")) {
+                    url = url + ` AND ${filters[i].name}:${filters[i].value}`
+                } else {
+                    url = url + `&filters=${filters[i].name}:${filters[i].value}`
+                }
             }
         }
     }
@@ -197,7 +204,11 @@ function getMerchantsNextInternal(team_id, start, limit, query, filters) {
     if(filters && Array.isArray(filters) && filters.length > 0) {
         for(var i = 0; i< filters.length; i++) {
             if(filters[i].name && filters[i].value) {
-                url = url + `&filters=${filters[i].name}:${filters[i].value}`
+                if(url.includes("&filters=")) {
+                    url = url + ` AND ${filters[i].name}:${filters[i].value}`
+                } else {
+                    url = url + `&filters=${filters[i].name}:${filters[i].value}`
+                }
             }
         }
     }
@@ -334,5 +345,11 @@ export function getCities(merchant_id) {
     return {
         types: [GET_CITIES_START, GET_CITIES_SUCCESS, GET_CITIES_FAILURE],
         promise: (client) => client.local.get('/crm/cities/?start=0&limit=10000')
+    }
+}
+
+export function clearState() {
+    return {
+        type: CLEAR_STATE
     }
 }

@@ -2,13 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
 
-import MerchantListCard from './MerchantListCard'
-import MerchantListFilters from './MerchantListFilters'
+import MerchantListCard from './MerchantListCard';
+import MerchantListFilters from './MerchantListFilters';
+
+import {clearState} from '../../../reducer/merchants';
 
 class Merchants extends Component {
-    
-    constructor(props) {
-        super(props);
+
+    componentWillMount() {
+        this.props.clearState();
     }
 
     render() {
@@ -46,7 +48,7 @@ class Merchants extends Component {
 
 export default Merchants = connect(
     (state) => ({team_name: state.dashboard.team_name}), 
-    {}
+    {clearState: clearState}
 )(Merchants)
 
 

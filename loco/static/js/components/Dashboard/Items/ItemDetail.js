@@ -4,7 +4,7 @@ import { Redirect } from "react-router-dom";
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
-import { createItem, getItemDetails, editItemDetails } from '../../../reducer/items';
+import { createItem, getItemDetails, editItemDetails, clearState } from '../../../reducer/items';
 
 class ItemDetail extends Component {
     
@@ -19,12 +19,14 @@ class ItemDetail extends Component {
     }
 
     componentWillMount() {
+        this.props.clearState();
         if(this.props.match.params.id) {
             this.props.getItemDetails(this.props.match.params.id);    
             this.setState({
                 create: false
             });        
         }
+        
     }
 
     componentWillReceiveProps(nextProps) {
@@ -96,6 +98,11 @@ class ItemDetail extends Component {
                         {(this.state.create) ? "New Item" : "Item " + this.props.match.params.id}
                     </h1>
                 </header>
+                { (props.createItemSucess || props.editItemSuccess) &&
+                    <section className="success-msg-holder">
+                        <p className="success-msg">&#x2714; Your changes have been successfully made. It will reflect in few mins.</p>
+                    </section>
+                }
                 <section className="content-scroller">
                 { (props.inProgress || props.getItemProgress || props.editItemProgress)
                     ? (
@@ -140,9 +147,6 @@ class ItemDetail extends Component {
                         </section>
                     )
                 }
-                { (props.createItemSucess || props.editItemSuccess) &&
-                    <Redirect to="/items"/>
-                }
                 </section>
             </div>            
         );
@@ -154,7 +158,7 @@ export default ItemDetail = connect(
         error: state.items.createItemError, itemDetailsData: state.items.itemDetailsData, 
         getItemProgress: state.items.getItemDetailsProgress, createItemSucess: state.items.createItemSucess,
         editItemSuccess: state.items.editItemSuccess, editItemProgress: state.items.editItemProgress }), 
-    {createItem: createItem, getItemDetails: getItemDetails, editItemDetails: editItemDetails}
+    {createItem: createItem, getItemDetails: getItemDetails, editItemDetails: editItemDetails, clearState: clearState}
 )(ItemDetail)
 
 

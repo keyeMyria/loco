@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
+import AutoComplete from 'material-ui/AutoComplete';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
-import { createMerchant, getMerchantDetails, editMerchantDetails, getStates, getCities } from '../../../reducer/merchants';
+import { createMerchant, getMerchantDetails, editMerchantDetails, getStates, getCities, clearState } from '../../../reducer/merchants';
 
 class MerchantDetail extends Component {
     
@@ -17,11 +18,13 @@ class MerchantDetail extends Component {
             city: "",
             name: "",
             state: "",
+            cities: [],
             create: true
         } 
     }
 
     componentWillMount() {
+        this.props.clearState();
         this.props.getCities();
         if(this.props.match.params.id) {
             this.props.getMerchantDetails(this.props.match.params.id); 
@@ -32,12 +35,19 @@ class MerchantDetail extends Component {
     }
 
     componentWillReceiveProps(nextProps) {
-        if(nextProps.merchantDetailsData && !this.props.merchantDetailsData) {
+        let merchant = nextProps.merchantDetailsData;
+        if(merchant && !this.props.merchantDetailsData) {
             this.setState({
-                name: nextProps.merchantDetailsData.name,
-                address: nextProps.merchantDetailsData.address,
-                city: nextProps.merchantDetailsData.city,
-                state: nextProps.merchantDetailsData.state,
+                name: merchant.name,
+                address: merchant.address,
+                city: merchant.city ? merchant.city.name : "",
+                state: merchant.state,
+            });
+        }
+
+        if(nextProps.cities && !this.props.cities) {
+            this.setState({
+                cities: nextProps.cities
             });
         }
     }
@@ -56,27 +66,35 @@ class MerchantDetail extends Component {
         });
     }
 
-    onCityChange = (ev, val) => {
-        ev.preventDefault();
+    onCityChange = (val) => {
         this.setState({
             city: val
         });
     }
 
     handleSubmit = (ev) => {
-        if(this.state.create) {
-            let price = parseFloat(price);
-            if(!price) {
-                price = 0;
+        let city = "", state = "";
+        if(this.props.cities && this.state.city) {
+            for (var i= 0; i< this.props.cities.length; i++) {
+                if(this.state.city == this.props.cities[i].name) {
+                    city = this.props.cities[i].id;
+                    state = this.props.cities[i].state;
+                }
             }
+        }
 
-            let data = {
-                name: this.state.name,
-                // price: price,
-                // serial_number : this.state.serial
-            };
+        let data = {
+            id: this.props.match.params.id,
+            name: this.state.name,
+            address: this.state.address,
+            city: city,
+            state: state
+        };
 
+        if(this.state.create) {
             this.props.createMerchant(this.props.team_id, data);
+        } else {
+            this.props.editMerchantDetails(data)
         }
     }
 
@@ -90,6 +108,10 @@ class MerchantDetail extends Component {
         };
 
         let props = this.props;
+        let data=[]
+        for (var i= 0; i< props.cities.length; i++) {
+            data.push(props.cities[i].name);
+        }
 
         return (
             <div className="content-holder">
@@ -98,6 +120,11 @@ class MerchantDetail extends Component {
                     {(this.state.create) ? "New Merchant" : "Merchant " + props.match.params.id}
                     </h1>
                 </header>
+                { (props.createMerchantSucess || props.editMerchantSuccess) &&
+                    <section className="success-msg-holder">
+                        <p className="success-msg">&#x2714; Your changes have been successfully made. It will reflect in few mins.</p>
+                    </section>
+                }
                 <section className="content-scroller">
                 { (props.inProgress || props.getMerchantProgress || props.editMerchantProgress)
                     ? (
@@ -124,22 +151,15 @@ class MerchantDetail extends Component {
                                     floatingLabelText="Address"
                                     style={{ display:"block"}}
                                     id="address" />
-                                <SelectField
-                                    floatingLabelText="City"
-                                    value={this.state.city}
-                                    onChange={this.onStateChange} >
-                                    { this.props.cities.map((item, index) => {   
-                                        return(
-                                            <MenuItem 
-                                                value={item.id} 
-                                                primaryText={item.name}
-                                                key={item.id} />
-                                        ) 
-                                    }) 
-                                    }
-                                </SelectField>
+                                <AutoComplete
+                                    floatingLabelText = "City"
+                                    searchText = {this.state.city}
+                                    filter = {AutoComplete.fuzzyFilter}
+                                    dataSource = {data}
+                                    maxSearchResults = {10}
+                                    onUpdateInput = {(searchText, data, params) => {this.onCityChange(searchText)}}
+                                    id = {"cityfilter"} />
                                 <br />
-
                                 <RaisedButton 
                                     label="Submit" 
                                     primary={true} 
@@ -148,9 +168,6 @@ class MerchantDetail extends Component {
                             </div>
                         </section>
                     )
-                }
-                { (props.createMerchantSucess || props.editMerchantSuccess) &&
-                    <Redirect to="/merchants"/>
                 }
                 </section>
             </div>            
@@ -165,7 +182,7 @@ export default MerchantDetail = connect(
         getMerchantProgress: state.merchants.getMerchantDetailsProgress, createMerchantSucess: state.merchants.createMerchantSucess,
         editMerchantSuccess: state.merchants.editMerchantSuccess, editMerchantProgress: state.merchants.editMerchantProgress }), 
     {createMerchant: createMerchant, getMerchantDetails: getMerchantDetails, editMerchantDetails: editMerchantDetails,
-        getStates: getStates, getCities: getCities}
+        getStates: getStates, getCities: getCities, clearState: clearState}
 )(MerchantDetail)
 
 
