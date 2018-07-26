@@ -204,7 +204,7 @@ def search_merchants(team_id, search_options, start, limit):
 def csv_merchants(team_id, search_options, start, limit):
     query = SOLR_HOST + 'merchant/select?q=[[QUERY]]&wt=csv&start=[[START]]&rows=[[LIMIT]]&sort=name asc'
     query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
-    query += '&fl=name,city,state,address,phone,merchant_type'
+    query += '&fl=name,state,city,address,phone,merchant_type'
     search_text = search_options.get('query')
     if search_text:
         search_text = "*" + str(search_text) + "*"
