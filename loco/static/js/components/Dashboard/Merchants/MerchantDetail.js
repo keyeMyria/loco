@@ -9,7 +9,9 @@ import MenuItem from 'material-ui/MenuItem';
 
 import { createMerchant, getMerchantDetails, editMerchantDetails, getStates, getCities, clearState } from '../../../reducer/merchants';
 
+const MERCHANT_TYPE = ["retail", "wholesale"]
 class MerchantDetail extends Component {
+
     
     constructor(props) {
         super(props);
@@ -19,7 +21,9 @@ class MerchantDetail extends Component {
             name: "",
             state: "",
             cities: [],
-            create: true
+            create: true,
+            phone: "",
+            merchant_type: ""
         } 
     }
 
@@ -72,6 +76,20 @@ class MerchantDetail extends Component {
         });
     }
 
+    onPhoneChange = (ev, val) => {
+        ev.preventDefault();
+        this.setState({
+            phone: val
+        });
+    }
+
+    onTypeChange = (ev, key, payload) => {
+        ev.preventDefault();
+        this.setState({
+            type: MERCHANT_TYPE[key]
+        });
+    }
+
     handleSubmit = (ev) => {
         let city = "", state = "";
         if(this.props.cities && this.state.city) {
@@ -88,6 +106,8 @@ class MerchantDetail extends Component {
             name: this.state.name,
             address: this.state.address,
             city: city,
+            phone: this.state.phone,
+            merchant_type: this.state.type,
             state: state
         };
 
@@ -151,6 +171,13 @@ class MerchantDetail extends Component {
                                     floatingLabelText="Address"
                                     style={{ display:"block"}}
                                     id="address" />
+                                <TextField
+                                    hintText=""
+                                    onChange={this.onPhoneChange}
+                                    value={this.state.phone}
+                                    floatingLabelText="Phone"
+                                    style={{ display:"block"}}
+                                    id="phone" />
                                 <AutoComplete
                                     floatingLabelText = "City"
                                     searchText = {this.state.city}
@@ -159,6 +186,18 @@ class MerchantDetail extends Component {
                                     maxSearchResults = {10}
                                     onUpdateInput = {(searchText, data, params) => {this.onCityChange(searchText)}}
                                     id = {"cityfilter"} />
+                                <SelectField
+                                    floatingLabelText="Merchant Type"
+                                    value={this.state.type}
+                                    onChange={this.onTypeChange} >
+
+                                    {  MERCHANT_TYPE.map((type) => {
+                                            return (
+                                                <MenuItem value={type} primaryText={type} key={type} />
+                                            )
+                                        })
+                                    }
+                                </SelectField>
                                 <br />
                                 <RaisedButton 
                                     label="Submit" 
