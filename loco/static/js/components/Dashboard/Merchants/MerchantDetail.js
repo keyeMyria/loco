@@ -23,6 +23,8 @@ class MerchantDetail extends Component {
             cities: [],
             create: true,
             phone: "",
+            nameErrorText: '',
+            phoneErrorText: '',
             merchant_type: ""
         } 
     }
@@ -63,10 +65,20 @@ class MerchantDetail extends Component {
         });
     }
 
+    isValidMobile = (number) => {
+        if (number == "") {
+            return true
+        }
+
+        let numberRegex = /^[6789]\d{9}$/
+        return numberRegex.test(String(number))
+    }
+    
     onNameChange = (ev, val) => {
         ev.preventDefault();
         this.setState({
-            name: val
+            name: val,
+            nameErrorText: ""
         });
     }
 
@@ -79,7 +91,8 @@ class MerchantDetail extends Component {
     onPhoneChange = (ev, val) => {
         ev.preventDefault();
         this.setState({
-            phone: val
+            phone: val,
+            phoneErrorText: ""
         });
     }
 
@@ -111,7 +124,15 @@ class MerchantDetail extends Component {
             state: state
         };
 
-        if(this.state.create) {
+        if (!this.isValidMobile(this.state.phone)) {
+            this.setState({
+                phoneErrorText: 'Please enter a valid 10 digit mobile number.',
+            })
+        } else  if (!this.state.name) {
+            this.setState({
+                nameErrorText: 'Please enter a valid name.',
+            })
+        } else if(this.state.create) {
             this.props.createMerchant(this.props.team_id, data);
         } else {
             this.props.editMerchantDetails(data)
@@ -162,6 +183,7 @@ class MerchantDetail extends Component {
                                     onChange={this.onNameChange}
                                     value={this.state.name}
                                     floatingLabelText="Name"
+                                    errorText={this.state.nameErrorText}
                                     style={{ display:"block"}}
                                     name="name" />
                                 <TextField
@@ -175,6 +197,7 @@ class MerchantDetail extends Component {
                                     hintText=""
                                     onChange={this.onPhoneChange}
                                     value={this.state.phone}
+                                    errorText={this.state.phoneErrorText}
                                     floatingLabelText="Phone"
                                     style={{ display:"block"}}
                                     id="phone" />
