@@ -11,7 +11,8 @@ const filterMap = {
     "City": "city",
     "State": "state",
     "Merchant": "merchant_name",
-    "Agent": "created_by_name"
+    "Agent": "created_by_name",
+    "Merchant Type": "merchant_type"
 }
 
 class TasktListFilters extends Component {
@@ -126,6 +127,9 @@ class TasktListFilters extends Component {
                             <MenuItem 
                                 primaryText="Agent" 
                                 onClick={(ev) => {this.handleFilterClick(ev, "Agent")}} />
+                            <MenuItem 
+                                primaryText="Merchant Type" 
+                                onClick={(ev) => {this.handleFilterClick(ev, "Merchant Type")}} />
                         </Menu>
                     </Popover>
                 </section>

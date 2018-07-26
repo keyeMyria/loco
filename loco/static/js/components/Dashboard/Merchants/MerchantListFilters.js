@@ -8,7 +8,8 @@ import Filter from '../Filter';
 
 const filterMap = {
     "City": "city",
-    "State": "state"
+    "State": "state",
+    "Merchant Type": "merchant_type"
 }
 
 class MerchantListFilters extends Component {
@@ -103,6 +104,9 @@ class MerchantListFilters extends Component {
                             <MenuItem 
                                 primaryText="State" 
                                 onClick={(ev) => {this.handleFilterClick(ev, "State")}} />
+                            <MenuItem 
+                                primaryText="Merchant Type" 
+                                onClick={(ev) => {this.handleFilterClick(ev, "Merchant Type")}} />
                         </Menu>
                     </Popover>
                 </section>

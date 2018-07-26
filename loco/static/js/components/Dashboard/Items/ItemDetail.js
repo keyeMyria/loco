@@ -14,7 +14,8 @@ class ItemDetail extends Component {
             "serial":"",
             "name": "",
             "price": "",
-            "create": true
+            "create": true,
+            nameErrorText: '',
         } 
     }
 
@@ -49,7 +50,8 @@ class ItemDetail extends Component {
     onNameChange = (ev, val) => {
         ev.preventDefault();
         this.setState({
-            "name": val
+            "name": val,
+            nameErrorText: ""
         });
     }
 
@@ -72,7 +74,11 @@ class ItemDetail extends Component {
             serial_number : this.state.serial
         };
 
-        if(this.state.create) {
+        if (!this.state.name) {
+            this.setState({
+                nameErrorText: 'Please enter a valid name.',
+            })
+        } else if(this.state.create) {
             this.props.createItem(this.props.team_id, data);
         } else {
             data["id"] = this.props.match.params.id;
@@ -126,6 +132,7 @@ class ItemDetail extends Component {
                                     hintText=""
                                     onChange={this.onNameChange}
                                     value={this.state.name}
+                                    errorText={this.state.nameErrorText}
                                     floatingLabelText="Name"
                                     style={{ display:"block"}}
                                     name="name" />
