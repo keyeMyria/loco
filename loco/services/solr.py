@@ -222,7 +222,7 @@ def csv_merchants(team_id, search_options, start, limit):
     return get_csv_solr(query)
 
 def search_items(team_id, search_options, start, limit):
-    query = SOLR_HOST + 'item/select?q=[[QUERY]]&wt=json&start=[[START]]&rows=[[LIMIT]]&sort=name asc'
+    query = SOLR_HOST + 'item/select?q=[[QUERY]]&wt=json&start=[[START]]&rows=[[LIMIT]]&sort=name asc&defType=edismax&qf=search_field+serial_number'
     query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
 
     search_text = search_options.get('query')

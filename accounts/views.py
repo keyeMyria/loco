@@ -81,7 +81,7 @@ def login_password(phone, password, request):
             return Response(status=status.HTTP_401_UNAUTHORIZED)
 
         login(request, user)
-        Token.objects.filter(user=user).delete()
+        # Token.objects.filter(user=user).delete()
         return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)

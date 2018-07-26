@@ -31,6 +31,14 @@ class City(BaseModel):
         super(City, self).save(*args, **kwargs)
 
 class Merchant(BaseModel):
+    TYPE_RETAIL = 'retail'
+    TYPE_WHOLESALE = 'wholesale'
+
+    TYPE_CHOICES = (
+        (TYPE_RETAIL, 'retail'),
+        (TYPE_WHOLESALE, 'wholesale'),
+    )
+
     team = models.ForeignKey(Team)
     created_by = models.ForeignKey(User, blank=True, null=True)
     name = models.CharField(max_length=100)
@@ -38,6 +46,8 @@ class Merchant(BaseModel):
     state = models.ForeignKey(State, blank=True, null=True)
     city = models.ForeignKey(City, blank=True, null=True)
     address = models.TextField(blank=True)
+    phone = models.CharField(max_length=10, blank=True)
+    merchant_type = models.CharField(max_length=16, choices=TYPE_CHOICES, blank=True)
 
 def upload_csv_path(instance, filename):
     return 'teams/{0}/uploads/merchants/{1}/{2}'.format(

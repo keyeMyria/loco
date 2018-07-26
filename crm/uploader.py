@@ -13,8 +13,8 @@ def validate_merchant_rows(team, rows):
     counter = 0
     for row in rows:
         counter += 1
-        entries = row.strip().split(",") + [None]*4
-        name, state, city, address = entries[:4]
+        entries = row.strip().split(",") + [None]*6
+        name, state, city, address, phone, merchant_type = entries[:6]
         if not name:
             return (None, "Empty name at row: {0}".format(counter))
 
@@ -35,6 +35,8 @@ def validate_merchant_rows(team, rows):
             'city': city,
             'state': state,
             'address': address if address else "",
+            'phone': phone if phone else "",
+            'merchant_type': merchant_type if merchant_type else "",
             'team': team
             })
 
