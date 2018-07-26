@@ -1,3 +1,4 @@
+import csv
 from . import models, serializers
 
 
@@ -13,10 +14,12 @@ def validate_merchant_rows(team, rows):
     counter = 0
     for row in rows:
         counter += 1
-        entries = row.strip().split(",") + [None]*6
-        name, state, city, address, phone, merchant_type = entries[:6]
+        if len(row) != 6:
+            return (None, "Every row should have exactly 6 columns. Check row: {0}".format(counter))
+
+        name, state, city, address, phone, merchant_type = row
         if not name:
-            return (None, "Empty name at row: {0}".format(counter))
+            return (None, "Empty name. Check row: {0}".format(counter))
 
         if city:
             city = city.lower()
@@ -71,9 +74,8 @@ def upload_merchants(upload_id):
     upload.status = models.MerchantUpload.STATUS_PROGRESS
     upload.save()
 
-    data_file = upload.data
-    file_data = data_file.readlines()
-    results, err = validate_merchant_rows(upload.team, file_data)
+    reader = csv.reader(upload.data)
+    results, err = validate_merchant_rows(upload.team, reader)
 
     if err:
         upload.message = err
@@ -101,8 +103,10 @@ def validate_item_rows(team, rows):
     counter = 0
     for row in rows:
         counter += 1
-        entries = row.strip().split(",") + [None]*3
-        name, price, serial_number = entries[:3]
+        if len(row) != 3:
+            return (None, "Every row should have exactly 3 columns. Check row: {0}".format(counter))
+
+        name, price, serial_number = row
         if not name:
             return (None, "Empty name at row: {0}".format(counter))
 
@@ -132,9 +136,8 @@ def upload_items(upload_id):
     upload.status = models.ItemUpload.STATUS_PROGRESS
     upload.save()
 
-    data_file = upload.data
-    file_data = data_file.readlines()
-    results, err = validate_item_rows(upload.team, file_data)
+    reader = csv.reader(upload.data)
+    results, err = validate_item_rows(upload.team, reader)
 
     if err:
         upload.message = err
