@@ -28,7 +28,7 @@ class Items extends Component {
                             <i className="material-icons header-action-icon">create</i>
                             <p className="header-action-name">NEW</p>
                         </Link>
-                        <Link to="/items/csv" className="header-action">
+                        <Link to="/items/upload" className="header-action">
                             <i className="material-icons header-action-icon">vertical_align_top</i>
                             <p className="header-action-name">UPLOAD</p>
                         </Link>
