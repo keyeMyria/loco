@@ -176,7 +176,11 @@ function getMerchantsInitInternal(team_id, limit, query, filters) {
 
     return {
         types: [GET_MERCHANTS_INIT, GET_MERCHANTS_SUCCESS, GET_MERCHANTS_FAILURE],
-        promise: (client) => client.local.get(url)
+        promise: (client) => client.local.get(url,
+            {
+                cancelPrevious: true,
+            }
+            ),
     }
 }
 
@@ -215,7 +219,11 @@ function getMerchantsNextInternal(team_id, start, limit, query, filters) {
 
     return {
         types: [GET_MERCHANTS_START, GET_MERCHANTS_SUCCESS, GET_MERCHANTS_FAILURE],
-        promise: (client) => client.local.get(url)
+        promise: (client) => client.local.get(url,
+            {
+                cancelPrevious: true,
+            }
+        ),
     }
 }
 

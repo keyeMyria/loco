@@ -152,7 +152,11 @@ function getTasksInitInternal(team_id, limit, query, filters, startDate, endDate
 
     return {
         types: [GET_TASKS_INIT, GET_TASKS_SUCCESS, GET_TASKS_FAILURE],
-        promise: (client) => client.local.get(url)
+        promise: (client) => client.local.get(url,
+            {
+                cancelPrevious: true,
+            }
+        )
     }
 }
 
@@ -201,7 +205,11 @@ function getTasksNextInternal(team_id, start, limit, query, filters, startDate, 
 
     return {
         types: [GET_TASKS_START, GET_TASKS_SUCCESS, GET_TASKS_FAILURE],
-        promise: (client) => client.local.get(url)
+        promise: (client) => client.local.get(url,
+            {
+                cancelPrevious: true,
+            }
+        )
     }
 }
 

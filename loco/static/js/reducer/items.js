@@ -138,7 +138,11 @@ function getItemsInitInternal(team_id, limit, query) {
 
     return {
         types: [GET_ITEMS_INIT, GET_ITEMS_SUCCESS, GET_ITEMS_FAILURE],
-        promise: (client) => client.local.get(url)
+        promise: (client) => client.local.get(url,
+            {
+                cancelPrevious: true,
+            }
+        )
     }
 }
 
@@ -164,7 +168,11 @@ function getItemsNextInternal(team_id, start, limit, query) {
 
     return {
         types: [GET_ITEMS_START, GET_ITEMS_SUCCESS, GET_ITEMS_FAILURE],
-        promise: (client) => client.local.get(url)
+        promise: (client) => client.local.get(url,
+            {
+                cancelPrevious: true,
+            }
+        )
     }
 }
 
