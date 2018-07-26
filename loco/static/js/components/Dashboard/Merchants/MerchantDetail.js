@@ -48,6 +48,8 @@ class MerchantDetail extends Component {
                 address: merchant.address,
                 city: merchant.city ? merchant.city.name : "",
                 state: merchant.state,
+                phone: merchant.phone,
+                merchant_type: merchant.merchant_type
             });
         }
 
@@ -73,7 +75,7 @@ class MerchantDetail extends Component {
         let numberRegex = /^[6789]\d{9}$/
         return numberRegex.test(String(number))
     }
-    
+
     onNameChange = (ev, val) => {
         ev.preventDefault();
         this.setState({
@@ -99,7 +101,7 @@ class MerchantDetail extends Component {
     onTypeChange = (ev, key, payload) => {
         ev.preventDefault();
         this.setState({
-            type: MERCHANT_TYPE[key]
+            merchant_type: MERCHANT_TYPE[key]
         });
     }
 
@@ -120,7 +122,7 @@ class MerchantDetail extends Component {
             address: this.state.address,
             city: city,
             phone: this.state.phone,
-            merchant_type: this.state.type,
+            merchant_type: this.state.merchant_type,
             state: state
         };
 
@@ -211,7 +213,7 @@ class MerchantDetail extends Component {
                                     id = {"cityfilter"} />
                                 <SelectField
                                     floatingLabelText="Merchant Type"
-                                    value={this.state.type}
+                                    value={this.state.merchant_type}
                                     onChange={this.onTypeChange} >
 
                                     {  MERCHANT_TYPE.map((type) => {
