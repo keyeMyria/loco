@@ -1,7 +1,7 @@
 import 'react-dates/initialize';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { HashRouter } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
@@ -19,14 +19,14 @@ class Dashboard extends Component {
     render() {
 
         return (
-            <HashRouter>
+            <BrowserRouter basename={`/web/teams/${this.props.team_id}`}>
                 <MuiThemeProvider>
                     <div className="dashboard-holder">
                 	   <Sidebar />
                        <Routes />
                     </div>
                 </MuiThemeProvider>
-            </HashRouter>
+            </BrowserRouter>
         );
 	}
 }
