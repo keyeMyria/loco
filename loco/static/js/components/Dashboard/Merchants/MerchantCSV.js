@@ -67,9 +67,12 @@ class MerchantCSV extends Component {
 		        			<li className="upload-csv-helper">
 			        			- Please use a CSV file.
 		        			</li>
-		        			<li className="upload-csv-helper">
-			        			- Ensure file has columns in following sequence: name, state, city, address.
-		        			</li>
+                            <li className="upload-csv-helper">
+                                - Ensure file has columns in following sequence: *name, state, city, address, phone and merchant-type(wholesale OR retail).
+                            </li>
+                            <li className="upload-csv-helper">
+                                - Values marked with * are must.
+                            </li>
 		        			<li className="upload-csv-helper">
 			        			- Do not include column names in the csv file.
 		        			</li>
