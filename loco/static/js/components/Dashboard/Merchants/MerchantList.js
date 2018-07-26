@@ -12,6 +12,7 @@ export default class MerchantList extends Component {
                             <th>Name</th>
                             <th>State</th>
                             <th>City</th>
+                            <th>Type</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -26,6 +27,9 @@ export default class MerchantList extends Component {
                                     </td>
                                     <td>
                                         <Link to={"/merchants/" + merchant.id + "/change" }>{merchant.city}</Link>
+                                    </td>
+                                    <td>
+                                        <Link to={"/merchants/" + merchant.id + "/change" }>{merchant.merchant_type}</Link>
                                     </td>
                                 </tr>
                             )
