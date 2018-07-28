@@ -1,6 +1,17 @@
-import csv
+import csv, xlrd
 from . import models, serializers
 
+NO_VALUE = 1
+INVALID_VALUE = 2
+
+def get_int(value, default):
+    if not value:
+        return (default, NO_VALUE)
+
+    try:
+        return (int(value), 0)
+    except:
+        return (default, INVALID_VALUE)
 
 def validate_merchant_rows(team, rows):
     if not rows:
@@ -21,6 +32,10 @@ def validate_merchant_rows(team, rows):
         if not name:
             return (None, "Empty name. Check row: {0}".format(counter))
 
+        phone, err = get_int(phone, '')
+        if err == INVALID_VALUE:
+            return (None, "Invalid phone number. Check row: {0}".format(counter))            
+
         if city:
             city = city.lower()
             cities.append(city)
@@ -38,7 +53,7 @@ def validate_merchant_rows(team, rows):
             'city': city,
             'state': state,
             'address': address if address else "",
-            'phone': phone if phone else "",
+            'phone': phone if str(phone) else "",
             'merchant_type': merchant_type if merchant_type else "",
             'team': team
             })
@@ -74,7 +89,20 @@ def upload_merchants(upload_id):
     upload.status = models.MerchantUpload.STATUS_PROGRESS
     upload.save()
 
-    reader = csv.reader(upload.data)
+    if (upload.data.name.endswith('.csv')):
+        reader = csv.reader(upload.data)
+    elif (upload.data.name.endswith('.xlsx')):
+        wb = xlrd.open_workbook(upload.data.path)
+        sheet = wb.sheet_by_index(0)
+        reader = []
+        for row in range(sheet.nrows):
+            reader.append(sheet.row_values(row))
+    else:
+        upload.message = "Unsupported file format"
+        upload.status = models.MerchantUpload.STATUS_FAILED
+        upload.save()
+        return
+
     results, err = validate_merchant_rows(upload.team, reader)
 
     if err:
