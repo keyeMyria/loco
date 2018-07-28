@@ -131,10 +131,10 @@ def validate_item_rows(team, rows):
     counter = 0
     for row in rows:
         counter += 1
-        if len(row) != 3:
-            return (None, "Every row should have exactly 3 columns. Check row: {0}".format(counter))
+        if len(row) != 5:
+            return (None, "Every row should have exactly 5 columns. Check row: {0}".format(counter))
 
-        name, price, serial_number = row
+        name, price, serial_number, mrp, composition = row
         if not name:
             return (None, "Empty name at row: {0}".format(counter))
 
@@ -144,6 +144,8 @@ def validate_item_rows(team, rows):
         item = {
             'name': name,
             'price': price,
+            'mrp': mrp if mrp else None,
+            'composition': composition,
             'serial_number': serial_number if serial_number else "",
             'team': team
             }
@@ -164,7 +166,20 @@ def upload_items(upload_id):
     upload.status = models.ItemUpload.STATUS_PROGRESS
     upload.save()
 
-    reader = csv.reader(upload.data)
+    if (upload.data.name.endswith('.csv')):
+        reader = csv.reader(upload.data)
+    elif (upload.data.name.endswith('.xlsx')):
+        wb = xlrd.open_workbook(upload.data.path)
+        sheet = wb.sheet_by_index(0)
+        reader = []
+        for row in range(sheet.nrows):
+            reader.append(sheet.row_values(row))
+    else:
+        upload.message = "Unsupported file format"
+        upload.status = models.ItemUpload.STATUS_FAILED
+        upload.save()
+        return
+
     results, err = validate_item_rows(upload.team, reader)
 
     if err:
