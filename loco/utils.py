@@ -67,7 +67,7 @@ def get_query_start_limit_dj(request):
     return (int(start), int(limit))
 
 def get_csv_url(entity, team_id, start, total_count, query='', filters=''):
-    url = "/web/teams/{0}/{1}/csv/?start={2}&limit={3}".format(
+    url = "/web/teams/{0}/{1}/download/?start={2}&limit={3}&format=csv".format(
         team_id, entity, start, total_count)
 
     if query:

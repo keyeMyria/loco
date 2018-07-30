@@ -201,9 +201,9 @@ def search_merchants(team_id, search_options, start, limit):
     data, count = get_query_solr(query)
     return {'data': data, 'count': count}
 
-def csv_merchants(team_id, search_options, start, limit):
-    query = SOLR_HOST + 'merchant/select?q=[[QUERY]]&wt=csv&start=[[START]]&rows=[[LIMIT]]&sort=name asc'
-    query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
+def download_merchants(team_id, search_options, start, limit, download_format='csv'):
+    query = SOLR_HOST + 'merchant/select?q=[[QUERY]]&wt=[[FORMAT]]&start=[[START]]&rows=[[LIMIT]]&sort=name asc'
+    query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit)).replace('[[FORMAT]]', download_format)
     query += '&fl=name,state,city,address,phone,merchant_type'
     search_text = search_options.get('query')
     if search_text:
@@ -245,10 +245,10 @@ def search_items(team_id, search_options, start, limit):
     data, count = get_query_solr(query)
     return {'data': data, 'count': count}
 
-def csv_items(team_id, search_options, start, limit):
-    query = SOLR_HOST + 'item/select?q=[[QUERY]]&wt=csv&start=[[START]]&rows=[[LIMIT]]&sort=name asc'
-    query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
-    query += '&fl=name,price,serial_number'
+def download_items(team_id, search_options, start, limit, download_format='csv'):
+    query = SOLR_HOST + 'item/select?q=[[QUERY]]&wt=[[FORMAT]]&start=[[START]]&rows=[[LIMIT]]&sort=name asc'
+    query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit)).replace('[[FORMAT]]', download_format)
+    query += '&fl=name,price,serial_number,mrp,description'
     search_text = search_options.get('query')
     search_text = search_options.get('query')
     if search_text:
@@ -289,10 +289,10 @@ def search_tasks(team_id, search_options, start, limit):
     data, count = get_query_solr(query)
     return {'data': data, 'count': count}
 
-def csv_tasks(team_id, search_options, start, limit):
-    query = SOLR_HOST + 'task/select?q=[[QUERY]]&wt=csv&start=[[START]]&sort=created desc&rows=[[LIMIT]]'
+def download_tasks(team_id, search_options, start, limit, download_format='csv'):
+    query = SOLR_HOST + 'task/select?q=[[QUERY]]&wt=[[FORMAT]]&start=[[START]]&sort=created desc&rows=[[LIMIT]]'
     query += '&fl=merchant_name,created_by_name,amount,created,city,state'
-    query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
+    query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit)).replace('[[FORMAT]]', download_format)
     search_text = search_options.get('query')
     if search_text:
         search_text = "*" + str(search_text) + "*"
