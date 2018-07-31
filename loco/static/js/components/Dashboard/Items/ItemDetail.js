@@ -14,6 +14,8 @@ class ItemDetail extends Component {
             "serial":"",
             "name": "",
             "price": "",
+            "mrp": "",
+            "description": "",
             "create": true,
             nameErrorText: '',
         } 
@@ -35,6 +37,8 @@ class ItemDetail extends Component {
             this.setState({
                 name: nextProps.itemDetailsData.name,
                 price: nextProps.itemDetailsData.price,
+                mrp: nextProps.itemDetailsData.mrp,
+                description: nextProps.itemDetailsData.description,
                 serial: nextProps.itemDetailsData.serial_number,
             });
         }
@@ -62,15 +66,36 @@ class ItemDetail extends Component {
         });
     }
 
+    onMrpChange = (ev, val) => {
+        ev.preventDefault();
+        this.setState({
+            "mrp": val
+        });
+    }
+
+    onDescriptionChange = (ev, val) => {
+        ev.preventDefault();
+        this.setState({
+            "description": val
+        });
+    }
+
     handleSubmit = (ev) => {
         let price = parseFloat(this.state.price);
         if(!price) {
             price = 0;
         }
 
+        let mrp = parseFloat(this.state.mrp);
+        if(!mrp) {
+            mrp = 0;
+        }        
+
         let data = {
             name: this.state.name,
             price: price,
+            mrp: mrp,
+            description: this.state.description,
             serial_number : this.state.serial
         };
 
@@ -143,7 +168,20 @@ class ItemDetail extends Component {
                                     floatingLabelText="Price"
                                     style={{ display:"block"}}
                                     name="price" />
-
+                                <TextField
+                                    hintText=""
+                                    onChange={this.onMrpChange}
+                                    value={this.state.mrp}
+                                    floatingLabelText="MRP"
+                                    style={{ display:"block"}}
+                                    name="mrp" />
+                                <TextField
+                                    hintText=""
+                                    onChange={this.onDescriptionChange}
+                                    value={this.state.description}
+                                    floatingLabelText="Description"
+                                    style={{ display:"block"}}
+                                    name="description" />
                                 <RaisedButton 
                                     label="Submit" 
                                     primary={true} 
