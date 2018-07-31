@@ -31,12 +31,14 @@ class City(BaseModel):
         super(City, self).save(*args, **kwargs)
 
 class Merchant(BaseModel):
-    TYPE_RETAIL = 'retail'
-    TYPE_WHOLESALE = 'wholesale'
+    TYPE_RETAILER = 'retailer'
+    TYPE_STOCKIST = 'stockist'
+    TYPE_DISTRIBUTOR = 'distributor'
 
     TYPE_CHOICES = (
-        (TYPE_RETAIL, 'retail'),
-        (TYPE_WHOLESALE, 'wholesale'),
+        (TYPE_RETAILER, 'retail'),
+        (TYPE_STOCKIST, 'stockist'),
+        (TYPE_DISTRIBUTOR,'distributor')
     )
 
     team = models.ForeignKey(Team)
@@ -78,6 +80,8 @@ class Item(BaseModel):
     created_by = models.ForeignKey(User, blank=True, null=True)
     name = models.CharField(max_length=140)
     price = models.DecimalField(max_digits=11, decimal_places=2)
+    mrp = models.DecimalField(max_digits=11, decimal_places=2, blank=True, null=True)
+    description = models.TextField(blank=True)
     serial_number = models.CharField(max_length=50, blank=True)
 
 def upload_item_csv_path(instance, filename):

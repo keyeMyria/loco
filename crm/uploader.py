@@ -1,5 +1,17 @@
+import csv, xlrd
 from . import models, serializers
 
+NO_VALUE = 1
+INVALID_VALUE = 2
+
+def get_int(value, default):
+    if not value:
+        return (default, NO_VALUE)
+
+    try:
+        return (int(value), 0)
+    except:
+        return (default, INVALID_VALUE)
 
 def validate_merchant_rows(team, rows):
     if not rows:
@@ -13,10 +25,16 @@ def validate_merchant_rows(team, rows):
     counter = 0
     for row in rows:
         counter += 1
-        entries = row.strip().split(",") + [None]*6
-        name, state, city, address, phone, merchant_type = entries[:6]
+        if len(row) != 6:
+            return (None, "Every row should have exactly 6 columns. Check row: {0}".format(counter))
+
+        name, state, city, address, phone, merchant_type = row
         if not name:
-            return (None, "Empty name at row: {0}".format(counter))
+            return (None, "Empty name. Check row: {0}".format(counter))
+
+        phone, err = get_int(phone, '')
+        if err == INVALID_VALUE:
+            return (None, "Invalid phone number. Check row: {0}".format(counter))            
 
         if city:
             city = city.lower()
@@ -35,7 +53,7 @@ def validate_merchant_rows(team, rows):
             'city': city,
             'state': state,
             'address': address if address else "",
-            'phone': phone if phone else "",
+            'phone': phone if str(phone) else "",
             'merchant_type': merchant_type if merchant_type else "",
             'team': team
             })
@@ -71,9 +89,21 @@ def upload_merchants(upload_id):
     upload.status = models.MerchantUpload.STATUS_PROGRESS
     upload.save()
 
-    data_file = upload.data
-    file_data = data_file.readlines()
-    results, err = validate_merchant_rows(upload.team, file_data)
+    if (upload.data.name.endswith('.csv')):
+        reader = csv.reader(upload.data)
+    elif (upload.data.name.endswith('.xlsx')):
+        wb = xlrd.open_workbook(upload.data.path)
+        sheet = wb.sheet_by_index(0)
+        reader = []
+        for row in range(sheet.nrows):
+            reader.append(sheet.row_values(row))
+    else:
+        upload.message = "Unsupported file format"
+        upload.status = models.MerchantUpload.STATUS_FAILED
+        upload.save()
+        return
+
+    results, err = validate_merchant_rows(upload.team, reader)
 
     if err:
         upload.message = err
@@ -101,8 +131,10 @@ def validate_item_rows(team, rows):
     counter = 0
     for row in rows:
         counter += 1
-        entries = row.strip().split(",") + [None]*3
-        name, price, serial_number = entries[:3]
+        if len(row) != 5:
+            return (None, "Every row should have exactly 5 columns. Check row: {0}".format(counter))
+
+        name, price, serial_number, mrp, composition = row
         if not name:
             return (None, "Empty name at row: {0}".format(counter))
 
@@ -112,6 +144,8 @@ def validate_item_rows(team, rows):
         item = {
             'name': name,
             'price': price,
+            'mrp': mrp if mrp else None,
+            'composition': composition,
             'serial_number': serial_number if serial_number else "",
             'team': team
             }
@@ -132,9 +166,21 @@ def upload_items(upload_id):
     upload.status = models.ItemUpload.STATUS_PROGRESS
     upload.save()
 
-    data_file = upload.data
-    file_data = data_file.readlines()
-    results, err = validate_item_rows(upload.team, file_data)
+    if (upload.data.name.endswith('.csv')):
+        reader = csv.reader(upload.data)
+    elif (upload.data.name.endswith('.xlsx')):
+        wb = xlrd.open_workbook(upload.data.path)
+        sheet = wb.sheet_by_index(0)
+        reader = []
+        for row in range(sheet.nrows):
+            reader.append(sheet.row_values(row))
+    else:
+        upload.message = "Unsupported file format"
+        upload.status = models.ItemUpload.STATUS_FAILED
+        upload.save()
+        return
+
+    results, err = validate_item_rows(upload.team, reader)
 
     if err:
         upload.message = err
