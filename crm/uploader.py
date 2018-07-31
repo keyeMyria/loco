@@ -134,7 +134,7 @@ def validate_item_rows(team, rows):
         if len(row) != 5:
             return (None, "Every row should have exactly 5 columns. Check row: {0}".format(counter))
 
-        name, price, serial_number, mrp, composition = row
+        name, price, serial_number, mrp, description = row
         if not name:
             return (None, "Empty name at row: {0}".format(counter))
 
@@ -145,7 +145,7 @@ def validate_item_rows(team, rows):
             'name': name,
             'price': price,
             'mrp': mrp if mrp else None,
-            'composition': composition,
+            'description': description,
             'serial_number': serial_number if serial_number else "",
             'team': team
             }
