@@ -287,6 +287,14 @@ body {
     color: #CB202D;
 }
 
+.pager-downlaod-action {
+    font-size: 14px;
+    color: #CB202D;
+    width: 50%;
+    display: inline-block;
+    text-align: center;
+}
+
 .pager-action .pager-action-icon {
     font-size: 20px;
     margin-right: 4px;
