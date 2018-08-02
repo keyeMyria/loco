@@ -285,6 +285,7 @@ body {
 .list-pager-action .pager-action {
     font-size: 14px;
     color: #CB202D;
+    cursor: pointer;
 }
 
 .pager-downlaod-action {

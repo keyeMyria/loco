@@ -250,7 +250,6 @@ def download_items(team_id, search_options, start, limit, download_format='csv')
     query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit)).replace('[[FORMAT]]', download_format)
     query += '&fl=name,price,serial_number,mrp,description'
     search_text = search_options.get('query')
-    search_text = search_options.get('query')
     if search_text:
         search_text = "*" + str(search_text) + "*"
     else:

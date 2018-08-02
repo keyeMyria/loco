@@ -61,6 +61,7 @@ export default class Paginator extends Component {
             downloadCSV = (
                 <section className="list-pager-action">
                     <span target="_blank" className="pager-action" onClick={this.handleOpen}>
+                        <i className="material-icons pager-action-icon">vertical_align_bottom</i> 
                         <p className="pager-action-name">Download</p>
                     </span>
                 </section>

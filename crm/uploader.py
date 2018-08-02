@@ -146,7 +146,7 @@ def validate_item_rows(team, rows):
             'price': price,
             'mrp': mrp if mrp else None,
             'description': description,
-            'serial_number': serial_number if serial_number else "",
+            'serial_number': str(serial_number) if serial_number else "",
             'team': team
             }
 
