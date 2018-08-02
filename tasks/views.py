@@ -252,10 +252,13 @@ class TaskSearch(APIView):
             search_options['query'] = query
 
         filters = request.query_params.get(PARAM_FILTERS, '')
-        if filters:
-            if not team.is_admin(request.user):
+        if not team.is_admin(request.user):
+            if filters:
                 filters += " AND created_by:{}".format(request.user.id)
-                
+            else:
+                filters = "created_by:{}".format(request.user.id)
+
+        if filters:
             search_options['filters'] = filters
 
         start, limit = utils.get_query_start_limit(request)

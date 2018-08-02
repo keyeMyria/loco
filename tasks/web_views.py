@@ -40,7 +40,7 @@ def tasks_download(request, team_id):
     tasks = solr.download_tasks(team.id, search_options, start, limit, download_format)
     response = HttpResponse(tasks)
     response['content_type'] = 'application/{0}'.format(download_format)
-    response['Content-Disposition'] = 'attachment;filename=tasks.{0}'.format(download_format)
+    response['Content-Disposition'] = 'attachment;filename=orders.{0}'.format(download_format)
     return response
 
 def render_to_pdf(template_src, context_dict={}):

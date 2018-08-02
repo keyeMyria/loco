@@ -16,7 +16,7 @@ export default class JobListCard extends Component {
     render() {   
         var content = (
             <section className="list-card-content">
-                <JobList data={this.props.data} />
+                <JobList data={this.props.data} refresh={this.props.getUploads} />
             </section>
         );
 
