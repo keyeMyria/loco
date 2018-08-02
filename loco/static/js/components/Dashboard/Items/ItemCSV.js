@@ -65,13 +65,16 @@ class ItemCSV extends Component {
                     <section className="upload-csv">
                         <ul className="upload-csv-helpers">
                             <li className="upload-csv-helper">
-                                - Please use a CSV file.
+                                - Please use a .csv or .xlsx file.
                             </li>
                             <li className="upload-csv-helper">
-                                - Ensure file has columns in following sequence: name, price, serial_number.
+                                - Ensure file has columns in following sequence: *name, *price, serial_number, mrp and description.
                             </li>
                             <li className="upload-csv-helper">
-                                - Do not include column names in the csv file.
+                                - Values marked with * are must.
+                            </li>
+                            <li className="upload-csv-helper">
+                                - Do not include column names on top. First row should be data.
                             </li>
                         </ul>
                         {error}
