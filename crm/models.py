@@ -56,19 +56,19 @@ def upload_csv_path(instance, filename):
         instance.team.id, instance.unique_id, filename)
 
 class MerchantUpload(BaseModel):
-    STATUS_CREATED = 'created'
+    STATUS_PENDING = 'pending'
     STATUS_PROGRESS = 'progress'
     STATUS_SUCCESS = 'success'
     STATUS_FAILED = 'failed'
 
     STATUS_CHOICES = (
-        ('created', 'created'),
+        ('pending', 'pending'),
         ('progress', 'progress'),
         ('success', 'success'),
         ('failed', 'failed')
     )
 
-    status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=STATUS_CREATED)
+    status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=STATUS_PENDING)
     team = models.ForeignKey(Team)
     data = models.FileField(upload_to=upload_csv_path)
     unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
@@ -89,19 +89,19 @@ def upload_item_csv_path(instance, filename):
         instance.team.id, instance.unique_id, filename)
 
 class ItemUpload(BaseModel):
-    STATUS_CREATED = 'created'
+    STATUS_PENDING = 'pending'
     STATUS_PROGRESS = 'progress'
     STATUS_SUCCESS = 'success'
     STATUS_FAILED = 'failed'
 
     STATUS_CHOICES = (
-        ('created', 'created'),
+        ('pending', 'pending'),
         ('progress', 'progress'),
         ('success', 'success'),
         ('failed', 'failed')
     )
 
-    status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=STATUS_CREATED)
+    status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=STATUS_PENDING)
     team = models.ForeignKey(Team)
     data = models.FileField(upload_to=upload_item_csv_path)
     unique_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
