@@ -134,6 +134,12 @@ class ItemDetail extends Component {
                         <p className="success-msg">&#x2714; Your changes have been successfully made. It will reflect in few mins.</p>
                     </section>
                 }
+
+                { props.error &&
+                    <section className="success-msg-holder" >
+                        <p className="success-msg error-msg">{ props.error }</p>
+                    </section>
+                }
                 <section className="content-scroller">
                 { (props.inProgress || props.getItemProgress || props.editItemProgress)
                     ? (
@@ -200,7 +206,7 @@ class ItemDetail extends Component {
 
 export default ItemDetail = connect(
     (state) => ({ team_id: state.dashboard.team_id, inProgress: state.items.createItemProgress,
-        error: state.items.createItemError, itemDetailsData: state.items.itemDetailsData, 
+        error: state.items.error, itemDetailsData: state.items.itemDetailsData, 
         getItemProgress: state.items.getItemDetailsProgress, createItemSucess: state.items.createItemSucess,
         editItemSuccess: state.items.editItemSuccess, editItemProgress: state.items.editItemProgress }), 
     {createItem: createItem, getItemDetails: getItemDetails, editItemDetails: editItemDetails, clearState: clearState}

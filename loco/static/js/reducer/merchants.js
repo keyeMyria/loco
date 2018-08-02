@@ -51,6 +51,7 @@ const INITIAL_STATE = {
 };
 
 export default function merchants(state = INITIAL_STATE, action={}) {
+    let error = "";
     switch(action.type) {
         case CREATE_MERCHANT_START:
             return { ...state, createMerchantProgress: true, createMerchantError: ""};
@@ -58,7 +59,15 @@ export default function merchants(state = INITIAL_STATE, action={}) {
             var merchantsData = JSON.parse(action.result);
             return { ...state, createMerchantProgress: false, createMerchantError: "", createMerchantSucess: true};
         case CREATE_MERCHANT_FAILURE:
-            return { ...state, createMerchantProgress: false, createMerchantError: "Create Merchant Failed.", createMerchantSucess: false};
+            error = "Something went wrong. Please try again later.";
+            if(action.result) {
+                let result = JSON.parse(action.result);
+                let resultError = result.error;
+                if(resultError) {
+                    error = resultError;
+                }
+            }
+            return { ...state, createMerchantProgress: false, createMerchantError: "Create Merchant Failed.", createMerchantSucess: false, error: error};
         case UPLOAD_MERCHANT_START:
             return { ...state, uploadProgress: true, uploadError: ""};
         case UPLOAD_MERCHANT_SUCCESS:
@@ -129,13 +138,29 @@ export default function merchants(state = INITIAL_STATE, action={}) {
             var merchantDetailsData = JSON.parse(action.result);
             return { ...state, getMerchantDetailsProgress: false, getMerchantDetailsError: "", merchantDetailsData: merchantDetailsData};
         case GET_MERCHANT_DETAILS_FAILURE:
-            return { ...state, getMerchantDetailsProgress: false, getMerchantDetailsError: "Get Merchant Details Failed."};
+            error = "Something went wrong. Please try again later.";
+            if(action.result) {
+                let result = JSON.parse(action.result);
+                let resultError = result.error;
+                if(resultError) {
+                    error = resultError;
+                }
+            }
+            return { ...state, getMerchantDetailsProgress: false, getMerchantDetailsError: "Get Merchant Details Failed.", error: error};
         case EDIT_MERCHANT_START:
             return { ...state, editMerchantProgress: true, editMerchantError: ""};
         case EDIT_MERCHANT_SUCCESS:
             return { ...state, editMerchantProgress: false, editMerchantError: "", editMerchantSuccess: true};
         case EDIT_MERCHANT_FAILURE:
-            return { ...state, editMerchantProgress: false, editMerchantError: "Edit Merchant Failed.", editMerchantSuccess: false};
+            error = "Something went wrong. Please try again later.";
+            if(action.result) {
+                let result = JSON.parse(action.result);
+                let resultError = result.error;
+                if(resultError) {
+                    error = resultError;
+                }
+            }
+            return { ...state, editMerchantProgress: false, editMerchantError: "Edit Merchant Failed.", editMerchantSuccess: false, error: error};
         case GET_STATES_START:
             return { ...state, getStatesProgress: true, getStatesrror: ""};
         case GET_STATES_SUCCESS:
