@@ -280,6 +280,7 @@ body {
     position: absolute;
     top: 12px;
     left: 14px;
+    cursor: pointer;
 }
 
 .list-pager-action .pager-action {

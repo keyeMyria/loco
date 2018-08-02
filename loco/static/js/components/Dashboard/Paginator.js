@@ -1,21 +1,28 @@
 import React, { Component } from 'react';
-import Dialog from 'material-ui/Dialog';
+import { Link } from "react-router-dom";
+import Popover from 'material-ui/Popover';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
 
 export default class Paginator extends Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            openDialog: false
+            openPopover: false
         }
     }
 
-    handleOpen = () => {
-        this.setState({openDialog: true});
+    handleOpen = (event) => {
+        event.preventDefault();
+        this.setState({
+            openPopover: true,
+            anchorEl: event.currentTarget 
+        });
     };
 
     handleClose = () => {
-        this.setState({openDialog: false});
+        this.setState({openPopover: false});
     };
 
 
@@ -59,38 +66,43 @@ export default class Paginator extends Component {
         var downloadCSV;
         if (this.props.csvURL) {
             downloadCSV = (
-                <section className="list-pager-action">
-                    <span target="_blank" className="pager-action" onClick={this.handleOpen}>
+                <section className="list-pager-action" onClick={this.handleOpen}>
+                    <span target="_blank" className="pager-action">
+                        <i className="material-icons pager-action-icon">vertical_align_bottom</i>
                         <p className="pager-action-name">Download</p>
                     </span>
                 </section>
             );
         }
 
-        var downloadDialog = (
-            <Dialog
-                title="Download As"
-                modal={false}
-                open={this.state.openDialog}
+        var downloadPopup = (
+            <Popover
+                open={this.state.openPopover}
+                anchorEl={this.state.anchorEl}
+                anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                targetOrigin={{horizontal: 'left', vertical: 'top'}}
                 onRequestClose={this.handleClose} >
+                
+                <Menu>
+                    <MenuItem 
+                        value={"csv"} 
+                        primaryText={"csv"} 
+                        key={"csv"}
+                        href={this.props.csvURL} />
 
-                <a target="_blank" className="pager-action pager-downlaod-action" href={this.props.csvURL}>
-                    <i className="material-icons pager-action-icon">vertical_align_bottom</i> 
-                    <p className="pager-action-name">csv</p>
-                </a>
-
-                <a target="_blank" className="pager-action pager-downlaod-action" href={this.props.csvURL.replace("format=csv", "format=xlsx")}>
-                    <i className="material-icons pager-action-icon">vertical_align_bottom</i> 
-                    <p className="pager-action-name">xlsx</p>
-                </a>
-
-            </Dialog>
+                    <MenuItem 
+                        value={"xlsx"} 
+                        primaryText={"xlsx"} 
+                        key={"xlsx"}
+                        href={this.props.csvURL.replace("format=csv", "format=xlsx")} />
+                </Menu>
+            </Popover>
         )
 
         return (
             <section className="list-pager">
                 {downloadCSV}
-                {downloadDialog}
+                {downloadPopup}
                 <section className="list-pager-content">
                     <p className="pager-counter">{pageCounter}</p>
                     <i className={prevClass} onClick={this.onPrevClick}>keyboard_arrow_left</i>
