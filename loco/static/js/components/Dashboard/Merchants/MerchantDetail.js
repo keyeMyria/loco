@@ -9,7 +9,8 @@ import MenuItem from 'material-ui/MenuItem';
 
 import { createMerchant, getMerchantDetails, editMerchantDetails, getStates, getCities, clearState } from '../../../reducer/merchants';
 
-const MERCHANT_TYPE = ["retail", "wholesale"]
+const MERCHANT_TYPE = ["retail", "stockist", "distributor"]
+
 class MerchantDetail extends Component {
 
     
