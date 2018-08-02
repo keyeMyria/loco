@@ -37,7 +37,7 @@ def tasks_download(request, team_id):
         search_options['filters'] = filters
 
     start, limit = utils.get_query_start_limit_dj(request)
-    tasks = solr.download_tasks(team.id, search_options, start, limit. download_format)
+    tasks = solr.download_tasks(team.id, search_options, start, limit, download_format)
     response = HttpResponse(tasks)
     response['content_type'] = 'application/{0}'.format(download_format)
     response['Content-Disposition'] = 'attachment;filename=tasks.{0}'.format(download_format)
