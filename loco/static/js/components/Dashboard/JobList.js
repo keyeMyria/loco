@@ -7,6 +7,16 @@ export default class JobList extends Component {
         return d.toLocaleString();
     };
 
+    getMessage = (job) => {
+        if (job.status != "pending") {
+            return job.message
+        }
+
+        return (
+            <button className="list-action" onClick={this.props.refresh}>Check Status</button>
+        )
+    };
+
     render() {
         return (
             <section className="list-table-holder read-only">
@@ -33,7 +43,7 @@ export default class JobList extends Component {
                                         {job.status}
                                     </td>
                                     <td>
-                                        {job.message}
+                                        {this.getMessage(job)}
                                     </td>
                                 </tr>
                             )

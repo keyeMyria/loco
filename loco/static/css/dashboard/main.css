@@ -254,6 +254,14 @@ body {
     display: block;
 }
 
+.list-table-holder td .list-action {
+    cursor: pointer;
+    background: none;
+    border: none;
+    border: 1px solid #CB202D;
+    color: #CB202D;
+}
+
 .list-table-holder.read-only table tr {
     cursor: default;
 }
