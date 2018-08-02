@@ -3,6 +3,11 @@ import { Link } from "react-router-dom";
 
 export default class TaskList extends Component {
 
+    formatDate = (date) => {
+        var d = new Date(date);
+        return d.toLocaleString();
+    };
+
     render() {
         return (
             <section className="list-table-holder">
@@ -11,6 +16,7 @@ export default class TaskList extends Component {
                         <tr>
                             <th>ID</th>
                             <th>Merchant</th>
+                            <th>Created On</th>
                             <th>Created By</th>
                             <th>Amount</th>
                         </tr>
@@ -24,6 +30,9 @@ export default class TaskList extends Component {
                                     </td>
                                     <td>
                                         <Link to={"/tasks/" + task.task_id + "/change" }>{task.merchant_name}</Link>
+                                    </td>
+                                    <td>
+                                        <Link to={"/tasks/" + task.task_id + "/change" }>{this.formatDate(task.created)}</Link>
                                     </td>
                                     <td>
                                         <Link to={"/tasks/" + task.task_id + "/change" }>{task.created_by_name}</Link>
