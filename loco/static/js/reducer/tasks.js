@@ -100,6 +100,7 @@ export default function tasks(state = INITIAL_STATE, action={}) {
 
             taskDetailsData["content"] = JSON.parse(taskDetailsData.content)
             let task = taskDetailsData.content;
+            taskDetailsData["description"] = task.content.description;
             if(task && task.content && task.content.items && Array.isArray(task.content.items)) {
                 taskDetailsData["items_data"] = task.content.items;
             } else {

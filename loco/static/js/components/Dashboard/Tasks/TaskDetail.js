@@ -40,6 +40,7 @@ class TaskDetail extends Component {
                 items: task.items_data,
                 task_id: task.task_id,
                 created: this.formatDate(task.created),
+                description: task.description,
             });
         }
     }
@@ -89,6 +90,12 @@ class TaskDetail extends Component {
                                     <p className="detail-title">Created On:</p>
                                     <p className="detail-value">{this.state.created}</p>
                                 </article>
+                                { this.state.description && 
+                                    <article className="task-detail">
+                                        <p className="detail-title">Description:</p>
+                                        <p className="detail-value">{this.state.description}</p>
+                                    </article>
+                                }
                                 <article className="task-detail">
                                     <a className="detail-link" target="_blank" href={pdfLink}>PDF</a>
                                 </article>
@@ -101,7 +108,6 @@ class TaskDetail extends Component {
                                                 <tr>
                                                     <th>Serial No.</th>
                                                     <th>Name</th>
-                                                    <th>Description</th>
                                                     <th>Quantity</th>
                                                     <th>Price</th>
                                                 </tr>
@@ -112,7 +118,6 @@ class TaskDetail extends Component {
                                                         <tr key={index}>
                                                             <td>{item.item.serial_number}</td>
                                                             <td>{item.item.name}</td>
-                                                            <td>{item.item.description}</td>
                                                             <td>{item.quantity}</td>
                                                             <td>{item.item.price}</td>
                                                         </tr>
