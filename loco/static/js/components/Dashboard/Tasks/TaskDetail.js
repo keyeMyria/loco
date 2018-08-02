@@ -62,6 +62,13 @@ class TaskDetail extends Component {
                 <header className="header">
                     <h1 className="title">{"Order " + this.props.match.params.id}</h1>
                 </header>
+
+                { props.error &&
+                    <section className="success-msg-holder" >
+                        <p className="success-msg error-msg">{ props.error }</p>
+                    </section>
+                }
+                
                 <section className="content-scroller">
                 { (props.getTaskProgress)
                     ? (
@@ -145,7 +152,7 @@ class TaskDetail extends Component {
 }
 
 export default TaskDetail = connect(
-    (state) => ({ team_id: state.dashboard.team_id, error: state.tasks.createTaskError, 
+    (state) => ({ team_id: state.dashboard.team_id, error: state.tasks.error, 
         taskDetailsData: state.tasks.taskDetailsData, getTaskProgress: state.tasks.getTaskDetailsProgress}), 
     {getTaskDetails: getTaskDetails, clearState: clearState}
 )(TaskDetail)

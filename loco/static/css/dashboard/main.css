@@ -368,6 +368,10 @@ body {
     border-radius: 4px;
 }
 
+.success-msg-holder .error-msg {
+    background-color: red;
+}
+
 /*-----------------Task Detail Holder------------------*/
 
 .task-detail {

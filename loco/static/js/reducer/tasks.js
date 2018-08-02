@@ -109,7 +109,15 @@ export default function tasks(state = INITIAL_STATE, action={}) {
 
             return { ...state, getTaskDetailsProgress: false, getTaskDetailsError: "", taskDetailsData: taskDetailsData};
         case GET_TASK_DETAILS_FAILURE:
-            return { ...state, getTaskDetailsProgress: false, getTaskDetailsError: "Get Task Details Failed."};
+            let error = "Something went wrong. Please try again later.";
+            if(action.result) {
+                let result = JSON.parse(action.result);
+                let resultError = result.error;
+                if(resultError) {
+                    error = resultError;
+                }
+            }
+            return { ...state, getTaskDetailsProgress: false, getTaskDetailsError: "Get Task Details Failed.", error: error};
         case UPDATE_QUERY:
             return { ...state, query: action.query};
         case UPDATE_FILTER:

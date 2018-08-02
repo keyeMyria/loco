@@ -169,6 +169,12 @@ class MerchantDetail extends Component {
                         <p className="success-msg">&#x2714; Your changes have been successfully made. It will reflect in few mins.</p>
                     </section>
                 }
+
+                { props.error &&
+                    <section className="success-msg-holder" >
+                        <p className="success-msg error-msg">{ props.error }</p>
+                    </section>
+                }
                 <section className="content-scroller">
                 { (props.inProgress || props.getMerchantProgress || props.editMerchantProgress)
                     ? (
@@ -242,7 +248,7 @@ class MerchantDetail extends Component {
 
 export default MerchantDetail = connect(
     (state) => ({ team_id: state.dashboard.team_id, inProgress: state.merchants.createMerchantProgress,
-        error: state.merchants.createMerchantError, merchantDetailsData: state.merchants.merchantDetailsData,
+        error: state.merchants.error, merchantDetailsData: state.merchants.merchantDetailsData,
         states: state.merchants.states, cities: state.merchants.cities,
         getMerchantProgress: state.merchants.getMerchantDetailsProgress, createMerchantSucess: state.merchants.createMerchantSucess,
         editMerchantSuccess: state.merchants.editMerchantSuccess, editMerchantProgress: state.merchants.editMerchantProgress }), 

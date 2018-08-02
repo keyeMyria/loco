@@ -41,6 +41,7 @@ const INITIAL_STATE = {
 };
 
 export default function items(state = INITIAL_STATE, action={}) {
+    let error = "";
     switch(action.type) {
         case GET_ITEMS_INIT:
             return { ...state, start: -1, data:[], inProgress: true, csvURL: ''};
@@ -93,7 +94,15 @@ export default function items(state = INITIAL_STATE, action={}) {
         case CREATE_ITEM_SUCCESS:
             return { ...state, createItemProgress: false, createItemError: "", createItemSucess: true};
         case CREATE_ITEM_FAILURE:
-            return { ...state, createItemProgress: false, createItemError: "Create Item Failed."};
+            error = "Something went wrong. Please try again later.";
+            if(action.result) {
+                let result = JSON.parse(action.result);
+                let resultError = result.error;
+                if(resultError) {
+                    error = resultError;
+                }
+            }
+            return { ...state, createItemProgress: false, createItemError: "Create Item Failed.", error: error};
         case UPLOAD_ITEM_START:
             return { ...state, uploadProgress: true, uploadError: ""};
         case UPLOAD_ITEM_SUCCESS:
@@ -111,18 +120,34 @@ export default function items(state = INITIAL_STATE, action={}) {
         case ITEM_UPLOADS_FAILURE:
             return { ...state, getUploadsProgress: false, getUploadsError: "Unable to get past uploads", uploads: []};
         case GET_ITEM_DETAILS_START:
-            return { ...state, getItemDetailsProgress: true, getItemDetailsError: ""};
+            return { ...state, getItemDetailsProgress: true};
         case GET_ITEM_DETAILS_SUCCESS:
             var itemDetailsData = JSON.parse(action.result);
-            return { ...state, getItemDetailsProgress: false, getItemDetailsError: "", itemDetailsData: itemDetailsData};
+            return { ...state, getItemDetailsProgress: false, itemDetailsData: itemDetailsData};
         case GET_ITEM_DETAILS_FAILURE:
-            return { ...state, getItemDetailsProgress: false, getItemDetailsError: "Get Item Details Failed."};
+            error = "Something went wrong. Please try again later.";
+            if(action.result) {
+                let result = JSON.parse(action.result);
+                let resultError = result.error;
+                if(resultError) {
+                    error = resultError;
+                }
+            }
+            return { ...state, getItemDetailsProgress: false, error: error};
         case EDIT_ITEM_START:
             return { ...state, editItemProgress: true, editItemError: ""};
         case EDIT_ITEM_SUCCESS:
             return { ...state, editItemProgress: false, editItemError: "", editItemSuccess: true};
         case EDIT_ITEM_FAILURE:
-            return { ...state, editItemProgress: false, editItemError: "Edit Item Failed."};
+            error = "Something went wrong. Please try again later.";
+            if(action.result) {
+                let result = JSON.parse(action.result);
+                let resultError = result.error;
+                if(resultError) {
+                    error = resultError;
+                }
+            }
+            return { ...state, editItemProgress: false, editItemError: "Edit Item Failed.", error: error};
         case CLEAR_STATE:
             return INITIAL_STATE;    
         default:
