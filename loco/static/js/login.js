@@ -72,7 +72,7 @@ class UserLogin extends React.Component {
 
         return (
             <form className="login-form">
-		      <input className="login-phone" value={this.state.phone} onChange={this.handlePhoneChange} type="text" name="phone" placeholder="Phone" />
+		      <input className="login-phone" value={this.state.phone} onChange={this.handlePhoneChange} type="number" name="phone" placeholder="Phone" />
 		      <input className="login-password" value={this.state.password} onChange={this.handlePasswordChange} type="password" name="password" placeholder="Password" />
 		      <div className="login-error">
 		      	{this.state.error || this.props.auth.error}
