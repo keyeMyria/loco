@@ -8,7 +8,7 @@ export default class JobList extends Component {
     };
 
     getMessage = (job) => {
-        if (job.status != "pending") {
+        if (job.status != "pending" || job.status != "progress") {
             return job.message
         }
 
