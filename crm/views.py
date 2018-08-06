@@ -26,7 +26,7 @@ class MerchantList(APIView):
         start, limit = utils.get_query_start_limit(request)
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
-        merchants = team.merchant_set.all(is_deleted=False)
+        merchants = team.merchant_set.filter(is_deleted=False)
         if filter_query:
             merchants = merchants.filter(name__icontains=filter_query)
 
@@ -66,8 +66,8 @@ class MerchantDetail(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, item_id, format=None):
-        merchant = get_object_or_404(models.Merchant, id=item_id, is_deleted=False)
+    def delete(self, request, merchant_id, format=None):
+        merchant = get_object_or_404(models.Merchant, id=merchant_id, is_deleted=False)
         self.check_object_permissions(request, merchant)
         merchant.is_deleted = True
         merchant.save()
@@ -134,7 +134,7 @@ class ItemList(APIView):
         start, limit = utils.get_query_start_limit(request)
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
-        items = team.item_set.all(is_deleted=False)
+        items = team.item_set.filter(is_deleted=False)
         if filter_query:
             items = items.filter(name__icontains=filter_query)
 
