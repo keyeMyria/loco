@@ -26,7 +26,7 @@ class MerchantList(APIView):
         start, limit = utils.get_query_start_limit(request)
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
-        merchants = team.merchant_set.all()
+        merchants = team.merchant_set.filter(is_deleted=False)
         if filter_query:
             merchants = merchants.filter(name__icontains=filter_query)
 
@@ -50,13 +50,13 @@ class MerchantDetail(APIView):
     permission_classes = (permissions.IsAuthenticated, crm_permissions.IsMerchantTeamMember)
 
     def get(self, request, merchant_id, format=None):
-        merchant = get_object_or_404(models.Merchant, id=merchant_id)
+        merchant = get_object_or_404(models.Merchant, id=merchant_id, is_deleted=False)
         self.check_object_permissions(request, merchant)
         serializer = serializers.DeepMerchantSerializer(merchant)
         return Response(serializer.data)
 
     def put(self, request, merchant_id, format=None):
-        merchant = get_object_or_404(models.Merchant, id=merchant_id)
+        merchant = get_object_or_404(models.Merchant, id=merchant_id, is_deleted=False)
         self.check_object_permissions(request, merchant)
         serializer = serializers.MerchantSerializer(merchant, data=request.data)
         if serializer.is_valid():
@@ -65,6 +65,13 @@ class MerchantDetail(APIView):
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, merchant_id, format=None):
+        merchant = get_object_or_404(models.Merchant, id=merchant_id, is_deleted=False)
+        self.check_object_permissions(request, merchant)
+        merchant.is_deleted = True
+        merchant.save()
+        return Response()
 
 class MerchantUpload(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)
@@ -127,7 +134,7 @@ class ItemList(APIView):
         start, limit = utils.get_query_start_limit(request)
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
-        items = team.item_set.all()
+        items = team.item_set.filter(is_deleted=False)
         if filter_query:
             items = items.filter(name__icontains=filter_query)
 
@@ -152,13 +159,13 @@ class ItemDetail(APIView):
     permission_classes = (permissions.IsAuthenticated, crm_permissions.IsItemTeamMember)
 
     def get(self, request, item_id, format=None):
-        item = get_object_or_404(models.Item, id=item_id)
+        item = get_object_or_404(models.Item, id=item_id, is_deleted=False)
         self.check_object_permissions(request, item)
         serializer = serializers.ItemSerializer(item)
         return Response(serializer.data)
 
     def put(self, request, item_id, format=None):
-        item = get_object_or_404(models.Item, id=item_id)
+        item = get_object_or_404(models.Item, id=item_id, is_deleted=False)
         self.check_object_permissions(request, item)
         serializer = serializers.ItemSerializer(item, data=request.data)
         if serializer.is_valid():
@@ -167,6 +174,13 @@ class ItemDetail(APIView):
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, item_id, format=None):
+        item = get_object_or_404(models.Item, id=item_id)
+        self.check_object_permissions(request, item)
+        item.is_deleted = True
+        item.save()
+        return Response()
 
 class ItemUpload(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)

@@ -103,7 +103,13 @@ def upload_merchants(upload_id):
         upload.save()
         return
 
-    results, err = validate_merchant_rows(upload.team, reader)
+    try:
+        results, err = validate_merchant_rows(upload.team, reader)
+    except:
+        upload.message = "System error. Contact admin."
+        upload.status = models.MerchantUpload.STATUS_FAILED
+        upload.save()
+        return 
 
     if err:
         upload.message = err
@@ -142,10 +148,10 @@ def validate_item_rows(team, rows):
             return (None, "Empty price at row: {0}".format(counter))
 
         item = {
-            'name': name,
+            'name': name.decode('utf-8'),
             'price': price,
             'mrp': mrp if mrp else None,
-            'description': description,
+            'description': description.decode('utf-8'),
             'serial_number': str(serial_number) if serial_number else "",
             'team': team
             }
@@ -180,7 +186,13 @@ def upload_items(upload_id):
         upload.save()
         return
 
-    results, err = validate_item_rows(upload.team, reader)
+    try:
+        results, err = validate_item_rows(upload.team, reader)
+    except:
+        upload.message = "System error. Contact admin."
+        upload.status = models.ItemUpload.STATUS_FAILED
+        upload.save()
+        return 
 
     if err:
         upload.message = err
