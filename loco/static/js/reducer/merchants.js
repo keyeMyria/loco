@@ -18,6 +18,9 @@ export const GET_MERCHANTS_SUCCESS = 'dashboard/get_merchants_success';
 export const GET_MERCHANT_DETAILS_START = 'dashboard/get_merchant_details_start';
 export const GET_MERCHANT_DETAILS_FAILURE = 'dashboard/get_merchant_details_failure';
 export const GET_MERCHANT_DETAILS_SUCCESS = 'dashboard/get_merchant_details_success';
+export const DELETE_MERCHANT_START = 'dashboard/delete_merchant_start';
+export const DELETE_MERCHANT_FAILURE = 'dashboard/delete_merchant_failure';
+export const DELETE_MERCHANT_SUCCESS = 'dashboard/delete_merchant_success';
 export const EDIT_MERCHANT_START = 'dashboard/edit_merchant_start';
 export const EDIT_MERCHANT_FAILURE = 'dashboard/edit_merchant_failure';
 export const EDIT_MERCHANT_SUCCESS = 'dashboard/edit_merchant_success';
@@ -147,6 +150,20 @@ export default function merchants(state = INITIAL_STATE, action={}) {
                 }
             }
             return { ...state, getMerchantDetailsProgress: false, getMerchantDetailsError: "Get Merchant Details Failed.", error: error};
+        case DELETE_MERCHANT_START:
+            return { ...state, deleteMerchantProgress: true};
+        case DELETE_MERCHANT_SUCCESS:
+            return { ...state, deleteMerchantProgress: false, deleteMerchantSuccess: true};
+        case DELETE_MERCHANT_FAILURE:
+            error = "Something went wrong. Please try again later.";
+            if(action.result) {
+                let result = JSON.parse(action.result);
+                let resultError = result.error;
+                if(resultError) {
+                    error = resultError;
+                }
+            }
+            return { ...state, deleteMerchantProgress: false, error: error};
         case EDIT_MERCHANT_START:
             return { ...state, editMerchantProgress: true, editMerchantError: ""};
         case EDIT_MERCHANT_SUCCESS:
@@ -355,6 +372,13 @@ export function getMerchantDetails(merchant_id) {
     return {
         types: [GET_MERCHANT_DETAILS_START, GET_MERCHANT_DETAILS_SUCCESS, GET_MERCHANT_DETAILS_FAILURE],
         promise: (client) => client.local.get('/crm/merchants/' + merchant_id)
+    }
+}
+
+export function deleteMerchant(merchant_id) {
+    return {
+        types: [DELETE_MERCHANT_START, DELETE_MERCHANT_SUCCESS, DELETE_MERCHANT_FAILURE],
+        promise: (client) => client.local.del('/crm/merchants/' + merchant_id)
     }
 }
 

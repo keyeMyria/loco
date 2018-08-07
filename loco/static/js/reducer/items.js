@@ -18,6 +18,9 @@ export const ITEM_UPLOADS_SUCCESS = 'dashboard/item_uploads_success';
 export const GET_ITEM_DETAILS_START = 'dashboard/get_item_details_start';
 export const GET_ITEM_DETAILS_FAILURE = 'dashboard/get_item_details_failure';
 export const GET_ITEM_DETAILS_SUCCESS = 'dashboard/get_item_details_success';
+export const DELETE_ITEM_START = 'dashboard/delete_item_start';
+export const DELETE_ITEM_FAILURE = 'dashboard/delete_item_failure';
+export const DELETE_ITEM_SUCCESS = 'dashboard/delete_item_success';
 export const EDIT_ITEM_START = 'dashboard/edit_item_start';
 export const EDIT_ITEM_FAILURE = 'dashboard/edit_item_failure';
 export const EDIT_ITEM_SUCCESS = 'dashboard/edit_item_success';
@@ -134,6 +137,20 @@ export default function items(state = INITIAL_STATE, action={}) {
                 }
             }
             return { ...state, getItemDetailsProgress: false, error: error};
+        case DELETE_ITEM_START:
+            return { ...state, deleteItemProgress: true};
+        case DELETE_ITEM_SUCCESS:
+            return { ...state, deleteItemProgress: false, deleteItemSuccess: true};
+        case DELETE_ITEM_FAILURE:
+            error = "Something went wrong. Please try again later.";
+            if(action.result) {
+                let result = JSON.parse(action.result);
+                let resultError = result.error;
+                if(resultError) {
+                    error = resultError;
+                }
+            }
+            return { ...state, deleteItemProgress: false, error: error};
         case EDIT_ITEM_START:
             return { ...state, editItemProgress: true, editItemError: ""};
         case EDIT_ITEM_SUCCESS:
@@ -260,6 +277,13 @@ export function getItemDetails(item_id) {
     return {
         types: [GET_ITEM_DETAILS_START, GET_ITEM_DETAILS_SUCCESS, GET_ITEM_DETAILS_FAILURE],
         promise: (client) => client.local.get('/crm/items/' + item_id)
+    }
+}
+
+export function deleteItem(item_id) {
+    return {
+        types: [GET_ITEM_DETAILS_START, GET_ITEM_DETAILS_SUCCESS, GET_ITEM_DETAILS_FAILURE],
+        promise: (client) => client.local.del('/crm/items/' + item_id)
     }
 }
 
