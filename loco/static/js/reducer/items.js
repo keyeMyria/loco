@@ -282,7 +282,7 @@ export function getItemDetails(item_id) {
 
 export function deleteItem(item_id) {
     return {
-        types: [GET_ITEM_DETAILS_START, GET_ITEM_DETAILS_SUCCESS, GET_ITEM_DETAILS_FAILURE],
+        types: [DELETE_ITEM_START, DELETE_ITEM_SUCCESS, DELETE_ITEM_FAILURE],
         promise: (client) => client.local.del('/crm/items/' + item_id)
     }
 }
