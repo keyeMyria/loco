@@ -12,7 +12,8 @@ const filterMap = {
     "State": "state",
     "Merchant": "merchant_name",
     "Agent": "created_by_name",
-    "Merchant Type": "merchant_type"
+    "Merchant Type": "merchant_type",
+    "Sales Type": "sales_type"
 }
 
 class TasktListFilters extends Component {
@@ -115,21 +116,15 @@ class TasktListFilters extends Component {
                         animation={PopoverAnimationVertical} >
                         
                         <Menu>
-                            <MenuItem 
-                                primaryText="City" 
-                                onClick={(ev) => {this.handleFilterClick(ev, "City")}} />
-                            <MenuItem 
-                                primaryText="State" 
-                                onClick={(ev) => {this.handleFilterClick(ev, "State")}} />
-                            <MenuItem 
-                                primaryText="Merchant" 
-                                onClick={(ev) => {this.handleFilterClick(ev, "Merchant")}} />
-                            <MenuItem 
-                                primaryText="Agent" 
-                                onClick={(ev) => {this.handleFilterClick(ev, "Agent")}} />
-                            <MenuItem 
-                                primaryText="Merchant Type" 
-                                onClick={(ev) => {this.handleFilterClick(ev, "Merchant Type")}} />
+                            { Object.keys(filterMap).map(filter => {
+                                return (
+                                    <MenuItem 
+                                        primaryText={filter} 
+                                        onClick={(ev) => {this.handleFilterClick(ev, filter)}}
+                                        key={filter} />
+                                    )
+                                })
+                            }
                         </Menu>
                     </Popover>
                 </section>

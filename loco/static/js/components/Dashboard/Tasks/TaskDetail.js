@@ -14,7 +14,8 @@ class TaskDetail extends Component {
             amount: "",
             items: [],
             created: "",
-            task_id: ""
+            task_id: "",
+            sales_type: "",
         } 
     }
 
@@ -41,6 +42,7 @@ class TaskDetail extends Component {
                 task_id: task.task_id,
                 created: this.formatDate(task.created),
                 description: task.description,
+                sales_type: task.sales_type,
             });
         }
     }
@@ -90,6 +92,10 @@ class TaskDetail extends Component {
                                     <p className="detail-value">{this.state.created_by}</p>
                                 </article>
                                 <article className="task-detail">
+                                    <p className="detail-title">Sales Type:</p>
+                                    <p className="detail-value">{this.state.sales_type}</p>
+                                </article>
+                                <article className="task-detail">
                                     <p className="detail-title">Amount:</p>
                                     <p className="detail-value price">&#x20b9; {this.state.amount}</p>
                                 </article>
@@ -107,8 +113,8 @@ class TaskDetail extends Component {
                                     <a className="detail-link" target="_blank" href={pdfLink}>PDF</a>
                                 </article>
                             </section>
-                            <section className="list-card">
-                                { this.state.items &&
+                            { !!(this.state.items && this.state.items.length > 0) &&
+                                <section className="list-card">
                                     <section className="list-table-holder read-only">
                                         <table>
                                             <thead>
@@ -140,8 +146,8 @@ class TaskDetail extends Component {
                                             </tbody>
                                         </table>
                                     </section>
-                                }
-                            </section>
+                                </section>
+                            }
                         </section>
                     )
                 }

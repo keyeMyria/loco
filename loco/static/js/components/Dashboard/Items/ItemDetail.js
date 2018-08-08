@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from "react-router-dom";
+
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 
-import { createItem, getItemDetails, editItemDetails, clearState } from '../../../reducer/items';
+import { createItem, getItemDetails, editItemDetails, clearState, deleteItem } from '../../../reducer/items';
+import DeleteDialog from '../DeleteDialog';
 
 class ItemDetail extends Component {
     
@@ -18,6 +19,7 @@ class ItemDetail extends Component {
             "description": "",
             "create": true,
             nameErrorText: '',
+            open: false
         } 
     }
 
@@ -111,6 +113,23 @@ class ItemDetail extends Component {
         }
     }
 
+    openDialog = (ev) => {
+        ev.preventDefault()
+        this.setState({
+            open: true
+        });
+    }
+
+    closeDialog = (ev) => {
+        this.setState({
+            open: false
+        });
+    }
+
+    deleteMerchant = () => {
+        this.props.deleteItem(this.props.match.params.id);
+    }
+
     render() {
 
         const style = {
@@ -128,11 +147,37 @@ class ItemDetail extends Component {
                     <h1 className="title">
                         {(this.state.create) ? "New Item" : "Item " + this.props.match.params.id}
                     </h1>
+                    <section className="header-actions">
+                        <p className="header-action" onClick={this.openDialog}>
+                            <i className="material-icons header-action-icon">delete_outline</i>
+                            <p className="header-action-name">DELETE</p>
+                        </p>
+                    </section>
                 </header>
                 { (props.createItemSucess || props.editItemSuccess) &&
                     <section className="success-msg-holder">
                         <p className="success-msg">&#x2714; Your changes have been successfully made. It will reflect in few mins.</p>
                     </section>
+                }
+
+                { props.deleteItemSuccess &&
+                    <section className="success-msg-holder">
+                        <p className="success-msg">&#x2714; Item has been successfully deleted. It will reflect in few mins.</p>
+                    </section>
+                }
+
+                { (props.createItemSucess || props.editItemSuccess) &&
+                    <section className="success-msg-holder">
+                        <p className="success-msg">&#x2714; Your changes have been successfully made. It will reflect in few mins.</p>
+                    </section>
+                }
+
+                { this.state.open &&
+                    <DeleteDialog 
+                        title={"Delete Item" + props.match.params.id}
+                        dataType="item"
+                        closeDialog={this.closeDialog}
+                        deleteData={this.deleteMerchant} />
                 }
 
                 { props.error &&
@@ -141,7 +186,7 @@ class ItemDetail extends Component {
                     </section>
                 }
                 <section className="content-scroller">
-                { (props.inProgress || props.getItemProgress || props.editItemProgress)
+                { (props.inProgress || props.getItemProgress || props.editItemProgress || props.deleteItemProgress)
                     ? (
                         <section className="detail-card">
                             <section className="detail-card-loader-holder">
@@ -208,8 +253,9 @@ export default ItemDetail = connect(
     (state) => ({ team_id: state.dashboard.team_id, inProgress: state.items.createItemProgress,
         error: state.items.error, itemDetailsData: state.items.itemDetailsData, 
         getItemProgress: state.items.getItemDetailsProgress, createItemSucess: state.items.createItemSucess,
-        editItemSuccess: state.items.editItemSuccess, editItemProgress: state.items.editItemProgress }), 
-    {createItem: createItem, getItemDetails: getItemDetails, editItemDetails: editItemDetails, clearState: clearState}
+        editItemSuccess: state.items.editItemSuccess, editItemProgress: state.items.editItemProgress,
+        deleteItemProgress: state.items.deleteItemProgress, deleteItemSuccess: state.items.deleteItemSuccess }), 
+    {createItem: createItem, getItemDetails: getItemDetails, editItemDetails: editItemDetails, clearState: clearState, deleteItem: deleteItem}
 )(ItemDetail)
 
 

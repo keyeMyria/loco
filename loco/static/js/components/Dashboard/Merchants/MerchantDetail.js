@@ -7,13 +7,13 @@ import AutoComplete from 'material-ui/AutoComplete';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 
-import { createMerchant, getMerchantDetails, editMerchantDetails, getStates, getCities, clearState } from '../../../reducer/merchants';
+import { createMerchant, getMerchantDetails, editMerchantDetails, getStates, getCities, clearState, deleteMerchant } from '../../../reducer/merchants';
+import DeleteDialog from '../DeleteDialog';
 
 const MERCHANT_TYPE = ["retailer", "stockist", "distributor"]
 
 class MerchantDetail extends Component {
 
-    
     constructor(props) {
         super(props);
         this.state = {
@@ -26,7 +26,8 @@ class MerchantDetail extends Component {
             phone: "",
             nameErrorText: '',
             phoneErrorText: '',
-            merchant_type: ""
+            merchant_type: "",
+            "open": false
         } 
     }
 
@@ -142,6 +143,23 @@ class MerchantDetail extends Component {
         }
     }
 
+    openDialog = (ev) => {
+        ev.preventDefault()
+        this.setState({
+            open: true
+        });
+    }
+
+    closeDialog = (ev) => {
+        this.setState({
+            open: false
+        });
+    }    
+
+    deleteMerchant = () => {
+        this.props.deleteMerchant(this.props.match.params.id);
+    }
+
     render() {
 
         const style = {
@@ -163,11 +181,31 @@ class MerchantDetail extends Component {
                     <h1 className="title">
                     {(this.state.create) ? "New Merchant" : "Merchant " + props.match.params.id}
                     </h1>
+                    <section className="header-actions">
+                        <p className="header-action" onClick={this.openDialog}>
+                            <i className="material-icons header-action-icon">delete_outline</i>
+                            <p className="header-action-name">DELETE</p>
+                        </p>
+                    </section>
                 </header>
                 { (props.createMerchantSucess || props.editMerchantSuccess) &&
                     <section className="success-msg-holder">
                         <p className="success-msg">&#x2714; Your changes have been successfully made. It will reflect in few mins.</p>
                     </section>
+                }
+
+                { props.deleteMerchantSuccess &&
+                    <section className="success-msg-holder">
+                        <p className="success-msg">&#x2714; Merchant has been successfully deleted. It will reflect in few mins.</p>
+                    </section>
+                }
+
+                { this.state.open &&
+                    <DeleteDialog 
+                        title={"Delete Merchant" + props.match.params.id}
+                        dataType="merchant"
+                        closeDialog={this.closeDialog}
+                        deleteData={this.deleteMerchant} />
                 }
 
                 { props.error &&
@@ -176,7 +214,7 @@ class MerchantDetail extends Component {
                     </section>
                 }
                 <section className="content-scroller">
-                { (props.inProgress || props.getMerchantProgress || props.editMerchantProgress)
+                { (props.inProgress || props.getMerchantProgress || props.editMerchantProgress || props.deleteMerchantProgress)
                     ? (
                         <section className="detail-card">
                             <section className="detail-card-loader-holder">
@@ -251,9 +289,10 @@ export default MerchantDetail = connect(
         error: state.merchants.error, merchantDetailsData: state.merchants.merchantDetailsData,
         states: state.merchants.states, cities: state.merchants.cities,
         getMerchantProgress: state.merchants.getMerchantDetailsProgress, createMerchantSucess: state.merchants.createMerchantSucess,
-        editMerchantSuccess: state.merchants.editMerchantSuccess, editMerchantProgress: state.merchants.editMerchantProgress }), 
+        editMerchantSuccess: state.merchants.editMerchantSuccess, editMerchantProgress: state.merchants.editMerchantProgress,
+        deleteMerchantProgress: state.merchants.deleteMerchantProgress, deleteMerchantSuccess: state.merchants.deleteMerchantSuccess }), 
     {createMerchant: createMerchant, getMerchantDetails: getMerchantDetails, editMerchantDetails: editMerchantDetails,
-        getStates: getStates, getCities: getCities, clearState: clearState}
+        getStates: getStates, getCities: getCities, clearState: clearState, deleteMerchant, deleteMerchant}
 )(MerchantDetail)
 
 
