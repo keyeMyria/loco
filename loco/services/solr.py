@@ -193,9 +193,9 @@ def search_merchants(team_id, search_options, start, limit):
 
     filters = search_options.get('filters')
     if filters:
-        filters += " AND team_id:" + str(team_id)
+        filters += " AND team_id:" + str(team_id) + " AND is_deleted:false"
     else:
-        filters = "team_id:" + str(team_id)
+        filters = "team_id:" + str(team_id) + " AND is_deleted:false"
 
     query += "&fq="+filters
     data, count = get_query_solr(query)
@@ -236,9 +236,9 @@ def search_items(team_id, search_options, start, limit):
 
     filters = search_options.get('filters')
     if filters:
-        filters += " AND team_id:" + str(team_id)
+        filters += " AND team_id:" + str(team_id) + " AND is_deleted:false"
     else:
-        filters = "team_id:" + str(team_id)
+        filters = "team_id:" + str(team_id) + " AND is_deleted:false"
 
     query += "&fq="+filters
     print (query)
