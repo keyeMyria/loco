@@ -71,6 +71,7 @@ class MerchantDetail(APIView):
         self.check_object_permissions(request, merchant)
         merchant.is_deleted = True
         merchant.save()
+        tasks.update_merchant_index_async.delay()
         return Response()
 
 class MerchantUpload(APIView):
@@ -180,6 +181,7 @@ class ItemDetail(APIView):
         self.check_object_permissions(request, item)
         item.is_deleted = True
         item.save()
+        tasks.update_item_index_async.delay()
         return Response()
 
 class ItemUpload(APIView):
