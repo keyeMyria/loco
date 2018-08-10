@@ -16,6 +16,7 @@ class TaskDetail extends Component {
             created: "",
             task_id: "",
             sales_type: "",
+            merchant_seller_name: "",
         } 
     }
 
@@ -43,6 +44,7 @@ class TaskDetail extends Component {
                 created: this.formatDate(task.created),
                 description: task.description,
                 sales_type: task.sales_type,
+                merchant_seller_name: task.merchant_seller_name
             });
         }
     }
@@ -86,6 +88,10 @@ class TaskDetail extends Component {
                                 <article className="task-detail">
                                     <p className="detail-title">Merchant Name:</p>
                                     <p className="detail-value">{this.state.merchant_name}</p>
+                                </article>
+                                <article className="task-detail">
+                                    <p className="detail-title">Merchant Seller Name:</p>
+                                    <p className="detail-value">{this.state.merchant_seller_name}</p>
                                 </article>
                                 <article className="task-detail">
                                     <p className="detail-title">Created By:</p>
