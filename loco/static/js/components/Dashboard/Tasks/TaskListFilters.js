@@ -13,7 +13,8 @@ const filterMap = {
     "Merchant": "merchant_name",
     "Agent": "created_by_name",
     "Merchant Type": "merchant_type",
-    "Sales Type": "sales_type"
+    "Sales Type": "sales_type",
+    "Merchant Seller": "merchant_seller_name",
 }
 
 class TasktListFilters extends Component {
