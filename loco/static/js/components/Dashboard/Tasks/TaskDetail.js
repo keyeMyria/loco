@@ -98,10 +98,6 @@ class TaskDetail extends Component {
                                     <p className="detail-value">{this.state.created_by}</p>
                                 </article>
                                 <article className="task-detail">
-                                    <p className="detail-title">Sales Type:</p>
-                                    <p className="detail-value">{this.state.sales_type}</p>
-                                </article>
-                                <article className="task-detail">
                                     <p className="detail-title">Amount:</p>
                                     <p className="detail-value price">&#x20b9; {this.state.amount}</p>
                                 </article>

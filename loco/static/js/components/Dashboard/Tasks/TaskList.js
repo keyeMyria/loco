@@ -17,7 +17,6 @@ export default class TaskList extends Component {
                             <th>ID</th>
                             <th>Merchant</th>
                             <th>Merchant Seller</th>
-                            <th>Sales Type</th>
                             <th>Created On</th>
                             <th>Created By</th>
                             <th>Amount</th>
@@ -35,9 +34,6 @@ export default class TaskList extends Component {
                                     </td>
                                     <td>
                                         <Link to={"/tasks/" + task.task_id + "/change" }>{task.merchant_seller_name}</Link>
-                                    </td>
-                                    <td>
-                                        <Link to={"/tasks/" + task.task_id + "/change" }>{task.sales_type}</Link>
                                     </td>
                                     <td>
                                         <Link to={"/tasks/" + task.task_id + "/change" }>{this.formatDate(task.created)}</Link>
