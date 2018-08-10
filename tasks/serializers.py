@@ -8,6 +8,23 @@ from teams.serializers import TeamSerializer
 from crm.models import Merchant, City, State, Item
 from crm import serializers as crm_serializers
 
+def create_or_get_merchant(merchant_data, team):
+    local_id = merchant_data.get('local_id')
+    if not local_id:
+        return (None, "No local id")
+
+    existing_merchant = Merchant.objects.filter(local_id=local_id)
+    if existing_merchant:
+        merchant_id = existing_merchant[0].id
+    else:
+        ser = crm_serializers.MerchantSerializer(data=merchant_data)
+        if ser.is_valid():
+            merchant_id = ser.save(team=team).id
+        else:
+            return (None, ser.errors)
+
+    return (merchant_id, None)
+
 def get_content_serializer(content_type, **kwargs):
     team = kwargs.pop('team')
     if content_type == DeliveryTaskContent.__name__.lower():
@@ -16,21 +33,19 @@ def get_content_serializer(content_type, **kwargs):
         data = kwargs.get("data")
         merchant = data.get('merchant')
         if isinstance(merchant, dict):
-            local_id = merchant.get('local_id')
-            if not local_id:
-                return (None, "No local id")
-
-            existing_merchant = Merchant.objects.filter(local_id=local_id)
-            if existing_merchant:
-                merchant_id = existing_merchant[0].id
-            else:
-                ser = crm_serializers.MerchantSerializer(data=merchant)
-                if ser.is_valid():
-                    merchant_id = ser.save(team=team).id
-                else:
-                    return (None, ser.errors)
+            merchant_id, error = create_or_get_merchant(merchant, team)
+            if error:
+                return (None, error)
 
             data['merchant'] = merchant_id
+
+        merchant_seller = data.get('merchant_seller')
+        if merchant_seller and isinstance(merchant_seller, dict):
+            merchant_id, error = create_or_get_merchant(merchant_seller, team)
+            if error:
+                return (None, error)
+
+            data['merchant_seller'] = merchant_id
         
         return (SalesTaskContentSerializer(**kwargs), None)
 
@@ -123,6 +138,7 @@ class DeepSalesTaskItemsSerializer(serializers.ModelSerializer):
 class DeepSalesTaskContentSerializer(serializers.ModelSerializer):
     items = DeepSalesTaskItemsSerializer(source="get_items", many=True, read_only=True)
     merchant = crm_serializers.DeepMerchantSerializer(read_only=True)
+    merchant_seller = crm_serializers.DeepMerchantSerializer(read_only=True, required=False)
 
     class Meta:
         model = SalesTaskContent

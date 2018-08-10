@@ -26,7 +26,7 @@ class MerchantList(APIView):
         start, limit = utils.get_query_start_limit(request)
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
-        merchants = team.merchant_set.filter(is_deleted=False)
+        merchants = team.merchant_set.all()
         if filter_query:
             merchants = merchants.filter(name__icontains=filter_query)
 
@@ -71,6 +71,7 @@ class MerchantDetail(APIView):
         self.check_object_permissions(request, merchant)
         merchant.is_deleted = True
         merchant.save()
+        tasks.update_merchant_index_async.delay()
         return Response()
 
 class MerchantUpload(APIView):
@@ -134,7 +135,7 @@ class ItemList(APIView):
         start, limit = utils.get_query_start_limit(request)
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
-        items = team.item_set.filter(is_deleted=False)
+        items = team.item_set.all()
         if filter_query:
             items = items.filter(name__icontains=filter_query)
 
@@ -180,6 +181,7 @@ class ItemDetail(APIView):
         self.check_object_permissions(request, item)
         item.is_deleted = True
         item.save()
+        tasks.update_item_index_async.delay()
         return Response()
 
 class ItemUpload(APIView):

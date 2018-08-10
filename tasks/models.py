@@ -129,6 +129,11 @@ class SalesTaskContent(BaseModel):
 
     description = models.TextField(blank=True)
     merchant = models.ForeignKey(Merchant, on_delete=models.DO_NOTHING)
+    merchant_seller = models.ForeignKey(Merchant, 
+        on_delete=models.DO_NOTHING, 
+        related_name="seller",
+        blank=True,
+        null=True)
     items = models.ManyToManyField(Item,
         through='SalesTaskItems', related_name="items",
         through_fields=('sales_task_content', 'item'))
