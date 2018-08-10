@@ -16,12 +16,15 @@
                 <section class="header-merchant">
                     <p class="header-order-id">Order Id: {{task.id}}</p>
                     <p class="header-merchant-name">Order for: {{task.content.merchant.name}}</p>
+                    {% if task.content.merchant.address %}
                     <p class="header-merchant-address">Address: {{task.content.merchant.address}}</p>
+                    {% endif %}
                     <p>  </p>
                     <p class="header-merchant-name">Procured by: {{task.content.merchant_seller.name}}</p>
+                    {% if task.content.merchant_seller.address %}
                     <p class="header-merchant-address">Address: {{task.content.merchant_seller.address}}</p>
+                    {% endif %}
                 </section>
-                <p class="header-date">Date: {{task.created}}</p>
             </section>
             <table class="items-table">
                 <thead>
@@ -54,6 +57,7 @@
             </table>
             <section class="footer">
                 <p class="footer-created-by">Created by: {{task.created_by.name}}</p>
+                <p class="footer-date">Date: {{task.created}}</p>
             </section>
         </section>
     </body>
