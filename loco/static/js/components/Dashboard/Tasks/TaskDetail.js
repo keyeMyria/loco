@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import { getTaskDetails, clearState } from '../../../reducer/tasks';
 
@@ -37,6 +37,7 @@ class TaskDetail extends Component {
         if(task && !this.props.taskDetailsData) {
             this.setState({
                 merchant_name: task.merchant_name,
+                merchant_id: task.merchant_id,
                 amount: task.amount,
                 created_by: task.created_by_name,
                 items: task.items_data,
@@ -44,7 +45,8 @@ class TaskDetail extends Component {
                 created: this.formatDate(task.created),
                 description: task.description,
                 sales_type: task.sales_type,
-                merchant_seller_name: task.merchant_seller_name
+                merchant_seller_name: task.merchant_seller_name,
+                merchant_seller_id: task.merchant_seller_id
             });
         }
     }
@@ -87,11 +89,15 @@ class TaskDetail extends Component {
                             <section className="detail-card">
                                 <article className="task-detail">
                                     <p className="detail-title">Merchant Name:</p>
-                                    <p className="detail-value">{this.state.merchant_name}</p>
+                                    <p className="detail-value">
+                                        <Link to={"/merchants/" + this.state.merchant_id + "/change"}>{this.state.merchant_name}</Link>
+                                    </p>
                                 </article>
                                 <article className="task-detail">
                                     <p className="detail-title">Merchant Seller Name:</p>
-                                    <p className="detail-value">{this.state.merchant_seller_name}</p>
+                                    <p className="detail-value">
+                                        <Link to={"/merchants/" + this.state.merchant_seller_id + "/change"}>{this.state.merchant_seller_name}</Link>
+                                    </p>
                                 </article>
                                 <article className="task-detail">
                                     <p className="detail-title">Created By:</p>
