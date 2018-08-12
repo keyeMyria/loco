@@ -137,10 +137,18 @@ class TaskDetail extends Component {
                                                 { this.state.items.map((item, index) => {
                                                     return (
                                                         <tr key={index}>
-                                                            <td>{item.item.serial_number}</td>
-                                                            <td>{item.item.name}</td>
-                                                            <td>{item.quantity}</td>
-                                                            <td>{item.item.price}</td>
+                                                            <td>
+                                                                <Link to={"/items/" + item.item.id + "/change" }>{item.item.serial_number}</Link>
+                                                            </td>
+                                                            <td>
+                                                                <Link to={"/items/" + item.item.id + "/change" }>{item.item.name}</Link>
+                                                            </td>
+                                                            <td>
+                                                                <Link to={"/items/" + item.item.id + "/change" }>{item.quantity}</Link>
+                                                            </td>
+                                                            <td>
+                                                                <Link to={"/items/" + item.item.id + "/change" }>{item.item.price}</Link>
+                                                            </td>
                                                         </tr>
                                                     )
                                                     })
