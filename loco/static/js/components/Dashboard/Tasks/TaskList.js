@@ -13,7 +13,7 @@ export default class TaskList extends Component {
             <section className="list-table-holder">
                 <table>
                     <thead>
-                        <tr>
+                        <tr className="no-click">
                             <th>ID</th>
                             <th>Merchant</th>
                             <th>Merchant Seller</th>

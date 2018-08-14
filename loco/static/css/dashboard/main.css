@@ -216,6 +216,14 @@ body {
     width: 100%;
 }
 
+.list-card-content .list-card-title {
+    width: 100%;
+    padding: 16px;
+    padding-left: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background: #f2f2f2;
+}
+
 .list-card-content .list-table-holder {
     width: 100%;
     text-align: left;
@@ -245,6 +253,10 @@ body {
     font-size: 14px;
 }
 
+.list-table-holder table td.txt-only {
+    padding: 12px;
+}
+
 .list-table-holder th {
     padding: 12px;
 }
@@ -262,17 +274,14 @@ body {
     color: #CB202D;
 }
 
-.list-table-holder.read-only table tr {
+.list-table-holder table tr.no-click {
     cursor: default;
 }
 
-.list-table-holder.read-only table tr:hover {
+.list-table-holder table tr.no-click:hover {
     background: white;
 }
 
-.list-table-holder.read-only table td {
-    padding: 12px;
-}
 
 /*---------------- List Pager ----------*/
 

@@ -4,7 +4,7 @@ import TaskList from './TaskList'
 import Paginator from '../Paginator'
 import {getTasksInit, getTasksNext, getTasksPrev} from '../../../reducer/tasks.js'
 
-class TaskListCard extends Component {
+export default class TaskListCard extends Component {
 
     constructor(props) {
         super(props)
@@ -14,10 +14,17 @@ class TaskListCard extends Component {
         this.props.getTasksInit();
     }
 
+    viewListTitle = () => {
+        if (this.props.listTitle) {
+            return <h3 className="list-card-title">{this.props.listTitle}</h3>
+        }
+    };
+
     render() {
         let tasks = this.props.tasks;
         var content = (
             <section className="list-card-content">
+                {this.viewListTitle()}
                 <TaskList data={tasks.data.slice(tasks.start, tasks.end)} />
                 <Paginator 
                     start={tasks.start}
@@ -46,11 +53,3 @@ class TaskListCard extends Component {
     }
 
 }
-
-export default connect(
-    ((state) => ({ tasks: state.tasks })) ,
-    {getTasksInit: getTasksInit, getTasksNext: getTasksNext, getTasksPrev:getTasksPrev}
-)(TaskListCard);
-
-
-

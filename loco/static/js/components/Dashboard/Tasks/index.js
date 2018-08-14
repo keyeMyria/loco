@@ -6,6 +6,7 @@ import TaskListCard from './TaskListCard';
 import TaskListFilters from './TaskListFilters';
 
 import {clearState} from '../../../reducer/tasks';
+import {getTasksInit, getTasksNext, getTasksPrev} from '../../../reducer/tasks.js'
 
 class Tasks extends Component {
     
@@ -34,7 +35,12 @@ class Tasks extends Component {
                 </header>
                 <section className="content-scroller">
                     <TaskListFilters />
-                    <TaskListCard />
+                    <TaskListCard 
+                        tasks={this.props.tasks}
+                        getTasksInit={this.props.getTasksInit}
+                        getTasksNext={this.props.getTasksNext} 
+                        getTasksPrev={this.props.getTasksPrev} 
+                    />
                 </section>
             </div>            
         );
@@ -42,8 +48,8 @@ class Tasks extends Component {
 }
 
 export default Tasks = connect(
-    (state) => ({team_name: state.dashboard.team_name}), 
-    {clearState:clearState}
+    (state) => ({team_name: state.dashboard.team_name, tasks: state.tasks}), 
+    {clearState:clearState, getTasksInit: getTasksInit, getTasksNext: getTasksNext, getTasksPrev:getTasksPrev}
 )(Tasks)
 
 

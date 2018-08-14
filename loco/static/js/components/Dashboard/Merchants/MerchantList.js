@@ -8,7 +8,7 @@ export default class MerchantList extends Component {
             <section className="list-table-holder">
                 <table>
                     <thead>
-                        <tr>
+                        <tr className="no-click">
                             <th>Name</th>
                             <th>State</th>
                             <th>City</th>

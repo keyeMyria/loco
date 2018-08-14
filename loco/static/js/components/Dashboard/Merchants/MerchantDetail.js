@@ -6,8 +6,19 @@ import RaisedButton from 'material-ui/RaisedButton';
 import AutoComplete from 'material-ui/AutoComplete';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import TaskListCard from '../Tasks/TaskListCard';
 
-import { createMerchant, getMerchantDetails, editMerchantDetails, getStates, getCities, clearState, deleteMerchant } from '../../../reducer/merchants';
+import { 
+    createMerchant, 
+    getMerchantDetails, 
+    editMerchantDetails, 
+    getStates, 
+    getCities, 
+    clearState, 
+    deleteMerchant,
+    getMerchantBuyTasksInit,
+    getMerchantBuyTasksNext,
+    getMerchantBuyTasksPrev, } from '../../../reducer/merchants';
 import DeleteDialog from '../DeleteDialog';
 
 const MERCHANT_TYPE = ["retailer", "stockist", "distributor"]
@@ -160,6 +171,22 @@ class MerchantDetail extends Component {
         this.props.deleteMerchant(this.props.match.params.id);
     }
 
+    viewMerchantBuyTasks = () => {
+        if (this.state.create && this.props.buyTasks.totalCount == 0) {
+            return
+        }
+
+        return (
+            <TaskListCard
+                listTitle={"Orders for " + this.state.name}
+                tasks={this.props.buyTasks}
+                getTasksInit={() => this.props.getBuyTasksInit(this.props.match.params.id)}
+                getTasksNext={() => this.props.getBuyTasksNext(this.props.match.params.id)} 
+                getTasksPrev={() => this.props.getBuyTasksPrev(this.props.match.params.id)} 
+            />
+        )
+    }
+
     render() {
 
         const style = {
@@ -278,6 +305,7 @@ class MerchantDetail extends Component {
                         </section>
                     )
                 }
+                {this.viewMerchantBuyTasks()}
                 </section>
             </div>            
         );
@@ -285,14 +313,33 @@ class MerchantDetail extends Component {
 }
 
 export default MerchantDetail = connect(
-    (state) => ({ team_id: state.dashboard.team_id, inProgress: state.merchants.createMerchantProgress,
-        error: state.merchants.error, merchantDetailsData: state.merchants.merchantDetailsData,
-        states: state.merchants.states, cities: state.merchants.cities,
-        getMerchantProgress: state.merchants.getMerchantDetailsProgress, createMerchantSucess: state.merchants.createMerchantSucess,
-        editMerchantSuccess: state.merchants.editMerchantSuccess, editMerchantProgress: state.merchants.editMerchantProgress,
-        deleteMerchantProgress: state.merchants.deleteMerchantProgress, deleteMerchantSuccess: state.merchants.deleteMerchantSuccess }), 
-    {createMerchant: createMerchant, getMerchantDetails: getMerchantDetails, editMerchantDetails: editMerchantDetails,
-        getStates: getStates, getCities: getCities, clearState: clearState, deleteMerchant, deleteMerchant}
+    (state) => ({ 
+        team_id: state.dashboard.team_id, 
+        inProgress: state.merchants.createMerchantProgress,
+        error: state.merchants.error, 
+        merchantDetailsData: state.merchants.merchantDetailsData,
+        states: state.merchants.states, 
+        cities: state.merchants.cities, 
+        buyTasks: state.merchants.buyTasks,
+        getMerchantProgress: state.merchants.getMerchantDetailsProgress, 
+        createMerchantSucess: state.merchants.createMerchantSucess,
+        editMerchantSuccess: state.merchants.editMerchantSuccess, 
+        editMerchantProgress: state.merchants.editMerchantProgress,
+        deleteMerchantProgress: state.merchants.deleteMerchantProgress,
+        deleteMerchantSuccess: state.merchants.deleteMerchantSuccess 
+    }), 
+    {
+        createMerchant: createMerchant, 
+        getMerchantDetails: getMerchantDetails, 
+        editMerchantDetails: editMerchantDetails,
+        getStates: getStates, 
+        getCities: getCities, 
+        clearState: clearState, 
+        deleteMerchant: deleteMerchant,
+        getBuyTasksInit: getMerchantBuyTasksInit,
+        getBuyTasksNext: getMerchantBuyTasksNext,
+        getBuyTasksPrev: getMerchantBuyTasksPrev,
+    }
 )(MerchantDetail)
 
 

@@ -19,10 +19,10 @@ export default class JobList extends Component {
 
     render() {
         return (
-            <section className="list-table-holder read-only">
+            <section className="list-table-holder">
                 <table>
                     <thead>
-                        <tr>
+                        <tr className="no-click">
                             <th>ID</th>
                             <th>Date</th>
                             <th>Status</th>
@@ -32,7 +32,7 @@ export default class JobList extends Component {
                     <tbody>
                         { this.props.data.map((job, index) => {
                             return (
-                                <tr key={index}>
+                                <tr className="no-click" key={index}>
                                     <td>
                                         {job.id}
                                     </td>

@@ -33,6 +33,13 @@ export const GET_CITIES_SUCCESS = 'dashboard/get_cities_success';
 export const UPDATE_QUERY = 'dashboard/update_merchants_query';
 export const UPDATE_FILTER = 'dashboard/update_merchants_filters';
 export const CLEAR_STATE = 'dashboard/clear_state'
+export const GET_BUY_TASKS_INIT = 'dashboard/merchants/get_buy_tasks_init';
+export const GET_BUY_TASKS_START = 'dashboard/merchants/get_buy_tasks_start';
+export const GET_BUY_TASKS_PREV_CACHED = 'dashboard/merchants/get_buy_tasks_prev_cached';
+export const GET_BUY_TASKS_NEXT_CACHED = 'dashboard/merchants/get_buy_tasks_next_cached';
+export const GET_BUY_TASKS_FAILURE = 'dashboard/merchants/get_buy_tasks_failure';
+export const GET_BUY_TASKS_SUCCESS = 'dashboard/merchants/get_buy_tasks_success';
+
 
 const INITIAL_STATE = {
     inProgress: true,
@@ -50,7 +57,18 @@ const INITIAL_STATE = {
     csvURL: '',
     uploads: [],
     states: [],
-    cities: []
+    cities: [],
+    buyTasks: {
+        inProgress: true,
+        start: -1,
+        end: 0,
+        limit: 10,
+        totalCount: 0,
+        currentCount: 0,
+        hasMoreItems: true,
+        data: [],
+        csvURL: ''
+    }
 };
 
 export default function merchants(state = INITIAL_STATE, action={}) {
@@ -190,6 +208,65 @@ export default function merchants(state = INITIAL_STATE, action={}) {
             return { ...state, getCitiesProgress: false, getCitiesError: "", cities: JSON.parse(action.result)};
         case GET_CITIES_FAILURE:
             return { ...state, getCitiesProgress: false, getCitiesError: "Get Cities Failed."};
+        case GET_BUY_TASKS_INIT:
+            var tasks = {...state.buyTasks,
+                data: [],
+                inProgress: true,
+                start: -1,
+                csvURL: '',
+                error: ''
+            }
+
+            return { ...state, buyTasks:tasks};
+        case GET_BUY_TASKS_START:
+            var tasks = {...state.buyTasks, inProgress: true, error: ""}
+            return { ...state, buyTasks:tasks};
+        case GET_BUY_TASKS_SUCCESS:
+            var result = JSON.parse(action.result);
+            var start = state.buyTasks.start + state.buyTasks.limit;
+            if (state.buyTasks.start == -1) {
+                start = 0;
+            }
+
+            if (!result.data) {
+                result.data = []
+            }
+
+            var newData = state.buyTasks.data.concat(result.data);
+            var hasMoreItems = true
+            if (result.data.length < state.buyTasks.limit) {
+                hasMoreItems = false;
+            }
+
+            var tasks = { ...state.buyTasks, inProgress: false, error: "",
+                    data: newData,
+                    totalCount: result.count,
+                    currentCount: newData.length,
+                    start: start,
+                    end: start + result.data.length,
+                    hasMoreItems: hasMoreItems,
+                    csvURL: result.csv
+                };
+
+            return {...state, buyTasks: tasks};
+
+        case GET_BUY_TASKS_NEXT_CACHED:
+            var start = state.buyTasks.start + state.buyTasks.limit;
+            var end = start + state.buyTasks.limit;
+            if (end > state.buyTasks.currentCount) {
+                end = state.buyTasks.currentCount;
+            }
+
+            var tasks = {...state.buyTasks, start:start, end:end}
+            return {...state, buyTasks:tasks}
+        case GET_BUY_TASKS_PREV_CACHED:
+            var end = state.buyTasks.start; 
+            var start = state.buyTasks.start - state.buyTasks.limit;
+            var tasks = {...state.buyTasks, start:start, end:end}
+            return {...state, buyTasks:tasks}
+        case GET_BUY_TASKS_FAILURE:
+            var tasks = {...state.buyTasks, inProgress: false, error: "Unable to get tasks.", data: []}
+            return { ...state, buyTasks:tasks};
         case CLEAR_STATE:
             return INITIAL_STATE;
         default:
@@ -408,5 +485,68 @@ export function getCities(merchant_id) {
 export function clearState() {
     return {
         type: CLEAR_STATE
+    }
+}
+
+function getMerchantBuyTasksInitInternal(team_id, limit, merchant_id) {
+    var url = '/teams/'+team_id+'/tasks/search/?start=0&limit='+limit;
+    url = url + '&filters=merchant_id:' + merchant_id;
+    return {
+        types: [GET_BUY_TASKS_INIT, GET_BUY_TASKS_SUCCESS, GET_BUY_TASKS_FAILURE],
+        promise: (client) => client.local.get(url,
+            {
+                cancelPrevious: true,
+            }
+        )
+    }
+}
+
+export function getMerchantBuyTasksInit (merchant_id) {
+    return function (dispatch, getState) {
+        var state = getState();
+        var limit = state.merchants.buyTasks.limit;
+        var query = state.merchants.buyTasks.query;
+        var team_id = state.dashboard.team_id;
+        return dispatch(getMerchantBuyTasksInitInternal(team_id, limit, merchant_id));
+    }
+}
+
+function getMerchantBuyTasksNextCachedInternal() {
+    return {type: GET_BUY_TASKS_NEXT_CACHED};
+}
+
+function getMerchantBuyTasksNextInternal(team_id, start, limit, merchant_id) {
+    var url = '/teams/'+team_id+'/tasks/search/?start=' + start + '&limit='+(limit);
+    url = url + '&filters=merchant_id:' + merchant_id;
+    
+    return {
+        types: [GET_BUY_TASKS_START, GET_BUY_TASKS_SUCCESS, GET_BUY_TASKS_FAILURE],
+        promise: (client) => client.local.get(url,
+            {
+                cancelPrevious: true,
+            }
+        )
+    }
+}
+
+export function getMerchantBuyTasksNext(merchant_id) {
+    return function (dispatch, getState) {
+        var state = getState();
+        var team_id = state.dashboard.team_id;
+        var start = state.buyTasks.start;
+        var limit = state.buyTasks.limit;
+        var currentCount = state.buyTasks.currentCount;
+        start = start + limit;
+        if (start < currentCount) {
+            dispatch(getMerchantBuyTasksNextCachedInternal());
+        } else {
+            dispatch(getMerchantBuyTasksNextInternal(team_id, start, limit, merchant_id));
+        }
+    }
+}
+
+export function getMerchantBuyTasksPrev() {
+    return {
+        type: GET_BUY_TASKS_PREV_CACHED
     }
 }

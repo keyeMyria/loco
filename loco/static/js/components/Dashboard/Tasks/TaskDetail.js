@@ -88,15 +88,15 @@ class TaskDetail extends Component {
                         <section>
                             <section className="detail-card">
                                 <article className="task-detail">
-                                    <p className="detail-title">Merchant Name:</p>
+                                    <p className="detail-title">Order for:</p>
                                     <p className="detail-value">
-                                        <Link to={"/merchants/" + this.state.merchant_id + "/change"}>{this.state.merchant_name}</Link>
+                                        <Link className="detail-link" to={"/merchants/" + this.state.merchant_id + "/change"}>{this.state.merchant_name}</Link>
                                     </p>
                                 </article>
                                 <article className="task-detail">
-                                    <p className="detail-title">Merchant Seller Name:</p>
+                                    <p className="detail-title">Order procured by:</p>
                                     <p className="detail-value">
-                                        <Link to={"/merchants/" + this.state.merchant_seller_id + "/change"}>{this.state.merchant_seller_name}</Link>
+                                        <Link className="detail-link" to={"/merchants/" + this.state.merchant_seller_id + "/change"}>{this.state.merchant_seller_name}</Link>
                                     </p>
                                 </article>
                                 <article className="task-detail">
@@ -123,10 +123,10 @@ class TaskDetail extends Component {
                             </section>
                             { !!(this.state.items && this.state.items.length > 0) &&
                                 <section className="list-card">
-                                    <section className="list-table-holder read-only">
+                                    <section className="list-table-holder">
                                         <table>
                                             <thead>
-                                                <tr>
+                                                <tr className="no-click">
                                                     <th>Serial No.</th>
                                                     <th>Name</th>
                                                     <th>Quantity</th>
@@ -153,11 +153,11 @@ class TaskDetail extends Component {
                                                     )
                                                     })
                                                 }
-                                                <tr>
+                                                <tr className="no-click">
                                                     <td></td>
                                                     <td></td>
-                                                    <td>Total</td>
-                                                    <td>{this.state.amount}</td>
+                                                    <td className="txt-only">Total</td>
+                                                    <td className="txt-only">{this.state.amount}</td>
                                                 </tr>
                                             </tbody>
                                         </table>

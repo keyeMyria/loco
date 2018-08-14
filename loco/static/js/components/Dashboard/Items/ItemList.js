@@ -8,7 +8,7 @@ export default class ItemList extends Component {
             <section className="list-table-holder">
                 <table>
                     <thead>
-                        <tr>
+                        <tr className="no-click">
                             <th>Serial No.</th>
                             <th>Name</th>
                             <th>Price</th>
