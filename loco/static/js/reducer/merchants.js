@@ -63,7 +63,7 @@ const INITIAL_STATE = {
         start: -1,
         end: 0,
         limit: 10,
-        totalCount: 0,
+        totalCount: -1,
         currentCount: 0,
         hasMoreItems: true,
         data: [],

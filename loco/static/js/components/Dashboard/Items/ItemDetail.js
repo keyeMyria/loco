@@ -3,9 +3,18 @@ import { connect } from 'react-redux';
 
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-
-import { createItem, getItemDetails, editItemDetails, clearState, deleteItem } from '../../../reducer/items';
 import DeleteDialog from '../DeleteDialog';
+import TaskListCard from '../Tasks/TaskListCard';
+
+import { 
+    createItem, 
+    getItemDetails, 
+    editItemDetails, 
+    clearState, 
+    deleteItem,
+    getItemTasksInit,
+    getItemTasksNext,
+    getItemTasksPrev, } from '../../../reducer/items';
 
 class ItemDetail extends Component {
     
@@ -126,8 +135,24 @@ class ItemDetail extends Component {
         });
     }
 
-    deleteMerchant = () => {
+    deleteItem = () => {
         this.props.deleteItem(this.props.match.params.id);
+    }
+
+    viewItemTasks = () => {
+        if (this.state.create) {
+            return
+        }
+
+        return (
+            <TaskListCard
+                listTitle={"Orders for " + this.state.name}
+                tasks={this.props.itemTasks}
+                getTasksInit={() => this.props.getItemTasksInit(this.props.match.params.id)}
+                getTasksNext={() => this.props.getItemTasksNext(this.props.match.params.id)} 
+                getTasksPrev={() => this.props.getItemTasksPrev(this.props.match.params.id)} 
+            />
+        )
     }
 
     render() {
@@ -177,7 +202,7 @@ class ItemDetail extends Component {
                         title={"Delete Item" + props.match.params.id}
                         dataType="item"
                         closeDialog={this.closeDialog}
-                        deleteData={this.deleteMerchant} />
+                        deleteData={this.deleteItem} />
                 }
 
                 { props.error &&
@@ -243,6 +268,7 @@ class ItemDetail extends Component {
                         </section>
                     )
                 }
+                {this.viewItemTasks()}
                 </section>
             </div>            
         );
@@ -250,12 +276,29 @@ class ItemDetail extends Component {
 }
 
 export default ItemDetail = connect(
-    (state) => ({ team_id: state.dashboard.team_id, inProgress: state.items.createItemProgress,
-        error: state.items.error, itemDetailsData: state.items.itemDetailsData, 
-        getItemProgress: state.items.getItemDetailsProgress, createItemSucess: state.items.createItemSucess,
-        editItemSuccess: state.items.editItemSuccess, editItemProgress: state.items.editItemProgress,
-        deleteItemProgress: state.items.deleteItemProgress, deleteItemSuccess: state.items.deleteItemSuccess }), 
-    {createItem: createItem, getItemDetails: getItemDetails, editItemDetails: editItemDetails, clearState: clearState, deleteItem: deleteItem}
+    (state) => ({ 
+        team_id: state.dashboard.team_id, 
+        inProgress: state.items.createItemProgress,
+        error: state.items.error, 
+        itemDetailsData: state.items.itemDetailsData, 
+        getItemProgress: state.items.getItemDetailsProgress, 
+        createItemSucess: state.items.createItemSucess,
+        editItemSuccess: state.items.editItemSuccess, 
+        editItemProgress: state.items.editItemProgress,
+        deleteItemProgress: state.items.deleteItemProgress, 
+        deleteItemSuccess: state.items.deleteItemSuccess,
+        itemTasks: state.items.itemTasks,
+    }), 
+    {
+        createItem: createItem, 
+        getItemDetails: getItemDetails, 
+        editItemDetails: editItemDetails, 
+        clearState: clearState, 
+        deleteItem: deleteItem,
+        getItemTasksInit: getItemTasksInit,
+        getItemTasksNext: getItemTasksNext,
+        getItemTasksPrev: getItemTasksPrev,
+    }
 )(ItemDetail)
 
 

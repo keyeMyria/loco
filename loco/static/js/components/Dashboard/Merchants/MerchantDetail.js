@@ -172,7 +172,7 @@ class MerchantDetail extends Component {
     }
 
     viewMerchantBuyTasks = () => {
-        if (this.state.create && this.props.buyTasks.totalCount == 0) {
+        if (this.state.create || this.props.buyTasks.totalCount == 0) {
             return
         }
 

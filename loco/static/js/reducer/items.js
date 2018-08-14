@@ -26,6 +26,12 @@ export const EDIT_ITEM_FAILURE = 'dashboard/edit_item_failure';
 export const EDIT_ITEM_SUCCESS = 'dashboard/edit_item_success';
 export const UPDATE_QUERY = 'dashboard/update_items_query';
 export const CLEAR_STATE = 'dashboard/clear_state'
+export const GET_ITEM_TASKS_INIT = 'dashboard/items/get_item_tasks_init';
+export const GET_ITEM_TASKS_START = 'dashboard/items/get_item_tasks_start';
+export const GET_ITEM_TASKS_PREV_CACHED = 'dashboard/items/get_item_tasks_prev_cached';
+export const GET_ITEM_TASKS_NEXT_CACHED = 'dashboard/items/get_item_tasks_next_cached';
+export const GET_ITEM_TASKS_FAILURE = 'dashboard/items/get_item_tasks_failure';
+export const GET_ITEM_TASKS_SUCCESS = 'dashboard/items/get_item_tasks_success';
 
 const INITIAL_STATE = {
     inProgress: true,
@@ -40,7 +46,18 @@ const INITIAL_STATE = {
     error: '',
     query: '',
     csvURL: '',
-    uploads: []
+    uploads: [],
+    itemTasks: {
+        inProgress: true,
+        start: -1,
+        end: 0,
+        limit: 10,
+        totalCount: -1,
+        currentCount: 0,
+        hasMoreItems: true,
+        data: [],
+        csvURL: ''
+    }
 };
 
 export default function items(state = INITIAL_STATE, action={}) {
@@ -165,6 +182,65 @@ export default function items(state = INITIAL_STATE, action={}) {
                 }
             }
             return { ...state, editItemProgress: false, editItemError: "Edit Item Failed.", error: error};
+        case GET_ITEM_TASKS_INIT:
+            var tasks = {...state.itemTasks,
+                data: [],
+                inProgress: true,
+                start: -1,
+                csvURL: '',
+                error: ''
+            }
+
+            return { ...state, itemTasks:tasks};
+        case GET_ITEM_TASKS_START:
+            var tasks = {...state.itemTasks, inProgress: true, error: ""}
+            return { ...state, itemTasks:tasks};
+        case GET_ITEM_TASKS_SUCCESS:
+            var result = JSON.parse(action.result);
+            var start = state.itemTasks.start + state.itemTasks.limit;
+            if (state.itemTasks.start == -1) {
+                start = 0;
+            }
+
+            if (!result.data) {
+                result.data = []
+            }
+
+            var newData = state.itemTasks.data.concat(result.data);
+            var hasMoreItems = true
+            if (result.data.length < state.itemTasks.limit) {
+                hasMoreItems = false;
+            }
+
+            var tasks = { ...state.itemTasks, inProgress: false, error: "",
+                    data: newData,
+                    totalCount: result.count,
+                    currentCount: newData.length,
+                    start: start,
+                    end: start + result.data.length,
+                    hasMoreItems: hasMoreItems,
+                    csvURL: result.csv
+                };
+
+            return {...state, itemTasks: tasks};
+
+        case GET_ITEM_TASKS_NEXT_CACHED:
+            var start = state.itemTasks.start + state.itemTasks.limit;
+            var end = start + state.itemTasks.limit;
+            if (end > state.itemTasks.currentCount) {
+                end = state.itemTasks.currentCount;
+            }
+
+            var tasks = {...state.itemTasks, start:start, end:end}
+            return {...state, itemTasks:tasks}
+        case GET_ITEM_TASKS_PREV_CACHED:
+            var end = state.itemTasks.start; 
+            var start = state.itemTasks.start - state.itemTasks.limit;
+            var tasks = {...state.itemTasks, start:start, end:end}
+            return {...state, itemTasks:tasks}
+        case GET_ITEM_TASKS_FAILURE:
+            var tasks = {...state.itemTasks, inProgress: false, error: "Unable to get tasks.", data: []}
+            return { ...state, itemTasks:tasks};
         case CLEAR_STATE:
             return INITIAL_STATE;    
         default:
@@ -331,5 +407,68 @@ export function uploadItem(data) {
 export function clearState() {
     return {
         type: CLEAR_STATE
+    }
+}
+
+function getItemTasksInitInternal(team_id, limit, item_id) {
+    var url = '/teams/'+team_id+'/tasks/search/?start=0&limit='+limit;
+    url = url + '&filters=item_list:' + item_id;
+    return {
+        types: [GET_ITEM_TASKS_INIT, GET_ITEM_TASKS_SUCCESS, GET_ITEM_TASKS_FAILURE],
+        promise: (client) => client.local.get(url,
+            {
+                cancelPrevious: true,
+            }
+        )
+    }
+}
+
+export function getItemTasksInit (item_id) {
+    return function (dispatch, getState) {
+        var state = getState();
+        var limit = state.items.itemTasks.limit;
+        var query = state.items.itemTasks.query;
+        var team_id = state.dashboard.team_id;
+        return dispatch(getItemTasksInitInternal(team_id, limit, item_id));
+    }
+}
+
+function getItemTasksNextCachedInternal() {
+    return {type: GET_ITEM_TASKS_NEXT_CACHED};
+}
+
+function getItemTasksNextInternal(team_id, start, limit, item_id) {
+    var url = '/teams/'+team_id+'/tasks/search/?start=' + start + '&limit='+(limit);
+    url = url + '&filters=item_list:' + item_id;
+    
+    return {
+        types: [GET_ITEM_TASKS_START, GET_ITEM_TASKS_SUCCESS, GET_ITEM_TASKS_FAILURE],
+        promise: (client) => client.local.get(url,
+            {
+                cancelPrevious: true,
+            }
+        )
+    }
+}
+
+export function getItemTasksNext(item_id) {
+    return function (dispatch, getState) {
+        var state = getState();
+        var team_id = state.dashboard.team_id;
+        var start = state.itemTasks.start;
+        var limit = state.itemTasks.limit;
+        var currentCount = state.itemTasks.currentCount;
+        start = start + limit;
+        if (start < currentCount) {
+            dispatch(getItemTasksNextCachedInternal());
+        } else {
+            dispatch(getItemTasksNextInternal(team_id, start, limit, item_id));
+        }
+    }
+}
+
+export function getItemTasksPrev() {
+    return {
+        type: GET_ITEM_TASKS_PREV_CACHED
     }
 }
