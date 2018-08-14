@@ -18,7 +18,10 @@ import {
     deleteMerchant,
     getMerchantBuyTasksInit,
     getMerchantBuyTasksNext,
-    getMerchantBuyTasksPrev, } from '../../../reducer/merchants';
+    getMerchantBuyTasksPrev, 
+    getMerchantSellTasksInit,
+    getMerchantSellTasksNext,
+    getMerchantSellTasksPrev, } from '../../../reducer/merchants';
 import DeleteDialog from '../DeleteDialog';
 
 const MERCHANT_TYPE = ["retailer", "stockist", "distributor"]
@@ -187,6 +190,22 @@ class MerchantDetail extends Component {
         )
     }
 
+    viewMerchantSellTasks = () => {
+        if (this.state.create || this.props.sellTasks.totalCount == 0) {
+            return
+        }
+
+        return (
+            <TaskListCard
+                listTitle={"Orders procured by " + this.state.name}
+                tasks={this.props.sellTasks}
+                getTasksInit={() => this.props.getSellTasksInit(this.props.match.params.id)}
+                getTasksNext={() => this.props.getSellTasksNext(this.props.match.params.id)} 
+                getTasksPrev={() => this.props.getSellTasksPrev(this.props.match.params.id)} 
+            />
+        )
+    }
+
     render() {
 
         const style = {
@@ -306,6 +325,7 @@ class MerchantDetail extends Component {
                     )
                 }
                 {this.viewMerchantBuyTasks()}
+                {this.viewMerchantSellTasks()}
                 </section>
             </div>            
         );
@@ -321,6 +341,7 @@ export default MerchantDetail = connect(
         states: state.merchants.states, 
         cities: state.merchants.cities, 
         buyTasks: state.merchants.buyTasks,
+        sellTasks: state.merchants.sellTasks,
         getMerchantProgress: state.merchants.getMerchantDetailsProgress, 
         createMerchantSucess: state.merchants.createMerchantSucess,
         editMerchantSuccess: state.merchants.editMerchantSuccess, 
@@ -339,6 +360,9 @@ export default MerchantDetail = connect(
         getBuyTasksInit: getMerchantBuyTasksInit,
         getBuyTasksNext: getMerchantBuyTasksNext,
         getBuyTasksPrev: getMerchantBuyTasksPrev,
+        getSellTasksInit: getMerchantSellTasksInit,
+        getSellTasksNext: getMerchantSellTasksNext,
+        getSellTasksPrev: getMerchantSellTasksPrev,
     }
 )(MerchantDetail)
 
