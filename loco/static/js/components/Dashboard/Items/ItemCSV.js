@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 import { uploadItem, getItemUploads } from '../../../reducer/items';
 import JobListCard from '../JobListCard';
+import AccountMenu from '../../common/accountMenu';
 
 class ItemCSV extends Component {
     
@@ -57,9 +58,7 @@ class ItemCSV extends Component {
                             <p className="header-action-name">UPLOAD</p>
                         </Link>
                     </section>
-                    <section className="profile-menu">
-                        <img src="/static/images/person_white.png" />
-                    </section>
+                    <AccountMenu />
                 </header>
                 <section className="content-scroller csv-upload-holder">
                     <section className="upload-csv">

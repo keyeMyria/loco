@@ -96,16 +96,19 @@ def validate_authentication(request, format=None):
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated, ))
 def logout_user(request, format=None):
+    session_type = request.GET.get('session_type', 'app')
 
-    try:
-        Token.objects.get(user=request.user).delete()
-    except:
-        pass
+    if session_type in ['all', 'app']:
+        try:
+            Token.objects.get(user=request.user).delete()
+        except:
+            pass
 
-    try:
-        logout(request)
-    except:
-        pass
+    if session_type in ['all', 'web']:
+        try:
+            logout(request)
+        except:
+            pass
 
     
     return Response()

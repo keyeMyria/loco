@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
 
+import AccountMenu from '../../common/accountMenu';
 import MerchantListCard from './MerchantListCard';
 import MerchantListFilters from './MerchantListFilters';
 
@@ -33,9 +34,7 @@ class Merchants extends Component {
                             <p className="header-action-name">UPLOAD</p>
                         </Link>
                     </section>
-                    <section className="profile-menu">
-                        <img src="/static/images/person_white.png" />
-                    </section>
+                    <AccountMenu />
                 </header>
                 <section className="content-scroller">
                     <MerchantListFilters />

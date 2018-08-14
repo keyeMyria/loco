@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
-
+import AccountMenu from '../../common/accountMenu';
 import TaskListCard from './TaskListCard';
 import TaskListFilters from './TaskListFilters';
 
@@ -29,9 +29,7 @@ class Tasks extends Component {
                         <i className="material-icons header-team-icon">arrow_drop_down</i>
                     </a>
                     
-                    <section className="profile-menu">
-                        <img src="/static/images/person_white.png" />
-                    </section>
+                    <AccountMenu />
                 </header>
                 <section className="content-scroller">
                     <TaskListFilters />
@@ -49,7 +47,12 @@ class Tasks extends Component {
 
 export default Tasks = connect(
     (state) => ({team_name: state.dashboard.team_name, tasks: state.tasks}), 
-    {clearState:clearState, getTasksInit: getTasksInit, getTasksNext: getTasksNext, getTasksPrev:getTasksPrev}
+    {
+        clearState:clearState, 
+        getTasksInit: getTasksInit, 
+        getTasksNext: getTasksNext, 
+        getTasksPrev:getTasksPrev
+    }
 )(Tasks)
 
 
