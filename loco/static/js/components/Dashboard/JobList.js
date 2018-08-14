@@ -33,16 +33,16 @@ export default class JobList extends Component {
                         { this.props.data.map((job, index) => {
                             return (
                                 <tr className="no-click" key={index}>
-                                    <td>
+                                    <td className="txt-only">
                                         {job.id}
                                     </td>
-                                    <td>
+                                    <td className="txt-only">
                                         {this.formatDate(job.created)}
                                     </td>
-                                    <td>
+                                    <td className="txt-only">
                                         {job.status}
                                     </td>
-                                    <td>
+                                    <td className="txt-only">
                                         {this.getMessage(job)}
                                     </td>
                                 </tr>
