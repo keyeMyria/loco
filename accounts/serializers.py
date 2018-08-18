@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = ('id', 'phone', 'latitude', 'longitude', 'status')
 
     def get_status(self, obj):
-    	return cache.get_user_status(obj.id)
+        return cache.get_user_status(obj.id)
 
 class UserBioSerializer(serializers.ModelSerializer):
 

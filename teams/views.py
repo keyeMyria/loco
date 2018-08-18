@@ -11,9 +11,9 @@ from loco import utils
 from loco.services import cache, solr
 
 from . import constants
-from .models import Team, TeamMembership, Checkin, CheckinMedia, Message
+from .models import Team, TeamMembership, Checkin, CheckinMedia, Message, UserLog
 from .serializers import TeamSerializer, TeamMembershipSerializer, CheckinSerializer,\
-    UserMediaSerializer, CheckinMediaSerializer, serialize_events, \
+    UserMediaSerializer, CheckinMediaSerializer, serialize_events, UserLogSerializer, \
     MessageSerializer, ConversationMessageSerializer, TYPE_LAST_LOCATION
 from .permissions import IsTeamMember, IsAdminOrReadOnly, IsAdmin, IsMe
 
@@ -377,3 +377,41 @@ class MessagesDetail(APIView):
             thread=thread_id, created__lt=start).order_by('-created')[:10]
         serializer = MessageSerializer(messages, many=True)
         return Response(data=serializer.data)
+
+class UserLogList(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+        start, limit = utils.get_query_start_limit(request)
+        start = int(start)
+        limit = int(limit)
+        logs = UserLog.objects.filter(user=request.user, team=team)[start:start+limit]
+        serializer = UserLogSerializer(logs, many=True)
+        return Response(data=serializer.data)
+
+
+    def post(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+        serializer = UserLogSerializer(data=request.data)
+
+        if serializer.is_valid():
+            last_log = UserLog.objects.filter(user=request.user, team=team).last()
+            if last_log and not serializer.validated_data['action_type'] == last_log.action_type:
+                log = serializer.save(team=team, user=request.user)
+                cache.set_user_log_status(request.user.id,
+                    team.id, log.action_type, log.created)
+            return Response()
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TeamSync(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+        log_status = cache.get_user_log_status(request.user.id, team.id)
+        return Response(data={'log_status': log_status})

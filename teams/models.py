@@ -283,3 +283,18 @@ class Message(BaseModel):
             return status
         elif self.status == self.STATUS_DELIVERED and status == self.STATUS_READ:
             return status
+
+
+class UserLog(BaseModel):
+    ACTION_SIGNIN = 'signin'
+    ACTION_SIGNOUT = 'signout'
+
+    ACTION_CHOICES = (
+        (ACTION_SIGNIN, 'signin'),
+        (ACTION_SIGNOUT, 'signout'),
+    )
+
+    team = models.ForeignKey(Team, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    action_type = models.CharField(max_length=10, choices=ACTION_CHOICES)
+    
