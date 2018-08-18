@@ -34,8 +34,11 @@ def getOtp(request, format=None):
     # otp = '1234'
     send_otp(phone, otp)
     user = User.objects.get_or_create_dummy(phone)
-
-    UserOtp.objects.create_or_update(user = user, otp=otp)
+    UserOtp.objects.create_or_update(user=user, otp=otp)
+    if user.is_active:
+        serializer = UserSerializer(user)
+        return Response(data=serializer.data)
+    
     return Response() 
 
 @csrf_exempt
@@ -87,6 +90,30 @@ def login_password(phone, password, request):
         return Response(status=status.HTTP_404_NOT_FOUND)
     except:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@csrf_exempt
+@api_view(['POST'])
+@permission_classes((permissions.AllowAny,))
+def web_auth_setup(request, format=None):
+    otp = request.data.get('otp')
+    phone = request.data.get('phone')
+    name = request.data.get('name')
+    password = request.data.get('password')
+
+    if not utils.validate_otp(otp) or not name or not password or not utils.validate_phone(phone):
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    if not (UserOtp.objects.checkOtp(otp, phone)):
+        return Response(data={"error": "Invalid OTP"}, status=status.HTTP_400_BAD_REQUEST)
+
+    user = User.objects.get(phone=phone)
+    user.name = name
+    user.set_password(password)
+    user.is_active = True
+    user.save()
+    login(request, user)
+    return Response()
+
 
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated,))

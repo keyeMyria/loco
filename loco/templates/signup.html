@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title_block %}
-    <title>Manage Teams on field | Anuvad</title>
+    <title>Create account | Anuvad</title>
 {%endblock%}
 
 {% block meta_block %}
@@ -11,9 +11,9 @@
 {%endblock%}
 
 {% block css_block %}
-    <!-- build:css /static/build/teams.css -->
+    <!-- build:css /static/build/signup.css -->
     <link rel="stylesheet" href="/static/css/base.css">
-    <link rel="stylesheet" href="/static/css/teams/main.css">
+    <link rel="stylesheet" href="/static/css/login/main.css">
     <!-- endbuild -->
 {%endblock%}
 
@@ -24,21 +24,24 @@
                 <img class="site-logo" src="/static/images/logo.png">
                 <div class="site-name">Anuvad</div>
             </section>
-            <section class="profile-menu">
-                <img src="/static/images/person_white.png">
-            </section>
         </div>
     </section>
 
-    <section class="user-teams-holder" id="user-teams-react"></section>
+    <div id="user-signup-react">
+    </div>
+
+    <section class="account-links">
+        <a class="forgot" href="/web/login">Already have an account? Log In.</a>
+        <a class="forgot" href="/web/password">Forgot password?</a>
+    </section>
     
 {% endblock %}
 
 {% block script_block %}
     <script>
         window.pageProps = JSON.parse('{{ pageProps | safe }}');
-        window.mountUserTeams = document.getElementById('user-teams-react');
+        window.mountUserSignup = document.getElementById('user-signup-react');
     </script>
 
-    <script src="{% static 'js/build/Teams.js' %}"></script>
+    <script src="{% static 'js/build/Signup.js' %}"></script>
 {% endblock %}

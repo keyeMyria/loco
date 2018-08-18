@@ -125,3 +125,35 @@ a {
     clear: both;
     *zoom: 1;
 }
+
+/*-------------- Header------------*/
+.site-header {
+  width: 100%;
+}
+
+.site-header .site-header-container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 16px 8px;
+  position: relative;
+}
+
+.site-handler .site-logo {
+  display: inline;
+  width: 28px;
+  height: 28px;
+}
+
+.site-handler .site-name {
+  display: inline;
+  color: white;
+  vertical-align: top;
+  font-size: 26px;
+}
+
+.profile-menu {
+  position: absolute;
+  right: 8px;
+  top: 16px;
+  cursor: pointer;
+}

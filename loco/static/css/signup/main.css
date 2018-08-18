@@ -28,14 +28,6 @@ body {
 
 /*----------Login Form----------*/
 
-.login-title {
-	color: white;
-	font-size: 48px;
-	line-height: 1.6em;
-	padding-top: 60px;
-	text-align: center;
-}
-
 .login-form {
 	max-width: 300px;
 	margin: 0 auto;
@@ -121,5 +113,4 @@ body {
 	color: white;
 	margin-top: 16px;
 	font-size: 14px;
-	text-decoration: underline;
 }

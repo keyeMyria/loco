@@ -39,7 +39,7 @@ class UserLogin extends React.Component {
 
     handleLogin = (e) => {
     	e.preventDefault();
-    	if (this.props.auth.inProgress) {
+    	if (this.props.auth.loginProgress) {
     		return
     	}
     	
@@ -58,7 +58,7 @@ class UserLogin extends React.Component {
     {
     	var loginActionClass = "login-action ";
     	var loginActionContent = "Login"
-    	if (this.props.auth.inProgress) {
+    	if (this.props.auth.loginProgress) {
     		loginActionClass = loginActionClass + "disabled";
     		loginActionContent = (
     			<div className="loader"></div>
@@ -70,16 +70,18 @@ class UserLogin extends React.Component {
         }
 
         return (
-            <form className="login-form">
-		      <input className="login-phone" value={this.state.phone} onChange={this.handlePhoneChange} type="number" name="phone" placeholder="Phone" />
-		      <input className="login-password" value={this.state.password} onChange={this.handlePasswordChange} type="password" name="password" placeholder="Password" />
-		      <div className="login-error">
-		      	{this.state.error || this.props.auth.error}
-		      </div>
-		      <button className={loginActionClass} onClick={this.handleLogin}>
-		      	{loginActionContent}
-		      </button>
-		    </form>
+            <div className="login">
+                <form className="login-form">
+    		      <input className="login-phone" value={this.state.phone} onChange={this.handlePhoneChange} type="number" name="phone" placeholder="Phone" />
+    		      <input className="login-password" value={this.state.password} onChange={this.handlePasswordChange} type="password" name="password" placeholder="Password" />
+    		      <div className="login-error">
+    		      	{this.state.error || this.props.auth.error}
+    		      </div>
+    		      <button className={loginActionClass} onClick={this.handleLogin}>
+    		      	{loginActionContent}
+    		      </button>
+    		    </form>
+            </div>
         );
 	}
 }
