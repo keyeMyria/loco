@@ -1,10 +1,10 @@
 import json
 
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
-from .models import Team
+from .models import TeamMembership
 
 @login_required
 def teams(request):
@@ -21,8 +21,11 @@ def dashboard(request, team_id):
     if not team_id:
         raise Http404
 
-    team = Team.objects.get(id=team_id)
-
+    membership = TeamMembership.objects.get(team__id=team_id, user=request.user)
+    if membership.role != TeamMembership.ROLE_ADMIN:
+        return HttpResponse("You are not allowed to view this page. Please ask team admin to grant you admin permission in order to continue")
+    
+    team = membership.team
     context = {
         'baseProps' : json.dumps({}),
         'pageProps': json.dumps({
