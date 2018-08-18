@@ -28,8 +28,8 @@ class TeamSerializer(serializers.ModelSerializer):
         return instance
 
 class TeamMembershipSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
     team = TeamSerializer(read_only=True)
+    user = serializers.SerializerMethodField()
 
     class Meta:
         model = TeamMembership
@@ -39,6 +39,9 @@ class TeamMembershipSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Team.objects.create(**validated_data)
+
+    def get_user(self, obj):
+        return UserSerializer(obj.user, context=self.context).data
 
     def get_configuration(self, role):
         configuration = {

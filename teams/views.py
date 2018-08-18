@@ -79,7 +79,7 @@ class TeamMembershipList(APIView):
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
         memberships = TeamMembership.objects.filter(team=team, user__is_active=True).exclude(status=constants.STATUS_REJECTED)
-        serializer = TeamMembershipSerializer(memberships, many=True)
+        serializer = TeamMembershipSerializer(memberships, many=True, context={'team': team})
         return Response(serializer.data)
 
     def post(self, request, team_id, format=None):
