@@ -40,6 +40,7 @@ class TaskDetail extends Component {
                 merchant_id: task.merchant_id,
                 amount: task.amount,
                 created_by: task.created_by_name,
+                created_by_id: task.created_by,
                 items: task.items_data,
                 task_id: task.task_id,
                 created: this.formatDate(task.created),
@@ -87,37 +88,47 @@ class TaskDetail extends Component {
                     : (
                         <section>
                             <section className="detail-card">
-                                <article className="task-detail">
-                                    <p className="detail-title">Order for:</p>
+                                <article className="detail">
+                                    <p className="detail-title">Order for</p>
                                     <p className="detail-value">
                                         <Link className="detail-link" to={"/merchants/" + this.state.merchant_id + "/change"}>{this.state.merchant_name}</Link>
                                     </p>
                                 </article>
-                                <article className="task-detail">
-                                    <p className="detail-title">Order procured by:</p>
+                                <article className="detail">
+                                    <p className="detail-title">Order procured by</p>
                                     <p className="detail-value">
-                                        <Link className="detail-link" to={"/merchants/" + this.state.merchant_seller_id + "/change"}>{this.state.merchant_seller_name}</Link>
+                                        <Link 
+                                            className="detail-link" 
+                                            to={"/merchants/" + this.state.merchant_seller_id + "/change"}
+                                        >
+                                            {this.state.merchant_seller_name}
+                                        </Link>
                                     </p>
                                 </article>
-                                <article className="task-detail">
-                                    <p className="detail-title">Created By:</p>
-                                    <p className="detail-value">{this.state.created_by}</p>
+                                <article className="detail">
+                                    <p className="detail-title">Created By</p>
+                                    <Link 
+                                        className="detail-link" 
+                                        to={"/users/" + this.state.created_by_id + "/profile"}
+                                    >
+                                        {this.state.created_by}
+                                    </Link>
                                 </article>
-                                <article className="task-detail">
-                                    <p className="detail-title">Amount:</p>
+                                <article className="detail">
+                                    <p className="detail-title">Amount</p>
                                     <p className="detail-value price">&#x20b9; {this.state.amount}</p>
                                 </article>
-                                <article className="task-detail">
-                                    <p className="detail-title">Created On:</p>
+                                <article className="detail">
+                                    <p className="detail-title">Created On</p>
                                     <p className="detail-value">{this.state.created}</p>
                                 </article>
                                 { this.state.description && 
-                                    <article className="task-detail">
-                                        <p className="detail-title">Description:</p>
+                                    <article className="detail">
+                                        <p className="detail-title">Description</p>
                                         <p className="detail-value">{this.state.description}</p>
                                     </article>
                                 }
-                                <article className="task-detail">
+                                <article className="detail">
                                     <a className="detail-link" target="_blank" href={pdfLink}>PDF</a>
                                 </article>
                             </section>

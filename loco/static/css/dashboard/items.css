@@ -5,7 +5,8 @@
 	padding: 8px 16px;
 }
 
-.item-filter-bar {
+.item-filter-bar,
+.user-filter-bar {
 	text-align: center;
 }
 

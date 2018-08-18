@@ -9,6 +9,8 @@ import ItemDetail from "./Items/ItemDetail";
 import ItemCSV from "./Items/ItemCSV";
 import Tasks from "./Tasks/index";
 import TaskDetail from "./Tasks/TaskDetail"
+import Users from "./Users/index";
+import UserDetail from "./Users/UserDetail";
 
 export default class Routes extends Component {
 
@@ -29,6 +31,9 @@ export default class Routes extends Component {
                 <Route exact path="/items/create" component={ItemDetail}/>
                 <Route exact path="/items/upload" component={ItemCSV}/>
                 <Route exact path="/items/:id/change" component={ItemDetail}/>
+
+                <Route exact path="/users" component={Users}/>
+                <Route exact path="/users/:id/profile" component={UserDetail}/>
             </div>
         );
 	}

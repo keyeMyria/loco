@@ -308,3 +308,26 @@ def download_tasks(team_id, search_options, start, limit, download_format='csv')
 
     query += "&fq="+filters
     return get_csv_solr(query)
+
+
+def search_members(team_id, search_options, start, limit):
+    query = SOLR_HOST + 'user/select?q=[[QUERY]]&wt=json&sort=created desc&start=[[START]]&rows=[[LIMIT]]&defType=edismax&qf=name'
+    query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))
+
+    search_text = search_options.get('query')
+    if search_text:
+        search_text = "*" + str(search_text) + "*"
+    else:
+        search_text = "*"
+
+    query = query.replace("[[QUERY]]", search_text)
+
+    filters = search_options.get('filters')
+    if filters:
+        filters += " AND team_id:" + str(team_id)
+    else:
+        filters = "team_id:" + str(team_id)
+
+    query += "&fq="+filters
+    data, count = get_query_solr(query)
+    return {'data': data, 'count': count}

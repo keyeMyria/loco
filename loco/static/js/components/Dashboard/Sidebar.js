@@ -21,6 +21,9 @@ export default class Sidebar extends Component {
                     <li className="nav-link">
                         <NavLink to="/items">Items</NavLink>
                     </li>
+                    <li className="nav-link">
+                        <NavLink to="/users">Users</NavLink>
+                    </li>
                 </ul>
             </section>        
         );

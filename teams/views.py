@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 
 from loco import utils
-from loco.services import cache
+from loco.services import cache, solr
 
 from . import constants
 from .models import Team, TeamMembership, Checkin, CheckinMedia, Message
@@ -112,24 +112,14 @@ def join_team(request, format=None):
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class TeamMembershipDetail(APIView):
-    permission_classes = (permissions.IsAuthenticated, IsAdmin)
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember, IsAdminOrReadOnly)
 
-    def put(self, request, membership_id, format=None):
-        membership = get_object_or_404(TeamMembership, id=membership_id)
-        self.check_object_permissions(self.request, membership)
-        serializer = TeamMembershipSerializer(membership, data=request.data, partial=True)
-        
-        if serializer.is_valid():
-            serializer.save()
-            return Response(data=serializer.data)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, membership_id, format=None):
-        membership = get_object_or_404(TeamMembership, id=membership_id)
-        self.check_object_permissions(self.request, membership)
-        membership.delete()
-        return Response(status=204)
+    def get(self, request, team_id, user_id, format=None):
+        membership = get_object_or_404(TeamMembership, user_id=user_id, team_id=team_id)
+        team = membership.team
+        self.check_object_permissions(self.request, team)
+        serializer = TeamMembershipSerializer(membership)
+        return Response(data=serializer.data)
 
 class TeamMemberDetail(APIView):
     permission_classes = (permissions.IsAuthenticated, IsAdminOrReadOnly)
@@ -159,6 +149,34 @@ class TeamMemberDetail(APIView):
         self.check_object_permissions(self.request, team)
         membership.delete()
         return Response(status=204)
+
+class TeamMembershipSearch(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+
+        PARAM_QUERY = 'query'
+        PARAM_FILTERS = 'filters'
+        search_options = {}
+        query = request.query_params.get(PARAM_QUERY)
+        if query:
+            search_options['query'] = query
+
+        filters = request.query_params.get(PARAM_FILTERS, '')
+        if filters:
+            search_options['filters'] = filters
+
+        start, limit = utils.get_query_start_limit(request)
+        merchants = solr.search_members(team.id, search_options, start, limit)
+        if merchants.get('data'):
+            merchants['csv'] = utils.get_csv_url('members', team.id, 0,
+                merchants.get('count'), query, filters)
+        else:
+            merchants['csv'] = ''
+            
+        return Response(merchants)
 
 class TeamMembershipStatus(APIView):
     permission_classes = (permissions.IsAuthenticated, )

@@ -5,6 +5,7 @@ import dashboard from './dashboard';
 import items from './items';
 import merchants from './merchants';
 import tasks from './tasks';
+import users from './users';
 
 const rootReducer = combineReducers({
   auth: auth,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
   items: items,
   merchants: merchants,
   tasks: tasks,
+  users: users,
 });
 
 export default rootReducer;

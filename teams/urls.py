@@ -16,6 +16,8 @@ urlpatterns = [
 	url(r'^(?P<team_id>[0-9]+)/status/$', views.TeamMembershipStatus.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/members/$', views.TeamMembershipList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/members/(?P<user_id>[0-9]+)/$', views.TeamMemberDetail.as_view()),
+	url(r'^(?P<team_id>[0-9]+)/memberships/(?P<user_id>[0-9]+)/$', views.TeamMembershipDetail.as_view()),
+	url(r'^(?P<team_id>[0-9]+)/memberships/search/$', views.TeamMembershipSearch.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/checkins/$', views.CheckinList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/checkins/(?P<checkin_id>[0-9]+)$', views.CheckinDetail.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/events/$', views.EventList.as_view()),

@@ -49,7 +49,6 @@ class UserLogin extends React.Component {
     	} else if (!this.state.password) {
     		this.setState({error:'*Please enter a valid password'})
     	} else {
-    		console.log(this.props);
     		this.props.login(this.state.phone, this.state.password);
     	}
 

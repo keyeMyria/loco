@@ -391,32 +391,38 @@ body {
     background-color: red;
 }
 
-/*-----------------Task Detail Holder------------------*/
+/*-----------------Detail Holder------------------*/
 
-.task-detail {
+.detail {
     padding: 16px;
 }
 
-.task-detail .detail-title {
+.detail .detail-title {
     font-weight: bold;
     line-height: 1.25;
     font-size: 16px;
     color: #3e5561;
 }
 
-.task-detail .detail-link {
+.detail .detail-link {
     line-height: 1.25;
     font-size: 16px;
     color: #CB202D;
 }
 
-.task-detail .detail-value {
+.detail .detail-value {
     line-height: 1.25;
     color: #3e5561;
 }
 
-.task-detail .price {
+.detail .price {
     color: #00bfa5;
+}
+
+.detail .detail-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
 }
 
 /*------------- Upload CSV -------------------*/
