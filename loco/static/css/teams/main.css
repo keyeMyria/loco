@@ -35,22 +35,58 @@ body {
 }
 
 .section-user-teams .user-teams {
-	max-width: 400px;
+	max-width: 800px;
 	margin: 0 auto;
 	margin-top: 16px;
+	text-align: left;
 }
 
 .user-teams .user-team {
-	width: 100%;
+	width: 30%;
+	height: 80px;
+	vertical-align: bottom;
 	padding: 16px 8px;
 	cursor: pointer;
 	border: 1px solid white;
 	transition: 0.3s;
 	margin-bottom: 8px;
+	margin-right: 16px;
 	background: white;
 	border-radius: 2px;
-	display: block;
+	display: inline-block;
 	font-size: 20px;
+	text-align: center;
+}
+
+.user-teams .user-team-action {
+	width: 30%;
+	height: 80px;
+	vertical-align: bottom;
+	padding: 16px 8px;
+	cursor: pointer;
+	border: 1px solid #CB202D;
+	transition: 0.3s;
+	margin-bottom: 8px;
+	margin-right: 16px;
+	background: #CB202D;
+	border-radius: 2px;
+	display: inline-block;
+	font-size: 20px;
+	text-align: center;
+	color: white;
+}
+
+.user-team-action .user-team-name,
+.user-team .user-team-name {
+	text-transform: capitalize;
+	font-size: 18px;
+	line-height: 1.6em;
+}
+
+.user-team .user-team-role {
+	text-transform: capitalize;
+	font-size: 14px;
+	color: rgba(0, 0, 0, 0.5);
 }
 
 .user-teams .user-team:hover {

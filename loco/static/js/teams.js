@@ -23,7 +23,10 @@ class UserTeams extends React.Component {
     render()
     {
         var teams = this.props.teams.teams.map((team) => 
-            <a className="user-team" href={'/web/teams/' + team.team.id}>{team.team.name}</a>
+            <a className="user-team" href={'/web/teams/' + team.team.id}>
+                <p className="user-team-name">{team.team.name}</p>
+                <p className="user-team-role">{team.role}</p>
+            </a>
         );
 
         let content;
@@ -36,6 +39,14 @@ class UserTeams extends React.Component {
         } else {
             content = (
                 <ul className="user-teams">
+                    <a className="user-team-action" >
+                        <i className="material-icons user-team-icon">group</i>
+                        <p className="user-team-name">Create new team</p>
+                    </a>
+                    <a className="user-team-action">
+                        <i className="material-icons user-team-icon">group_add</i>
+                        <p className="user-team-name">Join a team</p>
+                    </a>
                     {teams}
                 </ul>
             )
@@ -43,7 +54,7 @@ class UserTeams extends React.Component {
         
         return (
             <section className="section-user-teams">
-                <h1>Select team</h1>
+                <h1>Your teams</h1>
                 {content}
             </section>
         );
