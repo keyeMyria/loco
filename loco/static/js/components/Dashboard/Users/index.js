@@ -25,14 +25,6 @@ class Users extends Component {
     };
 
     render() {
-        const addUserActions = [
-              <FlatButton
-                label="Done"
-                primary={true}
-                keyboardFocused={true}
-                onClick={this.closeAddUserDialog}
-              />,
-            ];
 
         return (
             <div className="content-holder">
@@ -48,15 +40,6 @@ class Users extends Component {
                             <i className="material-icons header-action-icon">delete_outline</i>
                             <p className="header-action-name">Add user</p>
                         </p>
-                        <Dialog
-                            title="Add user"
-                            actions={addUserActions}
-                            modal={false}
-                            open={this.state.openAddUserDialog}
-                            onRequestClose={this.closeAddUserDialog}
-                        >
-                          Share following link with user on a mobile device
-                        </Dialog>
                     </section>
                     
                     <AccountMenu />
