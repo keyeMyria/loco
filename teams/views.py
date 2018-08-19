@@ -11,10 +11,10 @@ from loco import utils
 from loco.services import cache, solr
 
 from . import constants
-from .models import Team, TeamMembership, Checkin, CheckinMedia, Message, UserLog
+from .models import Team, TeamMembership, Checkin, CheckinMedia, Message, UserLog, TourPlan
 from .serializers import TeamSerializer, TeamMembershipSerializer, CheckinSerializer,\
     UserMediaSerializer, CheckinMediaSerializer, serialize_events, UserLogSerializer, \
-    MessageSerializer, ConversationMessageSerializer, TYPE_LAST_LOCATION
+    MessageSerializer, ConversationMessageSerializer, TYPE_LAST_LOCATION, TourPlanSerializer
 from .permissions import IsTeamMember, IsAdminOrReadOnly, IsAdmin, IsMe
 
 from accounts.models import User
@@ -404,6 +404,31 @@ class UserLogList(APIView):
                 cache.set_user_log_status(request.user.id,
                     team.id, log.action_type, log.created)
             return Response()
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TourPlanList(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+        start, limit = utils.get_query_start_limit(request)
+        start = int(start)
+        limit = int(limit)
+        plans = TourPlan.objects.filter(user=request.user, team=team)[start:start+limit]
+        serializer = TourPlanSerializer(plans, many=True)
+        return Response(data=serializer.data)
+
+
+    def post(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+        serializer = TourPlanSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save(team=team, user=request.user)
+            return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

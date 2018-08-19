@@ -33,6 +33,7 @@ urlpatterns = [
 	url(r'^(?P<team_id>[0-9]+)/groups/$', groups_views.GroupList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/logs/$', views.UserLogList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/sync/$', views.TeamSync.as_view()),
+	url(r'^(?P<team_id>[0-9]+)/plans/$', views.TourPlanList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/tasks/$', tasks_views.TaskList.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/tasks/files/$', tasks_views.task_media_upload),
 	url(r'^(?P<team_id>[0-9]+)/tasks/search/$', tasks_views.TaskSearch.as_view()),

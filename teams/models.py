@@ -297,4 +297,10 @@ class UserLog(BaseModel):
     team = models.ForeignKey(Team, on_delete=models.DO_NOTHING)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     action_type = models.CharField(max_length=10, choices=ACTION_CHOICES)
+
+class TourPlan(BaseModel):
+    team = models.ForeignKey(Team, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
+    data = models.TextField(blank=True)
+    dated = models.DateField()
     

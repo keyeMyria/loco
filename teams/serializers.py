@@ -1,6 +1,7 @@
 import json
 from rest_framework import serializers
-from .models import Team, TeamMembership, Checkin, CheckinMedia, Attendance, UserMedia, Message, UserLog
+from .models import Team, TeamMembership, Checkin, CheckinMedia
+from .models import Attendance, UserMedia, Message, UserLog, TourPlan
 
 from accounts.serializers import UserSerializer, UserBioSerializer
 from groups.serializers import GroupSerializer
@@ -173,5 +174,11 @@ class ConversationMessageSerializer(serializers.ModelSerializer):
 class UserLogSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserLog
+        fields = "__all__"
+        read_only_fields = ('created', 'updated', 'user', 'team')
+
+class TourPlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TourPlan
         fields = "__all__"
         read_only_fields = ('created', 'updated', 'user', 'team')
