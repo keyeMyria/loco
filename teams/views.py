@@ -387,14 +387,28 @@ class UserLogList(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)
 
     def get(self, request, team_id, format=None):
+        PARAM_USER_ID = "user"
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
         start, limit = utils.get_query_start_limit(request)
         start = int(start)
         limit = int(limit)
-        logs = UserLog.objects.filter(user=request.user, team=team)[start:start+limit]
-        serializer = UserLogSerializer(logs, many=True)
-        return Response(data=serializer.data)
+        user_id = request.query_params.get(PARAM_USER_ID)
+        logs = UserLog.objects.filter(user__id=user_id, team=team)
+        data = UserLogSerializer(logs[start:start+limit], many=True).data
+        count = logs.count()
+        csv_url = ''
+        if count > 0:
+            csv_url = "/web/teams/{0}/logs/download/?user={1}&start={2}&limit={3}&format=csv".format(
+        team_id, user_id, 0, count)
+
+        response = {
+            'data':data,
+            'count':count,
+            'csv': csv_url
+        }
+        
+        return Response(data=response)
 
 
     def post(self, request, team_id, format=None):
@@ -413,17 +427,30 @@ class UserLogList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TourPlanList(APIView):
-    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+    permission_classes = (permissions.IsAuthenticated, IsAdmin)
 
     def get(self, request, team_id, format=None):
+        PARAM_USER_ID = "user"
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
         start, limit = utils.get_query_start_limit(request)
         start = int(start)
         limit = int(limit)
-        plans = TourPlan.objects.filter(user=request.user, team=team)[start:start+limit]
-        serializer = TourPlanSerializer(plans, many=True)
-        return Response(data=serializer.data)
+        user_id = request.query_params.get(PARAM_USER_ID)
+        plans = TourPlan.objects.filter(user__id=user_id, team=team)
+        data = TourPlanSerializer(plans[start:start+limit], many=True).data
+        count = plans.count()
+        csv_url = ''
+        if count > 0:
+            csv_url = utils.get_csv_url('logs', team.id, 0, count)
+
+        response = {
+            'data':data,
+            'count':count,
+            'csv': csv_url
+        }
+
+        return Response(data=response)
 
 
     def post(self, request, team_id, format=None):

@@ -251,6 +251,7 @@ body {
 
 .list-table-holder table td {
     font-size: 14px;
+    text-transform: capitalize; 
 }
 
 .list-table-holder table td.txt-only {
