@@ -27,10 +27,15 @@ class IsAdminOrMe(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
     	return obj.team.is_admin(request.user) or obj.user == request.user or obj.is_admin_account(request.user)
     
+class IsTeamAdmin(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+        return obj.is_admin(request.user) or obj.is_admin_account(request.user)  
+
 class IsAdmin(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
-    	return obj.team.is_admin(request.user) or obj.is_admin_account(request.user)
+        return obj.team.is_admin(request.user) or obj.team.is_admin_account(request.user)
     
 class IsMe(permissions.BasePermission):
 

@@ -6,6 +6,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import DeleteDialog from '../DeleteDialog';
 import TaskListCard from '../Tasks/TaskListCard';
 import UserLogCard from './UserLogCard';
+import UserPlanCard from './UserPlanCard';
 
 import { 
     getUserDetails, 
@@ -15,7 +16,10 @@ import {
     getUserTasksPrev,
     getUserLogsInit,
     getUserLogsNext,
-    getUserLogsPrev } from '../../../reducer/users';
+    getUserLogsPrev ,
+    getUserPlansInit,
+    getUserPlansNext,
+    getUserPlansPrev } from '../../../reducer/users';
 
 class UserDetail extends Component {
     
@@ -118,6 +122,22 @@ class UserDetail extends Component {
         )
     }
 
+    viewUserPlans = () => {
+        if (!this.props.userDetailsData) {
+            return
+        }
+
+        return (
+            <UserPlanCard
+                listTitle={"Plan sheet of " + this.props.userDetailsData.user.name}
+                plans={this.props.userPlans}
+                getUserPlansInit={() => this.props.getUserPlansInit(this.props.match.params.id)}
+                getUserPlansNext={() => this.props.getUserPlansNext(this.props.match.params.id)} 
+                getUserPlansPrev={() => this.props.getUserPlansPrev(this.props.match.params.id)} 
+            />
+        )
+    }
+
     render() {
 
         const style = {
@@ -150,6 +170,7 @@ class UserDetail extends Component {
                 {this.viewUserDetails()}
                 {this.viewUserTasks()}
                 {this.viewUserLogs()}
+                {this.viewUserPlans()}
                 </section>
             </div>            
         );
@@ -163,6 +184,7 @@ export default UserDetail = connect(
         getUserDetailsProgress: state.users.getUserDetailsProgress, 
         userTasks: state.users.userTasks,
         userLogs: state.users.userLogs,
+        userPlans: state.users.userPlans,
     }), 
     {
         getUserDetails: getUserDetails, 
@@ -173,6 +195,9 @@ export default UserDetail = connect(
         getUserLogsInit: getUserLogsInit,
         getUserLogsNext: getUserLogsNext,
         getUserLogsPrev: getUserLogsPrev,
+        getUserPlansInit: getUserPlansInit,
+        getUserPlansNext: getUserPlansNext,
+        getUserPlansPrev: getUserPlansPrev,
     }
 )(UserDetail)
 

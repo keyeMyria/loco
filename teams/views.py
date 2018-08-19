@@ -15,7 +15,7 @@ from .models import Team, TeamMembership, Checkin, CheckinMedia, Message, UserLo
 from .serializers import TeamSerializer, TeamMembershipSerializer, CheckinSerializer,\
     UserMediaSerializer, CheckinMediaSerializer, serialize_events, UserLogSerializer, \
     MessageSerializer, ConversationMessageSerializer, TYPE_LAST_LOCATION, TourPlanSerializer
-from .permissions import IsTeamMember, IsAdminOrReadOnly, IsAdmin, IsMe
+from .permissions import IsTeamMember, IsAdminOrReadOnly, IsAdmin, IsMe, IsTeamAdmin
 
 from accounts.models import User
 from accounts.serializers import UserSerializer
@@ -427,7 +427,7 @@ class UserLogList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TourPlanList(APIView):
-    permission_classes = (permissions.IsAuthenticated, IsAdmin)
+    permission_classes = (permissions.IsAuthenticated, IsTeamAdmin)
 
     def get(self, request, team_id, format=None):
         PARAM_USER_ID = "user"
@@ -442,7 +442,8 @@ class TourPlanList(APIView):
         count = plans.count()
         csv_url = ''
         if count > 0:
-            csv_url = utils.get_csv_url('logs', team.id, 0, count)
+            csv_url = "/web/teams/{0}/plans/download/?user={1}&start={2}&limit={3}&format=csv".format(
+        team_id, user_id, 0, count)
 
         response = {
             'data':data,
