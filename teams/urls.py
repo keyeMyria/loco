@@ -10,6 +10,7 @@ from crm import views as crm_views
 
 urlpatterns = [
 	url(r'^$', views.TeamList.as_view()),
+	url(r'^err$', views.TeamList1.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/$', views.TeamDetail.as_view()),
 	url(r'^(?P<team_id>[0-9]+)/chats/$', views.get_chats),
 	url(r'^join/$', views.join_team),

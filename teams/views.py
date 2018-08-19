@@ -43,6 +43,11 @@ class TeamList(APIView):
 
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class TeamList1(APIView):
+    
+    def get(self, request, format=None):
+        return Response(data=serializer.data)
+
 class TeamDetail(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember, IsAdminOrReadOnly)
 
