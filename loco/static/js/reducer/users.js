@@ -29,6 +29,9 @@ export const GET_USER_PLANS_PREV_CACHED = 'dashboard/get_user_plans_prev_cached'
 export const GET_USER_PLANS_NEXT_CACHED = 'dashboard/get_user_plans_next_cached';
 export const GET_USER_PLANS_FAILURE = 'dashboard/get_user_plans_failure';
 export const GET_USER_PLANS_SUCCESS = 'dashboard/get_user_plans_success';
+export const REMOVE_USER_START = 'dashboard/remove_user_start';
+export const REMOVE_USER_FAILURE = 'dashboard/remove_user_failure';
+export const REMOVE_USER_SUCCESS = 'dashboard/remove_user_success';
 
 const INITIAL_STATE = {
     inProgress: true,
@@ -74,7 +77,10 @@ const INITIAL_STATE = {
         currentCount: 0,
         data: [],
         csvURL: ''
-    }
+    },
+    removeUserProgress: false,
+    removeUserError: '',
+    removeUserSuccess: false
 };
 
 export default function users(state = INITIAL_STATE, action={}) {
@@ -138,6 +144,16 @@ export default function users(state = INITIAL_STATE, action={}) {
             return { ...state, getUserDetailsProgress: false, 
                 getUserDetailsError: "Unable to get user details", 
                 error: error
+            };
+        case REMOVE_USER_START:
+            return { ...state, removeUserSuccess:false, removeUserProgress: true, removeUserError: ""};
+        case REMOVE_USER_SUCCESS:
+            return { ...state, removeUserSuccess:true, removeUserProgress: false, 
+                removeUserError: ""
+            };
+        case REMOVE_USER_FAILURE:
+            return { ...state, removeUserSuccess:false, removeUserProgress: false, 
+                removeUserError: error,
             };
         case GET_USER_TASKS_INIT:
             var tasks = {...state.userTasks,
@@ -330,6 +346,21 @@ export function getUserDetails(user_id) {
         var state = getState();
         var team_id = state.dashboard.team_id;
         return dispatch(getUserDetailsInternal(user_id, team_id));
+    }
+}
+
+export function removeUserInternal(user_id, team_id) {
+    return {
+        types: [REMOVE_USER_START, REMOVE_USER_SUCCESS, REMOVE_USER_FAILURE],
+        promise: (client) => client.local.del('/teams/' + team_id + '/members/' + user_id)
+    }
+}
+
+export function removeUser(user_id) {
+    return function (dispatch, getState) {
+        var state = getState();
+        var team_id = state.dashboard.team_id;
+        return dispatch(removeUserInternal(user_id, team_id));
     }
 }
 

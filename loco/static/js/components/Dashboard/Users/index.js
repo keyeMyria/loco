@@ -36,12 +36,12 @@ class Users extends Component {
 
     render() {
         const addUserDialogActions = [
-              <FlatButton
-                label="Done"
-                primary={true}
-                onClick={this.closeAddUserDialog}
-              />,
-            ];
+          <FlatButton
+            label="Done"
+            primary={true}
+            onClick={this.closeAddUserDialog}
+          />,
+        ];
 
         return (
             <div className="content-holder">

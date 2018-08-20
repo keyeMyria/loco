@@ -8,6 +8,9 @@ import TaskListCard from '../Tasks/TaskListCard';
 import UserLogCard from './UserLogCard';
 import UserPlanCard from './UserPlanCard';
 
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
+
 import { 
     getUserDetails, 
     clearState, 
@@ -19,18 +22,41 @@ import {
     getUserLogsPrev ,
     getUserPlansInit,
     getUserPlansNext,
-    getUserPlansPrev } from '../../../reducer/users';
+    getUserPlansPrev,
+    removeUser } from '../../../reducer/users';
 
 class UserDetail extends Component {
     
     constructor(props) {
         super(props); 
+        this.state = {
+            isOpenRemoveUserDialog: false
+        };
     }
 
     formatDate = (date) => {
         var d = new Date(date);
         return d.toLocaleString();
     };
+
+    closeRemoveUserDialog = () => {
+        this.setState({
+            isOpenRemoveUserDialog: false
+        })
+    };
+
+    openRemoveUserDialog = () => {
+        this.setState({
+            isOpenRemoveUserDialog: true
+        })
+    };
+
+    handleRemoveUser = () => {
+        this.props.removeUser(this.props.match.params.id);
+        this.setState({
+            isOpenRemoveUserDialog: false
+        })
+    }
 
     componentWillMount() {
         this.props.clearState();
@@ -138,6 +164,37 @@ class UserDetail extends Component {
         )
     }
 
+    viewRemoveUserDialog = () => {
+        if (!this.props.userDetailsData) {
+            return
+        }
+
+        const removeUserDialogActions = [
+          <FlatButton
+            label="Cancel"
+            primary={false}
+            onClick={this.closeRemoveUserDialog}
+          />,
+          <FlatButton
+            label="YES"
+            primary={true}
+            onClick={this.handleRemoveUser}
+          />,
+        ];
+
+        return (
+            <Dialog
+              title="Remove user from team"
+              actions={removeUserDialogActions}
+              modal={false}
+              open={this.state.isOpenRemoveUserDialog}
+              onRequestClose={this.closeRemoveUserDialog}
+            >
+              {'Are you sure you want to remove "' + this.props.userDetailsData.user.name + '" from team?'}
+            </Dialog>
+        );
+    }
+
     render() {
 
         const style = {
@@ -146,16 +203,34 @@ class UserDetail extends Component {
             width: "60px",
             marginTop: "20px"
         };
+        
 
         let props = this.props;
         return (
             <div className="content-holder">
+
+                { (props.removeUserSuccess) &&
+                    <section className="success-msg-holder">
+                        <p className="success-msg">
+                        User removed from team successfully
+                        </p>
+                    </section>
+                }
+
+                { (props.removeUserError) &&
+                    <section className="success-msg-holder">
+                        <p className="success-msg">
+                        {props.removeUserError}
+                        </p>
+                    </section>
+                }
+
                 <header className="header">
                     <h1 className="title">
                         {"User " + this.props.match.params.id}
                     </h1>
                     <section className="header-actions">
-                        <p className="header-action" onClick={this.openDialog}>
+                        <p className="header-action" onClick={this.openRemoveUserDialog}>
                             <i className="material-icons header-action-icon">delete_outline</i>
                             <p className="header-action-name">Remove</p>
                         </p>
@@ -164,6 +239,7 @@ class UserDetail extends Component {
                             <p className="header-action-name">Change Role</p>
                         </p>
                     </section>
+                    {this.viewRemoveUserDialog()}
                 </header>
 
                 <section className="content-scroller">
@@ -185,6 +261,9 @@ export default UserDetail = connect(
         userTasks: state.users.userTasks,
         userLogs: state.users.userLogs,
         userPlans: state.users.userPlans,
+        removeUserProgress: state.users.removeUserProgress,
+        removeUserError: state.users.removeUserError,
+        removeUserSuccess: state.users.removeUserSuccess,
     }), 
     {
         getUserDetails: getUserDetails, 
@@ -198,6 +277,7 @@ export default UserDetail = connect(
         getUserPlansInit: getUserPlansInit,
         getUserPlansNext: getUserPlansNext,
         getUserPlansPrev: getUserPlansPrev,
+        removeUser: removeUser,
     }
 )(UserDetail)
 
