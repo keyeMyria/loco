@@ -129,7 +129,7 @@ class UserDetail extends Component {
 
         return (
             <UserPlanCard
-                listTitle={"Plan sheet of " + this.props.userDetailsData.user.name}
+                listTitle={"Tour plan by " + this.props.userDetailsData.user.name}
                 plans={this.props.userPlans}
                 getUserPlansInit={() => this.props.getUserPlansInit(this.props.match.params.id)}
                 getUserPlansNext={() => this.props.getUserPlansNext(this.props.match.params.id)} 

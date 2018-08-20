@@ -389,7 +389,7 @@ class UserLogList(APIView):
         start = int(start)
         limit = int(limit)
         user_id = request.query_params.get(PARAM_USER_ID)
-        logs = UserLog.objects.filter(user__id=user_id, team=team)
+        logs = UserLog.objects.filter(user__id=user_id, team=team).order_by("-created")
         data = UserLogSerializer(logs[start:start+limit], many=True).data
         count = logs.count()
         csv_url = ''
@@ -413,7 +413,7 @@ class UserLogList(APIView):
 
         if serializer.is_valid():
             last_log = UserLog.objects.filter(user=request.user, team=team).last()
-            if last_log and not serializer.validated_data['action_type'] == last_log.action_type:
+            if not last_log or (last_log and not serializer.validated_data['action_type'] == last_log.action_type):
                 log = serializer.save(team=team, user=request.user)
                 cache.set_user_log_status(request.user.id,
                     team.id, log.action_type, log.created)
@@ -422,7 +422,7 @@ class UserLogList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class TourPlanList(APIView):
-    permission_classes = (permissions.IsAuthenticated, IsTeamAdmin)
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
 
     def get(self, request, team_id, format=None):
         PARAM_USER_ID = "user"
@@ -432,7 +432,7 @@ class TourPlanList(APIView):
         start = int(start)
         limit = int(limit)
         user_id = request.query_params.get(PARAM_USER_ID)
-        plans = TourPlan.objects.filter(user__id=user_id, team=team)
+        plans = TourPlan.objects.filter(user__id=user_id, team=team).order_by("-dated")
         data = TourPlanSerializer(plans[start:start+limit], many=True).data
         count = plans.count()
         csv_url = ''

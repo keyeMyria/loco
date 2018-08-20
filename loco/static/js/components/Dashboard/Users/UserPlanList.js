@@ -5,7 +5,7 @@ export default class UserPlanList extends Component {
 
     formatDate = (date) => {
         var d = new Date(date);
-        return d.toLocaleString();
+        return d.toDateString();
     };
 
     render() {

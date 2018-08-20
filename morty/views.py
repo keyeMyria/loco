@@ -137,7 +137,7 @@ class UserLogList(APIView):
 
         if serializer.is_valid():
             last_log = UserLog.objects.filter(user=user, team=team).last()
-            if last_log and not serializer.validated_data['action_type'] == last_log.action_type:
+            if not last_log or (last_log and not serializer.validated_data['action_type'] == last_log.action_type):
                 log = serializer.save(team=team, user=user)
                 cache.set_user_log_status(user.id,
                     team.id, log.action_type, log.created)
