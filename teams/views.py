@@ -460,6 +460,32 @@ class TourPlanList(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class TourPlanDetail(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+
+    def get(self, request, team_id, plan_id, format=None):
+        plan = get_object_or_404(TourPlan, id=plan_id, team=team_id)
+        self.check_object_permissions(request, plan.team)
+        serializer = TourPlanSerializer(plan)
+        return Response(serializer.data)
+
+    def put(self, request, team_id, plan_id, format=None):
+        plan = get_object_or_404(TourPlan, id=plan_id, team=team_id)
+        self.check_object_permissions(request, plan.team)
+        serializer = TourPlanSerializer(plan, data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, team_id, plan_id, format=None):
+        plan = get_object_or_404(TourPlan, id=plan_id, team=team_id)
+        self.check_object_permissions(request, plan.team)
+        plan.delete()
+        return Response(status=204)
+
 class TeamSync(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)
 
