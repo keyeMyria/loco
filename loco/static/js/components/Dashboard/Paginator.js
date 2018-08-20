@@ -44,6 +44,36 @@ export default class Paginator extends Component {
         this.props.getPrev();
     };
 
+    viewDownloadPopup = () => {
+        if (!this.props.csvURL) {
+            return
+        }
+
+        return (
+            <Popover
+                open={this.state.openPopover}
+                anchorEl={this.state.anchorEl}
+                anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                onRequestClose={this.handleClose} >
+                
+                <Menu>
+                    <MenuItem 
+                        value={"csv"} 
+                        primaryText={"csv"} 
+                        key={"csv"}
+                        href={this.props.csvURL} />
+
+                    <MenuItem 
+                        value={"xlsx"} 
+                        primaryText={"xlsx"} 
+                        key={"xlsx"}
+                        href={this.props.csvURL.replace("format=csv", "format=xlsx")} />
+                </Menu>
+            </Popover>
+        )
+    }
+
     render() {
         var countStart = (this.props.start+1);
         if (this.props.totalCount == 0) {
@@ -75,34 +105,12 @@ export default class Paginator extends Component {
             );
         }
 
-        var downloadPopup = (
-            <Popover
-                open={this.state.openPopover}
-                anchorEl={this.state.anchorEl}
-                anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-                targetOrigin={{horizontal: 'left', vertical: 'top'}}
-                onRequestClose={this.handleClose} >
-                
-                <Menu>
-                    <MenuItem 
-                        value={"csv"} 
-                        primaryText={"csv"} 
-                        key={"csv"}
-                        href={this.props.csvURL} />
-
-                    <MenuItem 
-                        value={"xlsx"} 
-                        primaryText={"xlsx"} 
-                        key={"xlsx"}
-                        href={this.props.csvURL.replace("format=csv", "format=xlsx")} />
-                </Menu>
-            </Popover>
-        )
+        
 
         return (
             <section className="list-pager">
                 {downloadCSV}
-                {downloadPopup}
+                {this.viewDownloadPopup()}
                 <section className="list-pager-content">
                     <p className="pager-counter">{pageCounter}</p>
                     <i className={prevClass} onClick={this.onPrevClick}>keyboard_arrow_left</i>

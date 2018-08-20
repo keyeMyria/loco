@@ -17,6 +17,18 @@ export const GET_USER_TASKS_NEXT_CACHED = 'dashboard/get_user_tasks_next_cached'
 export const GET_USER_TASKS_FAILURE = 'dashboard/get_user_tasks_failure';
 export const GET_USER_TASKS_SUCCESS = 'dashboard/get_user_tasks_success';
 export const UPDATE_QUERY = 'dashboard/update_users_query';
+export const GET_USER_LOGS_INIT = 'dashboard/get_user_logs_init';
+export const GET_USER_LOGS_START = 'dashboard/get_user_logs_start';
+export const GET_USER_LOGS_PREV_CACHED = 'dashboard/get_user_logs_prev_cached';
+export const GET_USER_LOGS_NEXT_CACHED = 'dashboard/get_user_logs_next_cached';
+export const GET_USER_LOGS_FAILURE = 'dashboard/get_user_logs_failure';
+export const GET_USER_LOGS_SUCCESS = 'dashboard/get_user_logs_success';
+export const GET_USER_PLANS_INIT = 'dashboard/get_user_plans_init';
+export const GET_USER_PLANS_START = 'dashboard/get_user_plans_start';
+export const GET_USER_PLANS_PREV_CACHED = 'dashboard/get_user_plans_prev_cached';
+export const GET_USER_PLANS_NEXT_CACHED = 'dashboard/get_user_plans_next_cached';
+export const GET_USER_PLANS_FAILURE = 'dashboard/get_user_plans_failure';
+export const GET_USER_PLANS_SUCCESS = 'dashboard/get_user_plans_success';
 
 const INITIAL_STATE = {
     inProgress: true,
@@ -34,6 +46,26 @@ const INITIAL_STATE = {
     endDate: "",
     csvURL: '',
     userTasks: {
+        inProgress: true,
+        start: -1,
+        end: 0,
+        limit: 10,
+        totalCount: -1,
+        currentCount: 0,
+        data: [],
+        csvURL: ''
+    },
+    userLogs: {
+        inProgress: true,
+        start: -1,
+        end: 0,
+        limit: 10,
+        totalCount: -1,
+        currentCount: 0,
+        data: [],
+        csvURL: ''
+    },
+    userPlans: {
         inProgress: true,
         start: -1,
         end: 0,
@@ -161,6 +193,114 @@ export default function users(state = INITIAL_STATE, action={}) {
         case GET_USER_TASKS_FAILURE:
             var tasks = {...state.userTasks, inProgress: false, error: "Unable to get tasks.", data: []}
             return { ...state, userTasks:tasks};
+        case GET_USER_LOGS_INIT:
+            var logs = {...state.userLogs,
+                data: [],
+                inProgress: true,
+                start: -1,
+                csvURL: '',
+                error: ''
+            }
+
+            return { ...state, userLogs:logs};
+        case GET_USER_LOGS_START:
+            var logs = {...state.userLogs, inProgress: true, error: ""}
+            return { ...state, userLogs:logs};
+        case GET_USER_LOGS_SUCCESS:
+            var result = JSON.parse(action.result);
+            var start = state.userLogs.start + state.userLogs.limit;
+            if (state.userLogs.start == -1) {
+                start = 0;
+            }
+
+            if (!result.data) {
+                result.data = []
+            }
+
+            var newData = state.userLogs.data.concat(result.data);
+
+            var logs = { ...state.userLogs, inProgress: false, error: "",
+                    data: newData,
+                    totalCount: result.count,
+                    currentCount: newData.length,
+                    start: start,
+                    end: start + result.data.length,
+                    csvURL: result.csv
+                };
+
+            return {...state, userLogs:logs};
+
+        case GET_USER_LOGS_NEXT_CACHED:
+            var start = state.userLogs.start + state.userLogs.limit;
+            var end = start + state.userLogs.limit;
+            if (end > state.userLogs.currentCount) {
+                end = state.userLogs.currentCount;
+            }
+
+            var logs = {...state.userLogs, start:start, end:end}
+            return {...state, userLogs:logs}
+        case GET_USER_LOGS_PREV_CACHED:
+            var end = state.userLogs.start; 
+            var start = state.userLogs.start - state.userLogs.limit;
+            var logs = {...state.userLogs, start:start, end:end}
+            return {...state, userLogs:logs}
+        case GET_USER_LOGS_FAILURE:
+            var logs = {...state.userLogs, inProgress: false, error: "Unable to get logs.", data: []}
+            return { ...state, userLogs:logs};
+        case GET_USER_PLANS_INIT:
+            var plans = {...state.userPlans,
+                data: [],
+                inProgress: true,
+                start: -1,
+                csvURL: '',
+                error: ''
+            }
+
+            return { ...state, userPlans:plans};
+        case GET_USER_PLANS_START:
+            var plans = {...state.userPlans, inProgress: true, error: ""}
+            return { ...state, userPlans:plans};
+        case GET_USER_PLANS_SUCCESS:
+            var result = JSON.parse(action.result);
+            var start = state.userPlans.start + state.userPlans.limit;
+            if (state.userPlans.start == -1) {
+                start = 0;
+            }
+
+            if (!result.data) {
+                result.data = []
+            }
+
+            var newData = state.userPlans.data.concat(result.data);
+
+            var plans = { ...state.userPlans, inProgress: false, error: "",
+                    data: newData,
+                    totalCount: result.count,
+                    currentCount: newData.length,
+                    start: start,
+                    end: start + result.data.length,
+                    csvURL: result.csv
+                };
+
+            return {...state, userPlans:plans};
+
+        case GET_USER_PLANS_NEXT_CACHED:
+            var start = state.userPlans.start + state.userPlans.limit;
+            var end = start + state.userPlans.limit;
+            if (end > state.userPlans.currentCount) {
+                end = state.userPlans.currentCount;
+            }
+
+            var plans = {...state.userPlans, start:start, end:end}
+            return {...state, userPlans:plans}
+        case GET_USER_PLANS_PREV_CACHED:
+            var end = state.userPlans.start; 
+            var start = state.userPlans.start - state.userPlans.limit;
+            var plans = {...state.userPlans, start:start, end:end}
+            return {...state, userPlans:plans}
+        case GET_USER_PLANS_FAILURE:
+            var plans = {...state.userPlans, inProgress: false, error: "Unable to get plans.", data: []}
+            return { ...state, userPlans:plans};
         case UPDATE_QUERY:
             return { ...state, query: action.query};
         case CLEAR_STATE:
@@ -371,6 +511,7 @@ export function getUserTasksPrev() {
         type: GET_USER_TASKS_PREV_CACHED
     }
 }
+
 export function updateQueryInternal(query) {
     return {
         type: UPDATE_QUERY,
@@ -386,5 +527,131 @@ export function searchUsers(query) {
     return function (dispatch, getState) {
         dispatch(updateQueryInternal(query));
         debouncedGetUsersInit(dispatch, getState);
+    }
+}
+
+function getUserLogsInitInternal(team_id, limit, user_id) {
+    var url = '/teams/'+team_id+'/logs/?start=0&limit='+limit;
+    url = url + '&user=' + user_id;
+    return {
+        types: [GET_USER_LOGS_INIT, GET_USER_LOGS_SUCCESS, GET_USER_LOGS_FAILURE],
+        promise: (client) => client.local.get(url,
+            {
+                cancelPrevious: true,
+            }
+        )
+    }
+}
+
+export function getUserLogsInit (user_id) {
+    return function (dispatch, getState) {
+        var state = getState();
+        var limit = state.users.userLogs.limit;
+        var query = state.users.userLogs.query;
+        var team_id = state.dashboard.team_id;
+        return dispatch(getUserLogsInitInternal(team_id, limit, user_id));
+    }
+}
+
+function getUserLogsNextCachedInternal() {
+    return {type: GET_USER_LOGS_NEXT_CACHED};
+}
+
+function getUserLogsNextInternal(team_id, start, limit, user_id) {
+    var url = '/teams/'+team_id+'/logs/?start=' + start + '&limit='+(limit);
+    url = url + '&user=' + user_id;
+    
+    return {
+        types: [GET_USER_LOGS_START, GET_USER_LOGS_SUCCESS, GET_USER_LOGS_FAILURE],
+        promise: (client) => client.local.get(url,
+            {
+                cancelPrevious: true,
+            }
+        )
+    }
+}
+
+export function getUserLogsNext(user_id) {
+    return function (dispatch, getState) {
+        var state = getState();
+        var team_id = state.dashboard.team_id;
+        var start = state.userLogs.start;
+        var limit = state.userLogs.limit;
+        var currentCount = state.userLogs.currentCount;
+        start = start + limit;
+        if (start < currentCount) {
+            dispatch(getUserLogsNextCachedInternal());
+        } else {
+            dispatch(getUserLogsNextInternal(team_id, start, limit, user_id));
+        }
+    }
+}
+
+export function getUserLogsPrev() {
+    return {
+        type: GET_USER_LOGS_PREV_CACHED
+    }
+}
+
+function getUserPlansInitInternal(team_id, limit, user_id) {
+    var url = '/teams/'+team_id+'/plans/?start=0&limit='+limit;
+    url = url + '&user=' + user_id;
+    return {
+        types: [GET_USER_PLANS_INIT, GET_USER_PLANS_SUCCESS, GET_USER_PLANS_FAILURE],
+        promise: (client) => client.local.get(url,
+            {
+                cancelPrevious: true,
+            }
+        )
+    }
+}
+
+export function getUserPlansInit (user_id) {
+    return function (dispatch, getState) {
+        var state = getState();
+        var limit = state.users.userPlans.limit;
+        var query = state.users.userPlans.query;
+        var team_id = state.dashboard.team_id;
+        return dispatch(getUserPlansInitInternal(team_id, limit, user_id));
+    }
+}
+
+function getUserPlansNextCachedInternal() {
+    return {type: GET_USER_PLANS_NEXT_CACHED};
+}
+
+function getUserPlansNextInternal(team_id, start, limit, user_id) {
+    var url = '/teams/'+team_id+'/plans/?start=' + start + '&limit='+(limit);
+    url = url + '&user=' + user_id;
+    
+    return {
+        types: [GET_USER_PLANS_START, GET_USER_PLANS_SUCCESS, GET_USER_PLANS_FAILURE],
+        promise: (client) => client.local.get(url,
+            {
+                cancelPrevious: true,
+            }
+        )
+    }
+}
+
+export function getUserPlansNext(user_id) {
+    return function (dispatch, getState) {
+        var state = getState();
+        var team_id = state.dashboard.team_id;
+        var start = state.userPlans.start;
+        var limit = state.userPlans.limit;
+        var currentCount = state.userPlans.currentCount;
+        start = start + limit;
+        if (start < currentCount) {
+            dispatch(getUserPlansNextCachedInternal());
+        } else {
+            dispatch(getUserPlansNextInternal(team_id, start, limit, user_id));
+        }
+    }
+}
+
+export function getUserPlansPrev() {
+    return {
+        type: GET_USER_PLANS_PREV_CACHED
     }
 }

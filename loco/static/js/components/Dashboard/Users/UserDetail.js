@@ -5,13 +5,21 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import DeleteDialog from '../DeleteDialog';
 import TaskListCard from '../Tasks/TaskListCard';
+import UserLogCard from './UserLogCard';
+import UserPlanCard from './UserPlanCard';
 
 import { 
     getUserDetails, 
     clearState, 
     getUserTasksInit,
     getUserTasksNext,
-    getUserTasksPrev, } from '../../../reducer/users';
+    getUserTasksPrev,
+    getUserLogsInit,
+    getUserLogsNext,
+    getUserLogsPrev ,
+    getUserPlansInit,
+    getUserPlansNext,
+    getUserPlansPrev } from '../../../reducer/users';
 
 class UserDetail extends Component {
     
@@ -83,9 +91,9 @@ class UserDetail extends Component {
     };
 
     viewUserTasks = () => {
-    	if (!this.props.userDetailsData) {
-    		return
-    	}
+        if (!this.props.userDetailsData) {
+            return
+        }
 
         return (
             <TaskListCard
@@ -94,6 +102,38 @@ class UserDetail extends Component {
                 getTasksInit={() => this.props.getUserTasksInit(this.props.match.params.id)}
                 getTasksNext={() => this.props.getUserTasksNext(this.props.match.params.id)} 
                 getTasksPrev={() => this.props.getUserTasksPrev(this.props.match.params.id)} 
+            />
+        )
+    }
+
+    viewUserLogs = () => {
+        if (!this.props.userDetailsData) {
+            return
+        }
+
+        return (
+            <UserLogCard
+                listTitle={"Attendance sheet for " + this.props.userDetailsData.user.name}
+                logs={this.props.userLogs}
+                getUserLogsInit={() => this.props.getUserLogsInit(this.props.match.params.id)}
+                getUserLogsNext={() => this.props.getUserLogsNext(this.props.match.params.id)} 
+                getUserLogsPrev={() => this.props.getUserLogsPrev(this.props.match.params.id)} 
+            />
+        )
+    }
+
+    viewUserPlans = () => {
+        if (!this.props.userDetailsData) {
+            return
+        }
+
+        return (
+            <UserPlanCard
+                listTitle={"Tour plan by " + this.props.userDetailsData.user.name}
+                plans={this.props.userPlans}
+                getUserPlansInit={() => this.props.getUserPlansInit(this.props.match.params.id)}
+                getUserPlansNext={() => this.props.getUserPlansNext(this.props.match.params.id)} 
+                getUserPlansPrev={() => this.props.getUserPlansPrev(this.props.match.params.id)} 
             />
         )
     }
@@ -129,6 +169,8 @@ class UserDetail extends Component {
                 <section className="content-scroller">
                 {this.viewUserDetails()}
                 {this.viewUserTasks()}
+                {this.viewUserLogs()}
+                {this.viewUserPlans()}
                 </section>
             </div>            
         );
@@ -141,6 +183,8 @@ export default UserDetail = connect(
         userDetailsData: state.users.userDetailsData, 
         getUserDetailsProgress: state.users.getUserDetailsProgress, 
         userTasks: state.users.userTasks,
+        userLogs: state.users.userLogs,
+        userPlans: state.users.userPlans,
     }), 
     {
         getUserDetails: getUserDetails, 
@@ -148,6 +192,12 @@ export default UserDetail = connect(
         getUserTasksInit: getUserTasksInit,
         getUserTasksNext: getUserTasksNext,
         getUserTasksPrev: getUserTasksPrev,
+        getUserLogsInit: getUserLogsInit,
+        getUserLogsNext: getUserLogsNext,
+        getUserLogsPrev: getUserLogsPrev,
+        getUserPlansInit: getUserPlansInit,
+        getUserPlansNext: getUserPlansNext,
+        getUserPlansPrev: getUserPlansPrev,
     }
 )(UserDetail)
 

@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import AccountMenu from '../../common/accountMenu';
 import UserListCard from './UserListCard';
 import UserListFilters from './UserListFilters';
+import Dialog from 'material-ui/Dialog';
+import FlatButton from 'material-ui/FlatButton';
 
 import {clearState, getUsersInit, getUsersNext, getUsersPrev} from '../../../reducer/users';
 
@@ -11,7 +13,9 @@ class Users extends Component {
     
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            isOpenAddUserDialog: false
+        };
     }
 
     componentWillMount() {
@@ -20,16 +24,21 @@ class Users extends Component {
 
     closeAddUserDialog = () => {
         this.setState({
-            openAddUserDialog: false
+            isOpenAddUserDialog: false
+        })
+    };
+
+    openAddUserDialog = () => {
+        this.setState({
+            isOpenAddUserDialog: true
         })
     };
 
     render() {
-        const addUserActions = [
+        const addUserDialogActions = [
               <FlatButton
                 label="Done"
                 primary={true}
-                keyboardFocused={true}
                 onClick={this.closeAddUserDialog}
               />,
             ];
@@ -44,20 +53,21 @@ class Users extends Component {
                     </a>
 
                     <section className="header-actions">
-                        <p className="header-action" onClick={this.openDialog}>
-                            <i className="material-icons header-action-icon">delete_outline</i>
+                        <p className="header-action" onClick={this.openAddUserDialog}>
+                            <i className="material-icons header-action-icon">person_add</i>
                             <p className="header-action-name">Add user</p>
                         </p>
-                        <Dialog
-                            title="Add user"
-                            actions={addUserActions}
-                            modal={false}
-                            open={this.state.openAddUserDialog}
-                            onRequestClose={this.closeAddUserDialog}
-                        >
-                          Share following link with user on a mobile device
-                        </Dialog>
                     </section>
+
+                    <Dialog
+                      title="Add new user"
+                      actions={addUserDialogActions}
+                      modal={false}
+                      open={this.state.isOpenAddUserDialog}
+                      onRequestClose={this.closeAddUserDialog}
+                    >
+                      {'User code "' + this.props.team_code + '" to join new team. Please share this code with new users.'}
+                    </Dialog>
                     
                     <AccountMenu />
                 </header>
@@ -76,7 +86,11 @@ class Users extends Component {
 }
 
 export default Users = connect(
-    (state) => ({team_name: state.dashboard.team_name, users: state.users}), 
+    (state) => ({
+        team_name: state.dashboard.team_name, 
+        team_code: state.dashboard.team_code, 
+        users: state.users
+    }), 
     {
         clearState:clearState, 
         getUsersInit: getUsersInit, 

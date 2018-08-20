@@ -11,11 +11,11 @@ from loco import utils
 from loco.services import cache, solr
 
 from . import constants
-from .models import Team, TeamMembership, Checkin, CheckinMedia, Message
+from .models import Team, TeamMembership, Checkin, CheckinMedia, Message, UserLog, TourPlan
 from .serializers import TeamSerializer, TeamMembershipSerializer, CheckinSerializer,\
-    UserMediaSerializer, CheckinMediaSerializer, serialize_events, \
-    MessageSerializer, ConversationMessageSerializer, TYPE_LAST_LOCATION
-from .permissions import IsTeamMember, IsAdminOrReadOnly, IsAdmin, IsMe
+    UserMediaSerializer, CheckinMediaSerializer, serialize_events, UserLogSerializer, \
+    MessageSerializer, ConversationMessageSerializer, TYPE_LAST_LOCATION, TourPlanSerializer
+from .permissions import IsTeamMember, IsAdminOrReadOnly, IsAdmin, IsMe, IsTeamAdmin
 
 from accounts.models import User
 from accounts.serializers import UserSerializer
@@ -79,7 +79,7 @@ class TeamMembershipList(APIView):
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
         memberships = TeamMembership.objects.filter(team=team, user__is_active=True).exclude(status=constants.STATUS_REJECTED)
-        serializer = TeamMembershipSerializer(memberships, many=True)
+        serializer = TeamMembershipSerializer(memberships, many=True, context={'team': team})
         return Response(serializer.data)
 
     def post(self, request, team_id, format=None):
@@ -377,3 +377,120 @@ class MessagesDetail(APIView):
             thread=thread_id, created__lt=start).order_by('-created')[:10]
         serializer = MessageSerializer(messages, many=True)
         return Response(data=serializer.data)
+
+class UserLogList(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+
+    def get(self, request, team_id, format=None):
+        PARAM_USER_ID = "user"
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+        start, limit = utils.get_query_start_limit(request)
+        start = int(start)
+        limit = int(limit)
+        user_id = request.query_params.get(PARAM_USER_ID)
+        logs = UserLog.objects.filter(user__id=user_id, team=team).order_by("-created")
+        data = UserLogSerializer(logs[start:start+limit], many=True).data
+        count = logs.count()
+        csv_url = ''
+        if count > 0:
+            csv_url = "/web/teams/{0}/logs/download/?user={1}&start={2}&limit={3}&format=csv".format(
+        team_id, user_id, 0, count)
+
+        response = {
+            'data':data,
+            'count':count,
+            'csv': csv_url
+        }
+        
+        return Response(data=response)
+
+
+    def post(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+        serializer = UserLogSerializer(data=request.data)
+
+        if serializer.is_valid():
+            last_log = UserLog.objects.filter(user=request.user, team=team).last()
+            if not last_log or (last_log and not serializer.validated_data['action_type'] == last_log.action_type):
+                log = serializer.save(team=team, user=request.user)
+                cache.set_user_log_status(request.user.id,
+                    team.id, log.action_type, log.created)
+            return Response()
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TourPlanList(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+
+    def get(self, request, team_id, format=None):
+        PARAM_USER_ID = "user"
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+        start, limit = utils.get_query_start_limit(request)
+        start = int(start)
+        limit = int(limit)
+        user_id = request.query_params.get(PARAM_USER_ID)
+        plans = TourPlan.objects.filter(user__id=user_id, team=team).order_by("-dated")
+        data = TourPlanSerializer(plans[start:start+limit], many=True).data
+        count = plans.count()
+        csv_url = ''
+        if count > 0:
+            csv_url = "/web/teams/{0}/plans/download/?user={1}&start={2}&limit={3}&format=csv".format(
+        team_id, user_id, 0, count)
+
+        response = {
+            'data':data,
+            'count':count,
+            'csv': csv_url
+        }
+
+        return Response(data=response)
+
+
+    def post(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+        serializer = TourPlanSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save(team=team, user=request.user)
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TourPlanDetail(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+
+    def get(self, request, team_id, plan_id, format=None):
+        plan = get_object_or_404(TourPlan, id=plan_id, team=team_id)
+        self.check_object_permissions(request, plan.team)
+        serializer = TourPlanSerializer(plan)
+        return Response(serializer.data)
+
+    def put(self, request, team_id, plan_id, format=None):
+        plan = get_object_or_404(TourPlan, id=plan_id, team=team_id)
+        self.check_object_permissions(request, plan.team)
+        serializer = TourPlanSerializer(plan, data=request.data)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, team_id, plan_id, format=None):
+        plan = get_object_or_404(TourPlan, id=plan_id, team=team_id)
+        self.check_object_permissions(request, plan.team)
+        plan.delete()
+        return Response(status=204)
+
+class TeamSync(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+        log_status = cache.get_user_log_status(request.user.id, team.id)
+        return Response(data={'log_status': log_status})

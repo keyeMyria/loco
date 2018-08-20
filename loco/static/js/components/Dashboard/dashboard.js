@@ -13,7 +13,7 @@ class Dashboard extends Component {
 
 	constructor(props) {
         super(props);
-        this.props.initTeamId(this.props.team_id, this.props.team_name);
+        this.props.initTeamId(this.props.team_id, this.props.team_name, this.props.team_code);
     }
 
     render() {

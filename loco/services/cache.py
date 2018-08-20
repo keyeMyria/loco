@@ -29,6 +29,8 @@ KEY_STATUS = "status_"
 KEY_STATUS_SIGNIN = "signin"
 KEY_TIME_SIGNIN = "signin_time_"
 KEY_STATUS_LOCATION = "location"
+KEY_LOG_STATUS = "log_"
+KEY_LOG_TIME = "log_time_"
 KEY_GROUP_MEMBERS = 'members_'
 
 USER_STATUS_SIGNEDIN = "signedin" 
@@ -92,6 +94,25 @@ def set_user_signin_status(user_id, status, timestamp):
     key = KEY_TIME_SIGNIN + str(user_id)
     cache.set(key, timestamp)
 
+def set_user_log_status(user_id, team_id, status, timestamp):
+    if settings.DEBUG:
+        raise Exception("Cannot use cache in developement")
+
+    if not user_id or not team_id:
+        return
+        
+    key = KEY_LOG_STATUS + str(user_id) + "_" + str(team_id)
+    cache.set(key, status)
+
+    key = KEY_LOG_TIME + str(user_id) + "_" + str(team_id)
+    cache.set(key, timestamp)
+
+def get_user_log_status(user_id, team_id):
+    if not user_id or not team_id:
+        return
+        
+    key = KEY_LOG_STATUS + str(user_id) + "_" + str(team_id)
+    return cache.get(key)
 
 def get_user_signin_timestamp(user_id):
     if not user_id:

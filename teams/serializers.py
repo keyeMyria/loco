@@ -1,6 +1,7 @@
 import json
 from rest_framework import serializers
-from .models import Team, TeamMembership, Checkin, CheckinMedia, Attendance, UserMedia, Message
+from .models import Team, TeamMembership, Checkin, CheckinMedia
+from .models import Attendance, UserMedia, Message, UserLog, TourPlan
 
 from accounts.serializers import UserSerializer, UserBioSerializer
 from groups.serializers import GroupSerializer
@@ -28,8 +29,8 @@ class TeamSerializer(serializers.ModelSerializer):
         return instance
 
 class TeamMembershipSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
     team = TeamSerializer(read_only=True)
+    user = serializers.SerializerMethodField()
 
     class Meta:
         model = TeamMembership
@@ -39,6 +40,9 @@ class TeamMembershipSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Team.objects.create(**validated_data)
+
+    def get_user(self, obj):
+        return UserSerializer(obj.user, context=self.context).data
 
     def get_configuration(self, role):
         configuration = {
@@ -166,3 +170,15 @@ class ConversationMessageSerializer(serializers.ModelSerializer):
             return ''
 
         return value.strip().encode('utf-8')
+
+class UserLogSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserLog
+        fields = "__all__"
+        read_only_fields = ('created', 'updated', 'user', 'team')
+
+class TourPlanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TourPlan
+        fields = "__all__"
+        read_only_fields = ('created', 'updated', 'user', 'team')
