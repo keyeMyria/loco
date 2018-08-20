@@ -49,6 +49,8 @@ urlpatterns += [
     url(r'^web/signup/?$', accounts_web_views.signup),
     url(r'^web/password/?$', accounts_web_views.password),
     url(r'^web/teams/?$', teams_web_views.teams),
+    url(r'^web/teams/create/?$', teams_web_views.teams),
+    url(r'^web/teams/join/?$', teams_web_views.teams),
     url(r'^web/teams/(?P<team_id>[0-9]+)/items/download/$', crm_web_views.items_download),
     url(r'^web/teams/(?P<team_id>[0-9]+)/merchants/download/$', crm_web_views.merchants_download),
     url(r'^web/teams/(?P<team_id>[0-9]+)/tasks/download/$', tasks_web_views.tasks_download),
