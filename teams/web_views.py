@@ -33,6 +33,7 @@ def dashboard(request, team_id):
         'pageProps': json.dumps({
             "team_id": team.id,
             "team_name": team.name,
+            "team_code": team.code,
         }),
         "page_name": "dashboardpage",   
     }
