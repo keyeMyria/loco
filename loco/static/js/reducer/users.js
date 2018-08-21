@@ -32,6 +32,9 @@ export const GET_USER_PLANS_SUCCESS = 'dashboard/get_user_plans_success';
 export const REMOVE_USER_START = 'dashboard/remove_user_start';
 export const REMOVE_USER_FAILURE = 'dashboard/remove_user_failure';
 export const REMOVE_USER_SUCCESS = 'dashboard/remove_user_success';
+export const CHANGE_USER_ROLE_START = 'dashboard/change_user_role_start';
+export const CHANGE_USER_ROLE_FAILURE = 'dashboard/change_user_role_failure';
+export const CHANGE_USER_ROLE_SUCCESS = 'dashboard/change_user_role_success';
 
 const INITIAL_STATE = {
     inProgress: true,
@@ -154,6 +157,16 @@ export default function users(state = INITIAL_STATE, action={}) {
         case REMOVE_USER_FAILURE:
             return { ...state, removeUserSuccess:false, removeUserProgress: false, 
                 removeUserError: error,
+            };
+        case CHANGE_USER_ROLE_START:
+            return { ...state, changeUserRoleSuccess:false, changeUserRoleProgress: true, changeUserRoleError: ""};
+        case CHANGE_USER_ROLE_SUCCESS:
+            return { ...state, changeUserRoleSuccess:true, changeUserRoleProgress: false, 
+                changeUserRoleError: ""
+            };
+        case CHANGE_USER_ROLE_FAILURE:
+            return { ...state, changeUserRoleSuccess:false, changeUserRoleProgress: false, 
+                changeUserRoleError: error,
             };
         case GET_USER_TASKS_INIT:
             var tasks = {...state.userTasks,
@@ -353,6 +366,17 @@ export function removeUserInternal(user_id, team_id) {
     return {
         types: [REMOVE_USER_START, REMOVE_USER_SUCCESS, REMOVE_USER_FAILURE],
         promise: (client) => client.local.del('/teams/' + team_id + '/members/' + user_id)
+    }
+}
+
+export function changeUserRole(user_id, team_id, role) {
+    return {
+        types: [CHANGE_USER_ROLE_START, CHANGE_USER_ROLE_SUCCESS, CHANGE_USER_ROLE_FAILURE],
+        promise: (client) => client.local.put('/teams/' + team_id + '/members/' + user_id + "/", {
+            data: {
+                role: role
+            }
+        })
     }
 }
 

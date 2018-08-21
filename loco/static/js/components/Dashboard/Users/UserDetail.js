@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
+import FlatButton from 'material-ui/FlatButton';
 import RaisedButton from 'material-ui/RaisedButton';
 import DeleteDialog from '../DeleteDialog';
 import TaskListCard from '../Tasks/TaskListCard';
 import UserLogCard from './UserLogCard';
 import UserPlanCard from './UserPlanCard';
-
-import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
+import UserRoleDialog from './UserRoleDialog';
 
 import { 
     getUserDetails, 
@@ -30,7 +30,8 @@ class UserDetail extends Component {
     constructor(props) {
         super(props); 
         this.state = {
-            isOpenRemoveUserDialog: false
+            isOpenRemoveUserDialog: false,
+            openDialog: false,
         };
     }
 
@@ -195,6 +196,18 @@ class UserDetail extends Component {
         );
     }
 
+    openDialog = () => {
+        this.setState({
+          openDialog: true
+        });
+      } 
+
+    closeDialog = () => {
+        this.setState({
+            openDialog: false
+        });
+    }
+
     render() {
 
         const style = {
@@ -208,6 +221,11 @@ class UserDetail extends Component {
         let props = this.props;
         return (
             <div className="content-holder">
+                { this.state.openDialog && 
+                    <UserRoleDialog 
+                        closeDialog = {this.closeDialog}
+                        user_id = {this.props.match.params.id} />
+                }
 
                 { (props.removeUserSuccess) &&
                     <section className="success-msg-holder">
@@ -235,7 +253,7 @@ class UserDetail extends Component {
                             <p className="header-action-name">Remove</p>
                         </p>
                         <p className="header-action" onClick={this.openDialog}>
-                            <i className="material-icons header-action-icon">delete_outline</i>
+                            <i className="material-icons header-action-icon">cached</i>
                             <p className="header-action-name">Change Role</p>
                         </p>
                     </section>
