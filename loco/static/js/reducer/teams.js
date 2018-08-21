@@ -31,7 +31,7 @@ export default function teams(state = INITIAL_STATE, action={}) {
         case JOIN_TEAM_START:
             return { ...state, inProgress: true};
         case JOIN_TEAM_SUCCESS:
-            return { ...state, inProgress: false, teamData: JSON.parse(action.result || '{}')};
+            return { ...state, inProgress: false, joinTeamData: JSON.parse(action.result || '{}')};
         case JOIN_TEAM_FAILURE:
             return { ...state, inProgress: false, error: "Unable to join team"};
         default:

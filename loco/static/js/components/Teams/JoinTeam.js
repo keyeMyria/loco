@@ -17,7 +17,10 @@ class JoinTeam extends Component {
         }
     }
 
-    componentWillReceiveProps() {
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.joinTeamData && nextProps.joinTeamData.team && nextProps.joinTeamData.team.id) {
+            window.location.href = "/web/teams/" + nextProps.joinTeamData.team.id;
+        }
     }
 
     onCodeChange = (ev, val) => {
@@ -84,6 +87,6 @@ class JoinTeam extends Component {
 }
 
 export default JoinTeam = connect(
-    ((state) => ({ inProgress: state.teams.inProgress  })) ,
+    ((state) => ({ inProgress: state.teams.inProgress, joinTeamData: state.teams.joinTeamData  })) ,
     {joinTeam: joinTeam,}
 )(JoinTeam);
