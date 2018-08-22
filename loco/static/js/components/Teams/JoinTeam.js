@@ -50,9 +50,19 @@ class JoinTeam extends Component {
             marginTop: "32px"
         };
 
+        const buttonStyle = {
+            backgroundColor : "#CB202D"
+        }
+
         return (
             <section className="section-user-teams">
                 <h1>Join A Team</h1>
+
+                { this.props.error &&
+                    <section className="success-msg-holder" >
+                        <p className="success-msg error-msg">{ this.props.error }</p>
+                    </section>
+                }
 
                 { this.props.inProgress
                     ? (
@@ -76,6 +86,7 @@ class JoinTeam extends Component {
                                 label="SUBMIT" 
                                 primary={true} 
                                 style={style} 
+                                buttonStyle = {buttonStyle}
                                 backgroundColor = "#CB202D"
                                 onClick={this.handleSubmit} />
                         </div>
@@ -87,6 +98,12 @@ class JoinTeam extends Component {
 }
 
 export default JoinTeam = connect(
-    ((state) => ({ inProgress: state.teams.inProgress, joinTeamData: state.teams.joinTeamData  })) ,
-    {joinTeam: joinTeam,}
+    ((state) => ({ 
+        inProgress: state.teams.inProgress, 
+        joinTeamData: state.teams.joinTeamData,
+        error: state.teams.joinTeamError,
+    })) ,
+    {
+        joinTeam: joinTeam,
+    }
 )(JoinTeam);

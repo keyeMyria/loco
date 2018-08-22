@@ -49,6 +49,10 @@ class CreateTeam extends Component {
             marginTop: "32px"
         };
 
+        const buttonStyle = {
+            backgroundColor : "#CB202D"
+        }
+
         return (
             <section className="section-user-teams">
                 <h1>Create Team</h1>
@@ -75,6 +79,7 @@ class CreateTeam extends Component {
                                 primary={true} 
                                 style={style} 
                                 backgroundColor = "#CB202D"
+                                buttonStyle = {buttonStyle}
                                 onClick={this.handleSubmit} />
                         </div>
                         )
