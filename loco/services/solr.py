@@ -179,6 +179,23 @@ def update_task_index():
         profiler.stop(500)
         return None
 
+def update_user_index():
+    url1 = SOLR_HOST + "user/dataimport?command=delta-import"
+    url2 = SOLR_HOST + "admin/cores?action=RELOAD&core=user"
+    metric = METRIC + "update_user_index"
+
+    try:
+        profiler = ProfilingRecord().start(metric)
+        response1 = requests.get(url1)
+        if response1.status_code != 200:
+            profiler.stop(response1.status_code)
+        else:
+            response2 = requests.get(url2)
+            profiler.stop(response2.status_code)
+    except:
+        profiler.stop(500)
+        return None
+
 def search_merchants(team_id, search_options, start, limit):
     query = SOLR_HOST + 'merchant/select?q=[[QUERY]]&wt=json&start=[[START]]&rows=[[LIMIT]]&sort=name asc'
     query = query.replace("[[START]]", str(start)).replace("[[LIMIT]]", str(limit))

@@ -10,7 +10,7 @@ from rest_framework.parsers import MultiPartParser
 from loco import utils
 from loco.services import cache, solr
 
-from . import constants
+from . import constants, tasks
 from .models import Team, TeamMembership, Checkin, CheckinMedia, Message, UserLog, TourPlan
 from .serializers import TeamSerializer, TeamMembershipSerializer, CheckinSerializer,\
     UserMediaSerializer, CheckinMediaSerializer, serialize_events, UserLogSerializer, \
@@ -105,6 +105,7 @@ class TeamMembershipList(APIView):
 def join_team(request, format=None):
     team = get_object_or_404(Team, code=request.data.get('code'))
     membership = team.add_member(request.user, request.user)
+    tasks.update_user_index_async.delay()
     if membership:
         serializer = TeamMembershipSerializer(membership)
         return Response(serializer.data)
