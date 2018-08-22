@@ -33,7 +33,7 @@ export default function teams(state = INITIAL_STATE, action={}) {
         case JOIN_TEAM_SUCCESS:
             return { ...state, inProgress: false, joinTeamData: JSON.parse(action.result || '{}')};
         case JOIN_TEAM_FAILURE:
-            return { ...state, inProgress: false, error: "Unable to join team"};
+            return { ...state, inProgress: false, joinTeamError: "Invalid code."};
         default:
             return state;
     }

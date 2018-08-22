@@ -124,3 +124,21 @@ body {
     text-align: center;
     padding-top: 100px;
 }
+
+.success-msg-holder {
+    padding-top: 56px;
+    text-align: center;
+}
+
+.success-msg-holder .success-msg {
+    margin: 0 auto;
+    display: inline-block;
+    background-color: #26ca26;
+    padding: 8px 16px;
+    color: #fff;
+    font-weight: 500;
+}
+
+.success-msg-holder .error-msg {
+    background-color: red;
+}
