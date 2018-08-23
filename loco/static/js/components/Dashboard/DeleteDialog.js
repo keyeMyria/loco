@@ -52,7 +52,7 @@ export default class DeleteDialog extends Component {
 					open={this.state.open}
 					onRequestClose={this.handleClose}
 				>
-					Are you sure you want to delete the selected {this.props.daraType}?
+					Are you sure you want to delete the selected {this.props.dataType}?
 				</Dialog>
 			</div>
 		);

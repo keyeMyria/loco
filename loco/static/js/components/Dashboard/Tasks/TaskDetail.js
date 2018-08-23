@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from "react-router-dom";
+import DeleteDialog from '../DeleteDialog';
 
-import { getTaskDetails, clearState } from '../../../reducer/tasks';
+import { getTaskDetails, clearState, deleteTask} from '../../../reducer/tasks';
 
 class TaskDetail extends Component {
     
@@ -17,6 +18,7 @@ class TaskDetail extends Component {
             task_id: "",
             sales_type: "",
             merchant_seller_name: "",
+            isOpenDeleteDialog: false,
         } 
     }
 
@@ -25,12 +27,29 @@ class TaskDetail extends Component {
         return d.toLocaleString();
     };
 
+    openDeleteDialog = (ev) => {
+        ev.preventDefault()
+        this.setState({
+            isOpenDeleteDialog: true
+        });
+    }
+
+    closeDeleteDialog = (ev) => {
+        this.setState({
+            isOpenDeleteDialog: false
+        });
+    }    
+
+    deleteTask = () => {
+        this.props.deleteTask(this.props.match.params.id);
+    }
+
     componentWillMount() {
         this.props.clearState();
         if(this.props.match.params.id) {
             this.props.getTaskDetails(this.props.team_id, this.props.match.params.id);        
         }
-    }
+    };
 
     componentWillReceiveProps(nextProps) {
         let task = nextProps.taskDetailsData;
@@ -68,12 +87,32 @@ class TaskDetail extends Component {
             <div className="content-holder">
                 <header className="header">
                     <h1 className="title">{"Order " + this.props.match.params.id}</h1>
+                    <section className="header-actions">
+                        <p className="header-action" onClick={this.openDeleteDialog}>
+                            <i className="material-icons header-action-icon">delete_outline</i>
+                            <p className="header-action-name">DELETE</p>
+                        </p>
+                    </section>
                 </header>
 
                 { props.error &&
                     <section className="success-msg-holder" >
                         <p className="success-msg error-msg">{ props.error }</p>
                     </section>
+                }
+
+                { props.deleteTaskSuccess &&
+                    <section className="success-msg-holder">
+                        <p className="success-msg">&#x2714; Order has been successfully deleted. It will reflect in few mins.</p>
+                    </section>
+                }
+
+                { this.state.isOpenDeleteDialog &&
+                    <DeleteDialog 
+                        title={"Delete Order " + props.match.params.id}
+                        dataType="order"
+                        closeDialog={this.closeDeleteDialog}
+                        deleteData={this.deleteTask} />
                 }
                 
                 <section className="content-scroller">
@@ -185,9 +224,17 @@ class TaskDetail extends Component {
 }
 
 export default TaskDetail = connect(
-    (state) => ({ team_id: state.dashboard.team_id, error: state.tasks.error, 
-        taskDetailsData: state.tasks.taskDetailsData, getTaskProgress: state.tasks.getTaskDetailsProgress}), 
-    {getTaskDetails: getTaskDetails, clearState: clearState}
+    (state) => ({ 
+        team_id: state.dashboard.team_id, 
+        error: state.tasks.error, 
+        taskDetailsData: state.tasks.taskDetailsData, 
+        getTaskProgress: state.tasks.getTaskDetailsProgress,
+    }), 
+    {
+        getTaskDetails: getTaskDetails, 
+        clearState: clearState,
+        deleteTask: deleteTask
+    }
 )(TaskDetail)
 
 

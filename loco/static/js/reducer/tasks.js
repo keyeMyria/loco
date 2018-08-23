@@ -16,6 +16,9 @@ export const CLEAR_STATE = 'dashboard/clear_state'
 export const UPDATE_QUERY = 'dashboard/update_tasks_query';
 export const UPDATE_FILTER = 'dashboard/update_tasks_filters';
 export const UPDATE_FILTER_DATE = 'dashboard/update_tasks_filter_date';
+export const DELETE_TASK_START = 'dashboard/delete_task_start';
+export const DELETE_TASK_FAILURE = 'dashboard/delete_task_failure';
+export const DELETE_TASK_SUCCESS = 'dashboard/delete_task_success';
 
 const INITIAL_STATE = {
     inProgress: true,
@@ -124,6 +127,13 @@ export default function tasks(state = INITIAL_STATE, action={}) {
             return { ...state, filters: action.filters}
         case UPDATE_FILTER_DATE:
             return { ...state, startDate: action.startDate, endDate: action.endDate}
+        case DELETE_TASK_START:
+            return { ...state, deleteTaskProgress: true, deleteTaskSuccess:false};
+        case DELETE_TASK_SUCCESS:
+            return { ...state, deleteTaskProgress: false, deleteTaskSuccess: true};
+        case DELETE_TASK_FAILURE:
+            var error = "Something went wrong. Please try again later.";
+            return { ...state, deleteTaskProgress: false, error: error, deleteTaskSuccess:false};
         case CLEAR_STATE:
             return INITIAL_STATE;
         default:
@@ -321,5 +331,12 @@ export function getTaskDetails(team_id, task_id) {
 export function clearState() {
     return {
         type: CLEAR_STATE
+    }
+}
+
+export function deleteTask(task_id) {
+    return {
+        types: [DELETE_TASK_START, DELETE_TASK_SUCCESS, DELETE_TASK_FAILURE],
+        promise: (client) => client.local.del('/tasks/' + task_id)
     }
 }

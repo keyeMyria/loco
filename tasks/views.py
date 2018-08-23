@@ -47,7 +47,7 @@ class TaskList(APIView):
         start, limit = utils.get_query_start_limit(request)
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
-        tasks = team.task_set.exclude(status=models.Task.STATUS_DELETED)
+        tasks = team.task_set.exclude(is_deleted=True)
         if filter_assigned_to:
             if filter_assigned_to == "0" or filter_assigned_to == 0:
                 tasks = tasks.filter(assigned_to__isnull=True)
@@ -206,8 +206,9 @@ class TaskDetail(APIView):
     def delete(self, request, task_id, format=None):
         task = get_object_or_404(models.Task, id=task_id)
         self.check_object_permissions(request, task)
-        task.status = models.Task.STATUS_DELETED
+        task.is_deleted = True
         task.save()
+        tasks.update_task_index_async.delay()
         return Response(status=204)
 
 @api_view(['POST'])
