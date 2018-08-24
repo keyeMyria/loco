@@ -229,6 +229,7 @@ export default TaskDetail = connect(
         error: state.tasks.error, 
         taskDetailsData: state.tasks.taskDetailsData, 
         getTaskProgress: state.tasks.getTaskDetailsProgress,
+        deleteTaskSuccess: state.tasks.deleteTaskSuccess
     }), 
     {
         getTaskDetails: getTaskDetails, 
