@@ -208,6 +208,9 @@ class TaskDetail(APIView):
         self.check_object_permissions(request, task)
         task.is_deleted = True
         task.save()
+        snapshot = TaskSnapshot.objects.get(task=task)
+        snapshot.is_deleted = True
+        snapshot.save()
         tasks.update_task_index_async.delay()
         return Response(status=204)
 
