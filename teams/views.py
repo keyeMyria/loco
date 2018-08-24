@@ -494,4 +494,4 @@ class TeamSync(APIView):
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
         log_status = cache.get_user_log_status(request.user.id, team.id)
-        return Response(data={'log_status': log_status})
+        return Response(data={'log_status': log_status == 'signin'})
