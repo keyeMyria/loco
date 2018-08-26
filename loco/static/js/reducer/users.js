@@ -549,9 +549,9 @@ export function getUserTasksNext(user_id) {
     return function (dispatch, getState) {
         var state = getState();
         var team_id = state.dashboard.team_id;
-        var start = state.userTasks.start;
-        var limit = state.userTasks.limit;
-        var currentCount = state.userTasks.currentCount;
+        var start = state.users.userTasks.start;
+        var limit = state.users.userTasks.limit;
+        var currentCount = state.users.userTasks.currentCount;
         start = start + limit;
         if (start < currentCount) {
             dispatch(getUserTasksNextCachedInternal());
@@ -630,9 +630,9 @@ export function getUserLogsNext(user_id) {
     return function (dispatch, getState) {
         var state = getState();
         var team_id = state.dashboard.team_id;
-        var start = state.userLogs.start;
-        var limit = state.userLogs.limit;
-        var currentCount = state.userLogs.currentCount;
+        var start = state.users.userLogs.start;
+        var limit = state.users.userLogs.limit;
+        var currentCount = state.users.userLogs.currentCount;
         start = start + limit;
         if (start < currentCount) {
             dispatch(getUserLogsNextCachedInternal());
@@ -693,9 +693,9 @@ export function getUserPlansNext(user_id) {
     return function (dispatch, getState) {
         var state = getState();
         var team_id = state.dashboard.team_id;
-        var start = state.userPlans.start;
-        var limit = state.userPlans.limit;
-        var currentCount = state.userPlans.currentCount;
+        var start = state.users.userPlans.start;
+        var limit = state.users.userPlans.limit;
+        var currentCount = state.users.userPlans.currentCount;
         start = start + limit;
         if (start < currentCount) {
             dispatch(getUserPlansNextCachedInternal());
