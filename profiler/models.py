@@ -45,14 +45,23 @@ class ProfilingRecord(models.Model):
             )
         )
 
+    def _get_service_name(self, api_name):
+        if "solr" in api_name:
+            service_name = "solr"
+        else:
+            service_name = "loco"
+
+        return service_name
+
     def _record_timing(self, api_name):
         if settings.DEBUG:
             print('Record Timing - %s:%s', api_name, self.duration)
 
         metric = 'apiserver.timing.%s' % api_name
         statsd.timing(metric, self.duration)
+        service_name = self._get_service_name(api_name)
         metric_timing_all = 'apiserver.timing.all'
-        statsd.timing(metric_timing_all, self.duration, tags=["api_name:%s" % api_name])
+        statsd.timing(metric_timing_all, self.duration, tags=["api_name:%s" % api_name, "service_name:%s" % service_name])
 
     def _record_success_count(self, api_name):
         if settings.DEBUG:
@@ -60,8 +69,9 @@ class ProfilingRecord(models.Model):
 
         metric = 'apiserver.success.%s' % api_name
         statsd.histogram(metric, 1)
+        service_name = self._get_service_name(api_name)
         metric_success_all = 'apiserver.success.all'
-        statsd.histogram(metric_success_all, 1, tags=["api_name:%s" % api_name])
+        statsd.histogram(metric_success_all, 1, tags=["api_name:%s" % api_name, "service_name:%s" % service_name])
 
 
     def _record_api_error(self, api_name, error_name):
@@ -70,8 +80,9 @@ class ProfilingRecord(models.Model):
 
         metric = 'apiserver.errors.%s.%s' % (error_name, api_name)
         statsd.histogram(metric, 1)
+        service_name = self._get_service_name(api_name)
         metric_all_errors = 'apiserver.errors.%s.all' % error_name
-        statsd.histogram(metric_all_errors, 1, tags=["api_name:%s" % api_name])
+        statsd.histogram(metric_all_errors, 1, tags=["api_name:%s" % api_name, "service_name:%s" % service_name])
 
     def save(self, *args, **kwargs):
         api_name = self.view_name
