@@ -413,11 +413,9 @@ class UserLogList(APIView):
         serializer = UserLogSerializer(data=request.data)
 
         if serializer.is_valid():
-            last_log = UserLog.objects.filter(user=request.user, team=team).last()
-            if not last_log or (last_log and not serializer.validated_data['action_type'] == last_log.action_type):
-                log = serializer.save(team=team, user=request.user)
-                cache.set_user_log_status(request.user.id,
-                    team.id, log.action_type, log.created)
+            log = serializer.save(team=team, user=request.user)
+            cache.set_user_log_status(request.user.id,
+                team.id, log.action_type, log.created)
             return Response()
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
