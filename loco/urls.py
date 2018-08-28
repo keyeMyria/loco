@@ -23,6 +23,7 @@ from teams import web_views as teams_web_views
 from crm import web_views as crm_web_views
 from tasks import web_views as tasks_web_views
 from teams import web_views as teams_web_views
+from attendance import web_views as attendance_web_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -55,6 +56,7 @@ urlpatterns += [
     url(r'^web/teams/(?P<team_id>[0-9]+)/merchants/download/$', crm_web_views.merchants_download),
     url(r'^web/teams/(?P<team_id>[0-9]+)/tasks/download/$', tasks_web_views.tasks_download),
     url(r'^web/teams/(?P<team_id>[0-9]+)/logs/download/$', teams_web_views.user_logs_download),
+    url(r'^web/teams/(?P<team_id>[0-9]+)/attendance/download/$', attendance_web_views.user_attendance_download),
     url(r'^web/teams/(?P<team_id>[0-9]+)/plans/download/$', teams_web_views.user_plans_download),
     url(r'^web/teams/(?P<team_id>[^/]+)/(.*)?$', teams_web_views.dashboard),
 ]

@@ -51,7 +51,8 @@ USER_APPS = [
     'notifications',
     'groups',
     'tasks',
-    'crm'
+    'crm',
+    'attendance'
 ]
 
 INSTALLED_APPS = SYSTEM_APPS + USER_APPS
