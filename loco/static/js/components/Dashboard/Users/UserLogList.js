@@ -23,7 +23,7 @@ export default class UserLogList extends Component {
                             return (
                                 <tr key={index} className="no-click">
                                     <td className="txt-only">
-                                        {this.formatDate(log.created)}
+                                        {this.formatDate(log.timestamp)}
                                     </td>
                                     <td className="txt-only">
                                         {log.action_type}

@@ -16,8 +16,9 @@ from .serializers import AttendanceSerializer, UserLocationSerializer, parse_mes
 
 from accounts.models import User
 from accounts.serializers import UserSerializer
-from teams.models import Team, Message, UserLog
-from teams.serializers import TeamMembershipSerializer, MessageSerializer, UserLogSerializer
+from attendance.serializers import PunchSerializer
+from teams.models import Team, Message
+from teams.serializers import TeamMembershipSerializer, MessageSerializer
 from notifications.tasks import send_chat_gcm_async
 
 def _clean_ping_data(ping_data):
@@ -124,23 +125,21 @@ class MessageList(APIView):
 
         return Response(data=serializer.errors, status=400)  
 
-class UserLogList(APIView):
+class PunchList(APIView):
     permission_classes = (permissions.IsAuthenticated, IsSuperUser)
 
     def post(self, request, team_id, format=None):
         PARAM_USER_ID = "user"
         team = get_object_or_404(Team, id=team_id)
         self.check_object_permissions(self.request, team)
-        serializer = UserLogSerializer(data=request.data)
+        serializer = PunchSerializer(data=request.data)
         user_id = request.query_params.get(PARAM_USER_ID)
         user = User.objects.get(id=user_id)
 
         if serializer.is_valid():
-            last_log = UserLog.objects.filter(user=user, team=team).last()
-            if not last_log or (last_log and not serializer.validated_data['action_type'] == last_log.action_type):
-                log = serializer.save(team=team, user=user)
-                cache.set_user_log_status(user.id,
-                    team.id, log.action_type, log.created)
+            log = serializer.save(team=team, user=user)
+            cache.set_user_log_status(user.id,
+                    team.id, log.action_type, log.timestamp)
             return Response()
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 

@@ -586,7 +586,7 @@ export function searchUsers(query) {
 }
 
 function getUserLogsInitInternal(team_id, limit, user_id) {
-    var url = '/teams/'+team_id+'/logs/?start=0&limit='+limit;
+    var url = '/teams/'+team_id+'/attendance/?start=0&limit='+limit;
     url = url + '&user=' + user_id;
     return {
         types: [GET_USER_LOGS_INIT, GET_USER_LOGS_SUCCESS, GET_USER_LOGS_FAILURE],
@@ -613,7 +613,7 @@ function getUserLogsNextCachedInternal() {
 }
 
 function getUserLogsNextInternal(team_id, start, limit, user_id) {
-    var url = '/teams/'+team_id+'/logs/?start=' + start + '&limit='+(limit);
+    var url = '/teams/'+team_id+'/attendance/?start=' + start + '&limit='+(limit);
     url = url + '&user=' + user_id;
     
     return {
