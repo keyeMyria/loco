@@ -47,11 +47,9 @@ class PunchList(APIView):
         serializer = serializers.PunchSerializer(data=request.data)
 
         if serializer.is_valid():
-            last_punch = models.Punch.objects.filter(user=request.user, team=team).last()
-            if not last_punch or (last_punch and not serializer.validated_data['action_type'] == last_punch.action_type):
-                punch = serializer.save(team=team, user=request.user)
-                cache.set_user_log_status(request.user.id,
-                    team.id, punch.action_type, punch.created)
+            punch = serializer.save(team=team, user=request.user)
+            cache.set_user_log_status(request.user.id,
+                team.id, punch.action_type, punch.timestamp)
             return Response()
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

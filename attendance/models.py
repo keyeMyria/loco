@@ -22,6 +22,7 @@ class Punch(BaseModel):
     team = models.ForeignKey(Team, on_delete=models.DO_NOTHING)
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     action_type = models.CharField(max_length=10, choices=ACTION_CHOICES)
+    timestamp = models.DateTimeField()
     
 
 class Leave(BaseModel):
