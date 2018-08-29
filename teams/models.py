@@ -3,7 +3,7 @@ from datetime import timedelta
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
-from django.db import models
+from django.db import models, connection
 
 from rest_framework.authtoken.models import Token
 
@@ -85,6 +85,8 @@ class Team(BaseModel):
             )
         else:
             membership = membership[0]
+            membership.is_deleted = False
+            membership.save()
 
         return membership
 
@@ -172,6 +174,19 @@ class Team(BaseModel):
             pass
 
         return []
+
+def get_team_members(team_id, date, search=None):
+    query = "select CASE WHEN a.action_type is NULL THEN 'Sign-Absent' ELSE a.action_type END, b.role, b.user_id, c.name  from ( select *  from attendance_punch  where id in  ( select max(id)  from attendance_punch  where team_id={0}  and date(CONVERT_TZ(timestamp,'+00:00','+05:30'))='{1}' group by user_id) ) as a  right join teams_teammembership as b  on a.user_id = b.user_id  join accounts_user as c on b.user_id = c.id where b.team_id={0} and b.is_deleted=False {2} order by a.action_type desc"
+    search_query = ''
+    if search:
+        search_query = "and c.name like '%{0}%'".format(search)
+
+    query = query.format(team_id, date, search_query)
+    with connection.cursor() as cursor:
+        cursor.execute(query)
+        rows = cursor.fetchall()
+
+    return rows
 
 class TeamMembership(BaseModel):
     ROLE_MEMBER = 'member'

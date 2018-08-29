@@ -16,7 +16,7 @@ export default class TaskList extends Component {
                         <tr className="no-click">
                             <th>Name</th>
                             <th>Role</th>
-                            <th>Joined On</th>
+                            <th>Attendance</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -30,7 +30,7 @@ export default class TaskList extends Component {
                                         <Link to={"/users/" + user.user_id + "/profile" }>{user.role}</Link>
                                     </td>
                                     <td>
-                                        <Link to={"/users/" + user.user_id + "/profile" }>{this.formatDate(user.created)}</Link>
+                                        <Link to={"/users/" + user.user_id + "/profile" }>{user.action}</Link>
                                     </td>
                                 </tr>
                             )

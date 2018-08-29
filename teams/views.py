@@ -1,5 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 
 from rest_framework.decorators import api_view, permission_classes, parser_classes
 from rest_framework.response import Response
@@ -11,7 +12,7 @@ from loco import utils
 from loco.services import cache, solr
 
 from . import constants, tasks
-from .models import Team, TeamMembership, Checkin, CheckinMedia, Message, UserLog, TourPlan
+from .models import Team, TeamMembership, Checkin, CheckinMedia, Message, UserLog, TourPlan, get_team_members
 from .serializers import TeamSerializer, TeamMembershipSerializer, CheckinSerializer,\
     UserMediaSerializer, CheckinMediaSerializer, serialize_events, UserLogSerializer, \
     MessageSerializer, ConversationMessageSerializer, TYPE_LAST_LOCATION, TourPlanSerializer
@@ -148,10 +149,11 @@ class TeamMemberDetail(APIView):
         membership = get_object_or_404(TeamMembership, user_id=user_id, team_id=team_id)
         team = membership.team
         self.check_object_permissions(self.request, team)
-        membership.delete()
+        membership.is_deleted=True
+        membership.save()
         return Response(status=204)
 
-class TeamMembershipSearch(APIView):
+class TeamMembershipSearch1(APIView):
     permission_classes = (permissions.IsAuthenticated, IsTeamMember)
 
     def get(self, request, team_id, format=None):
@@ -178,6 +180,37 @@ class TeamMembershipSearch(APIView):
             merchants['csv'] = ''
             
         return Response(merchants)
+
+class TeamMembershipSearch(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsTeamMember)
+
+    def get(self, request, team_id, format=None):
+        team = get_object_or_404(Team, id=team_id)
+        self.check_object_permissions(self.request, team)
+
+        PARAM_QUERY = 'query'
+        query = request.query_params.get(PARAM_QUERY)
+
+        start, limit = utils.get_query_start_limit(request)
+        offset = timedelta(hours=5, minutes=30)
+        date = timezone.now() + offset
+        date = date.strftime('%Y-%m-%d')
+        members = get_team_members(team.id, date, query)
+        count = len(members)
+        if members:
+            members = members[start:start+limit]
+
+        data = []
+        for member in members:
+            data.append({
+                "name": member[3],
+                "role": member[1],
+                "user_id": member[2],
+                "action": member[0],
+            })
+
+        results = {'count': count, 'data':data}
+        return Response(results)
 
 class TeamMembershipStatus(APIView):
     permission_classes = (permissions.IsAuthenticated, )
